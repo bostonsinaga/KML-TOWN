@@ -1,7 +1,7 @@
 # KML-TOWN
 
 Hello there,</br>
-This is my **KML-TOWN** software.</br>
+I've created software named **KML-TOWN**.</br>
 A simple and useful *'.kml'* manipulator program.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
