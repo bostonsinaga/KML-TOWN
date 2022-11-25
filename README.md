@@ -1,9 +1,9 @@
-# KML-TOWN
+# KML-TOWN v.0.2.0 2022-11-25
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
-A simple and useful *'.kml'* manipulator program.</br>
-I started developing it from *2022 November 14th*.</br>
+A simple and useful *'.kml'* editor program.</br>
+I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
 -- **scan** and **convert** into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their date</br>
