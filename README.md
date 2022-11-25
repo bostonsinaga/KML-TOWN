@@ -19,6 +19,7 @@ A simple and useful *'.kml'* manipulator program.</br>
 ---------- similar name or descriptions to folder of them</br>
 ---------- similar pin styles or path colors to folder of them</br>
 -- create order tags or numbering by direction of start to end location coordinate</br>
+-- convert *.kml* into *.csv* with folders as the *column* and data as the *rows*</br>
 
 **HOW TO INSTALL:**</br>
 -- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
