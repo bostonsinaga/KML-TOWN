@@ -21,9 +21,9 @@ A simple and useful *'.kml'* manipulator program.</br>
 -- create order tags or numbering by direction of start to end location coordinate</br>
 
 **HOW TO INSTALL:**</br>
--- compile the source code, by run *'./compile.[sh, bat]'* in CLI
+-- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
 ---- (or instead download the pre-compiled *'kml-town'* program in *'bin'* folder)</br>
--- then add compiled program folder (the folder where *'kml-town'* program located)
+-- then add compiled program folder (the folder where *'kml-town'* program located)</br>
 ---- to 'path' in your 'Environment Variable'</br>
 ---- (if you don't want to do so, you have to always *'cd'* into the program folder every time you using it)</br>
 -- and finally run *'kml-town'* in your CLI</br>
