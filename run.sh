@@ -1,1 +1,1 @@
-bin/kml-town
+./bin/kml-town.exe
