@@ -22,6 +22,9 @@ class Attribute {
         std::string name, value;
 };
 
+#define MALE_XMLGEN 0 // unable to own children
+#define FEMALE_XMLGEN 1 // able to own children
+
 class Node {
     public:
         Node(std::string name_in, Node *parent_in = nullptr) {
@@ -105,12 +108,12 @@ class Node {
             return retNodes;
         }
 
-        bool isSterileElement() {
-            return isSterile;
+        int getGender() {
+            return genderFlag;
         }
 
-        void setSterile(bool isIt) {
-            isSterile = isIt;
+        void setGender(int genderFlag_in) {
+            genderFlag = genderFlag_in;
         }
 
         // NAME AND INNER TEXT //
@@ -221,7 +224,7 @@ class Node {
         }
 
     private:
-        bool isSterile = false; // 'true' means cannot has a child
+        int genderFlag = FEMALE_XMLGEN;
         std::string name, innerText;
         Node *parent = nullptr;
 

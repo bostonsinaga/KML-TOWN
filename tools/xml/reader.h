@@ -3,7 +3,6 @@
 
 class Reader {
     public:
-
         Node *fileParse(std::string fileName) {
 
             std::ifstream readFile(fileName);
@@ -21,6 +20,11 @@ class Reader {
                 return parse(text, fileName);
             }
 
+            std::cerr
+                << "XML-TOOL-> Parsing error. '"
+                << fileName
+                << "' is missing the version and encoding value at its top\n";
+                
             return nullptr;
         }
 
@@ -60,6 +64,8 @@ class Reader {
             std::vector<Node*> queueNodes;
             std::vector<Attribute> readAttributes;
 
+            int qnSz = queueNodes.size();
+
             std::string
                 readMarkName = "",
                 readAttName = "",
@@ -71,13 +77,17 @@ class Reader {
 
             for (auto &CH : text) {
 
+                // MARK OPENING
                 if (preCH == '<' && CH != '/') {
                     readingFlag = mark_name_rdflag;
                     readMarkName += CH;
+                    readInnerText = "";
                 }
+                // FEMALE TAIL OPENING
                 else if (preCH == '<' && CH == '/') {
                     readingFlag = tail_name_rdflag;
                 }
+                // INSIDE MARK READING
                 else if (ctr > 0) {
                     // MARK NAME
                     if (readingFlag == mark_name_rdflag) {
@@ -93,66 +103,54 @@ class Reader {
                             readingFlag = void_rdflag;
                             isSkip = true;
 
-                            // MALE has ATT
-                            if (readAttributes.size() > 0) {
-                                
-                                if (queueNodes.size() > 1) {
-                                    queueNodes.at(queueNodes.size() - 2)->addChild(queueNodes.back());
-                                }
-                                else if (queueNodes.size() == 1) {
-                                    if (!isRooted) {
-                                        isRooted = true;
-                                        retNode = queueNodes.back();
-                                    }
-                                    else { // error message
-                                        multiRootErrorMessage(queueNodes.back()->getName());
-                                        delete queueNodes.back();
-                                        if (retNode) delete retNode;
-                                        return nullptr;
-                                    }
-                                }
-
-                                queueNodes.pop_back();
+                            if (readAttributes.size() == 0) {
+                                // cut '/' at back of 'readMarkName'
+                                readMarkName = readMarkName.substr(
+                                    0, readMarkName.size() - 1
+                                );
                             }
-                            // MALE no ATT
-                            else {
-                                Node *node = new Node(readMarkName);
-                                node->setAttributes(readAttributes);
-                                
-                                if (queueNodes.size() > 0) {
-                                    queueNodes.back()->addChild(node);
-                                }
-                                else if (queueNodes.size() == 0) {
-                                    if (!isRooted) {
-                                        isRooted = true;
-                                        retNode = node;
-                                    }
-                                    else { // error message
-                                        multiRootErrorMessage(node->getName());
-                                        delete node;
-                                        if (retNode) delete retNode;
-                                        return nullptr;
-                                    }
-                                }
 
+                            Node *node = new Node(readMarkName);
+                            node->setGender(MALE_XMLGEN);
+                            
+                            if (qnSz > 0) {
+                                queueNodes.back()->addChild(node);
+                            }
+                            else if (qnSz == 0) {
+                                if (!isRooted) {
+                                    isRooted = true;
+                                    retNode = node;
+                                }
+                                else { // error message
+                                    multiRootErrorMessage(node->getName());
+                                    delete node;
+                                    if (retNode) delete retNode;
+                                    return nullptr;
+                                }
+                            }
+
+                            // MALE with ATT
+                            if (readAttributes.size() > 0) {
+                                node->setAttributes(readAttributes);
                                 readAttributes.clear();
                             }
 
                             readMarkName = "";
                         }
-                        // get COMMON without ATT
+                        // get FEMALE without ATT
                         else if (isALetter(preCH) && CH == '>') {
                             readingFlag = inner_text_rdflag;
                             isSkip = true;
 
                             Node *node = new Node(readMarkName);
                             queueNodes.push_back(node);
+                            qnSz = queueNodes.size();
                             readMarkName = "";
                         }
 
                         if (!isSkip) readMarkName += CH;
                     }
-                    // FEMALE TAIL NAME
+                    // FEMALE TAIL
                     else if (readingFlag == tail_name_rdflag) {
                         bool isSkip = false;
 
@@ -162,12 +160,10 @@ class Reader {
                             isSkip = true;
 
                             if (queueNodes.back()->getName() == readMarkName) {
-                                int size = queueNodes.size();
 
-                                if (size == 1) {
+                                if (qnSz == 1) {
                                     if (!isRooted) {
                                         isRooted = true;
-                                        std::cout << "MEONG..\n";
                                         retNode = queueNodes.back();
                                     }
                                     else { // error message
@@ -177,14 +173,26 @@ class Reader {
                                         return nullptr;
                                     }
                                 }
-                                else if (size > 1) {
-                                    int index = queueNodes.size() - 2;
+                                else if (qnSz > 1) {
+                                    int index = qnSz - 2;
                                     if (queueNodes.at(index)) {
                                         queueNodes.at(index)->addChild(queueNodes.back());
                                     }
                                 }
 
+                                // set inner text if no children
+                                if (queueNodes.back()->getChildren()->size() == 0) {
+
+                                    // cut '<' at back of 'readInnerText'
+                                    readInnerText = readInnerText.substr(
+                                        0, readInnerText.size() - 1
+                                    );
+
+                                    queueNodes.back()->setInnerText(readInnerText);
+                                }
+
                                 queueNodes.pop_back();
+                                qnSz = queueNodes.size();
                                 readMarkName = "";
                             }
                             else { // error message
@@ -192,6 +200,7 @@ class Reader {
                                     << "XML-TOOL-> Parsing error. The element named '"
                                     << queueNodes.back()->getName()
                                     << "' has wrong structure\n";
+
                                 delete queueNodes.back();
                                 if (retNode) delete retNode;
                                 return nullptr;
@@ -232,6 +241,9 @@ class Reader {
                             readAttributes.push_back(
                                 Attribute(readAttName, readAttVal)
                             );
+
+                            readAttName = "";
+                            readAttVal = "";
                         }
 
                         // to ATT NAME
@@ -244,13 +256,14 @@ class Reader {
                             readingFlag = mark_name_rdflag;
                             isSkip = true;
                         }
-                        // close COMMON with ATT
+                        // close FEMALE HEAD with ATT
                         else if (preCH == '"' && CH == '>') {
                             readingFlag = inner_text_rdflag;
                             isSkip = true;
 
                             Node *node = new Node(readMarkName);
                             queueNodes.push_back(node);
+                            qnSz = queueNodes.size();
                             node->setAttributes(readAttributes);
                             readAttributes.clear();
                             readMarkName = "";
@@ -267,6 +280,7 @@ class Reader {
                         << "XML-TOOL-> Parsing error. Unexpected character at beginning of '"
                         << fileName
                         << "'\n";
+
                     return nullptr;
                 }
 

@@ -195,7 +195,7 @@ class Menu {
             mainMenuText,
             mainMenuText,
             pinIconNamesMenuText,
-            "KML-TOWN v.0.1.0 2022-11-14\n",
+            "KML-TOWN v.0.2.0 2022-11-14\n",
             "KML-TOWN-> converting TXT-KML...\n",
             "KML-TOWN-> converting KML-CSV...\n",
             "KML-TOWN-> running...\n",

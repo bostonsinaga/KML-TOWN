@@ -69,18 +69,14 @@ class Writer {
                     indentSpaces[0] += "    ";
                 }
 
-                // no children (single)
-                if (child->isSterileElement()) {
+                // never has children (MALE)
+                if (child->getGender() == MALE_XMLGEN) {
                     retTxt += (
                         indentSpaces[0] + "<" + child->getName()
                         + stringifyAttributes(child->getAttributes()) + "/>\n"
                     );
-
-                    for (auto &att : *child->getAttributes()) {
-                        std::cout << att.getName() << " - " << att.getValue() << std::endl;
-                    }
                 }
-                else { // closable element
+                else { // FEMALE element
                     std::string pulledStrings = pullChildrenStrings(child->getChildren());
 
                     if (pulledStrings != "") { // has children

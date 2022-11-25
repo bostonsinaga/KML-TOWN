@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Style id="sh_ylw-pushpin1010">
+    <IconStyle>
+        <scale>0.945455</scale>
+        <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+        </Icon>
+        <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+    </IconStyle>
+    <LabelStyle>
+        <color>ff0000ff</color>
+        <scale>0.8</scale>
+    </LabelStyle>
+</Style>

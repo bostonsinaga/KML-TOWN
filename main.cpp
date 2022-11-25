@@ -36,27 +36,27 @@ int main(int argc, char *argv[]) {
     ////////////////////
 
     // test
-    xml::Reader reader;
-    xml::Node *docNode = reader.fileParse(inputStrings.at(0));
+    // xml::Reader reader;
+    // xml::Node *docNode = reader.fileParse(inputStrings.at(0));
 
-    if (docNode) {
-        xml::Writer writer;
-        writer.stringify(inputStrings.at(1), docNode);
-        delete docNode;
-    }
+    // if (docNode) {
+    //     xml::Writer writer;
+    //     writer.stringify(inputStrings.at(1), docNode);
+    //     delete docNode;
+    // }
 
     Menu menu;
 
     switch (menu.select(inputStrings)) {
         case CONVERT_TXT_KML_FLAG: {
-            // txt::Scanner txtScanner;
+            txt::Scanner txtScanner;
 
-            // xml::Node *kmlNode = txtScanner.parse(
-            //     inputStrings.at(2),
-            //     inputStrings.at(4)
-            // );
+            xml::Node *kmlNode = txtScanner.parse(
+                inputStrings.at(2),
+                inputStrings.at(4)
+            );
 
-            // if (kmlNode) delete kmlNode;
+            if (kmlNode) delete kmlNode;
         break;}
         case CONVERT_KML_CSV_FLAG: {
 
