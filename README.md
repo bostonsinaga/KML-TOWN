@@ -5,7 +5,7 @@ I've created software named **KML-TOWN**.</br>
 A simple and useful *'.kml'* manipulator program.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
--- scan and convert into *'.kml'* from *'.txt'* exported WhatsApp chat of share locations with their's date</br>
+-- scan and convert into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their's date</br>
 -- manipulate *'.kml'* such as:</br>
 ------ change pin icon style with predefined styles</br>
 ------ set path into placemarks</br>
