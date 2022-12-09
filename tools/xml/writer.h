@@ -3,15 +3,14 @@
 
 class Writer {
     public:
-
         void stringify(
             std::string fileDir_out,
             Node *root,
             bool isWithRoot = true
         ) {
-            /* note: the 'root' is not include to write */
+            /* the 'root' is not include to write */
 
-            std::cout << "XML-TOOL-> Writing '" + fileDir_out + "'...\n";
+            std::cout << "XML-> Writing '" + fileDir_out + "'...\n";
 
             Node *includedRoot;
 
@@ -20,6 +19,8 @@ class Writer {
                 root = new Node("SuperRoot");
                 root->addChild(includedRoot);
             }
+
+            /* write into 'fileDir_out' */
             
             std::ofstream writeFile(fileDir_out);
 
@@ -35,7 +36,7 @@ class Writer {
                 delete root; // delete 'SuperRoot'
             }
 
-            std::cout << "XML-TOOL-> Stringify into '" + fileDir_out + "' completed!\n";
+            std::cout << "XML-> Stringify into '" + fileDir_out + "' completed!\n";
         }
 
     private:

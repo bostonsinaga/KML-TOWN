@@ -21,7 +21,7 @@ class Reader {
             }
 
             std::cerr
-                << "XML-TOOL-> Parsing error. '"
+                << "XML-> Parsing error. '"
                 << fileName
                 << "' is missing the version and encoding value at its top\n";
                 
@@ -31,19 +31,12 @@ class Reader {
         // input must only has one root in text form
         Node *parse(std::string text, std::string fileName = ".xml") {
 
-            std::cout << "XML-TOOL-> Reading '" << fileName << "'...\n";
-
-            std::function<bool(char)> isALetter = [=](char ch)->bool {
-                if (int(ch) >= 97 && int(ch) <= 122) {
-                    return true;
-                }
-                return false;
-            };
+            std::cout << "XML-> Reading '" << fileName << "'...\n";
 
             // multi root error message
             std::function<void(std::string)> multiRootErrorMessage = [=](std::string name) {
                 std::cerr
-                    << "XML-TOOL-> Parsing error. "
+                    << "XML-> Parsing error. "
                     << "Cannot parse multiple root the one named '"
                     << name << "'\n";
             };
@@ -94,7 +87,7 @@ class Reader {
                         bool isSkip = false;
 
                         // to ATT NAME
-                        if (isALetter(preCH) && CH == ' ') {
+                        if (mini_tool::isALetter(preCH) && CH == ' ') {
                             readingFlag = att_name_rdflag;
                             isSkip = true;
                         }
@@ -138,7 +131,7 @@ class Reader {
                             readMarkName = "";
                         }
                         // get FEMALE without ATT
-                        else if (isALetter(preCH) && CH == '>') {
+                        else if (mini_tool::isALetter(preCH) && CH == '>') {
                             readingFlag = inner_text_rdflag;
                             isSkip = true;
 
@@ -155,7 +148,7 @@ class Reader {
                         bool isSkip = false;
 
                         // verify MARK
-                        if (isALetter(preCH) && CH == '>') {
+                        if (mini_tool::isALetter(preCH) && CH == '>') {
                             readingFlag = void_rdflag;
                             isSkip = true;
 
@@ -197,7 +190,7 @@ class Reader {
                             }
                             else { // error message
                                 std::cerr
-                                    << "XML-TOOL-> Parsing error. The element named '"
+                                    << "XML-> Parsing error. The element named '"
                                     << queueNodes.back()->getName()
                                     << "' has wrong structure\n";
 
@@ -214,7 +207,7 @@ class Reader {
                         bool isSkip = false;
 
                         // to ATT VAL
-                        if (isALetter(preCH) && CH == '=') {
+                        if (mini_tool::isALetter(preCH) && CH == '=') {
                             readingFlag = att_val_rdflag;
                             isSkip = true;
                         }
@@ -277,10 +270,9 @@ class Reader {
                 }
                 else if (CH != '<' && CH != ' ' && CH != '\n') {
                     std::cerr
-                        << "XML-TOOL-> Parsing error. Unexpected character at beginning of '"
+                        << "XML-> Parsing error. Unexpected character at beginning of '"
                         << fileName
                         << "'\n";
-
                     return nullptr;
                 }
 
@@ -293,7 +285,7 @@ class Reader {
                 if (fileName == ".xml") {
                     fileName = retNode->getName() + " [in runtime element]";
                 }
-                std::cout << "XML-TOOL-> Parse from '" << fileName << "' completed!\n";
+                std::cout << "XML-> Parse from '" << fileName << "' completed!\n";
             }
 
             return retNode;
