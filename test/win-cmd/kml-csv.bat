@@ -1,0 +1,1 @@
+kml-town --convert --kml-in ../CSV-MULTI-DOC-TEST.kml --csv-out ../sheet.csv
