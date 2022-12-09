@@ -1,6 +1,12 @@
 #ifndef __KML_CONVERTER_H__
 #define __KML_CONVERTER_H__
 
+/* NOTE:
+*   This class is not a '.txt' to '.kml' converter
+*   please use 'txt/scanner' and 'kml/builder' instead
+*   this class just for coordinate converter from 'degree' to 'decimal' and vice versa
+*/
+
 class Converter {
     public:
         /* note: the tool functions take only two stringified axis */
@@ -12,10 +18,10 @@ class Converter {
             LNG_LAT_SEPARATE_FLAG_OUT
         };
 
-        std::vector<std::string> separateCoor(
+        std::vector<std::string> separateCoordinate(
             std::string coorStr,
-            int separateFlagIn,
-            int separateFlagOut
+            int separateFlagIn = -1, // '-1' means no position swap
+            int separateFlagOut = -1
         ) {
             bool isComma = false;
             std::string latStr = "", lngStr = "";
@@ -23,7 +29,9 @@ class Converter {
             for (auto &ch : coorStr) {
                 if (ch == ',' || ch == ' ') isComma = true;
                 else {
-                    if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN) {
+                    if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN ||
+                        separateFlagIn == -1
+                    ) {
                         if (isComma) {
                             lngStr += ch;
                         }
@@ -38,7 +46,9 @@ class Converter {
                 }
             }
 
-            if (separateFlagOut == LAT_LNG_SEPARATE_FLAG_OUT) {
+            if (separateFlagOut == LAT_LNG_SEPARATE_FLAG_OUT ||
+                separateFlagOut == -1
+            ) {
                 return std::vector<std::string>{latStr, lngStr};
             }
             else if (separateFlagOut == LNG_LAT_SEPARATE_FLAG_OUT) {
@@ -49,25 +59,25 @@ class Converter {
         }
 
         std::vector<std::string> convertCoor_decimalDegree(
-            std::vector<std::string> coorStrVec,
+            std::vector<std::string> coorStrCouple,
             int separateFlagIn,
             int separateFlagOut
         ) {
-            int ctr = 0;
+            int CTR = 0;
             double coor, minNum;
             std::string deg, min, sec;
 
-            for (auto &str : coorStrVec) {
+            for (auto &str : coorStrCouple) {
 
                 coor = std::stod(str);
-                deg = std::to_string(std::abs(coor)) + "\xB0";
+                deg = std::to_string(std::abs(coor)) + mini_tool::DEGREE_SIGN;
                 minNum = (coor - std::abs(coor)) * 60.0;
                 sec = std::to_string((minNum - std::abs(minNum)) * 60.0) + "\"";
                 min = std::to_string(std::abs(minNum)) + "'";
                 str = deg + min + sec;
 
                 if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN) {
-                    if (ctr == 0) { // latitude
+                    if (CTR == 0) { // latitude
                         if (coor < 0) str += "S";
                         else str += "N";
                     }
@@ -77,7 +87,7 @@ class Converter {
                     }
                 }
                 else if (separateFlagIn == LNG_LAT_SEPARATE_FLAG_IN) {
-                    if (ctr == 0) { // longitude
+                    if (CTR == 0) { // longitude
                         if (coor < 0) str += "W";
                         else str += "E";
                     }
@@ -87,55 +97,77 @@ class Converter {
                     }
                 }
                 
-                ctr++;
+                CTR++;
             }
 
-            swapCoorStringVector(&coorStrVec, separateFlagIn, separateFlagOut);
-            return coorStrVec;
+            swapCoorStringVector(&coorStrCouple, separateFlagIn, separateFlagOut);
+            return coorStrCouple;
         }
 
         std::vector<std::string> convertCoor_degreeDecimal(
-            std::vector<std::string> coorStrVec,
+            std::vector<std::string> coorStrCouple, // can be partly empty
             int separateFlagIn,
             int separateFlagOut
         ) {
-            int ctr = 0;
-            double coor;
+            int CTR = 0;
+            double coor = 0;
 
-            for (auto &str : coorStrVec) {
+            std::string formErrorMessage = (
+                "KML-> Convert error. Uncorrect form of degree coordinate\n"
+            );
 
-                size_t deg_startCt = str.find("\xB0"),
-                    min_startCt = str.find("'"),
-                    sec_startCt = str.find("\"");
+            for (auto &STR : coorStrCouple) {
+                if (STR != "") {
 
-                std::string formErrorMessage = "TXT-TOOL-> form error of degree coordinate\n";
+                    size_t deg_startCt = STR.find(mini_tool::DEGREE_SIGN),
+                        min_startCt = STR.find("'"),
+                        sec_startCt = STR.find("\"");
 
-                if (deg_startCt == std::string::npos ||
-                    min_startCt == std::string::npos ||
-                    sec_startCt == std::string::npos
-                ) {
-                    std::cerr << formErrorMessage;
-                    break;
-                }
-                else {
+                    bool isWithDecimalSign = false;
+
+                    // with decimal sign axis (not letter sign)
+                    if (deg_startCt != std::string::npos &&
+                        min_startCt != std::string::npos &&
+                        sec_startCt == std::string::npos
+                    ) {
+                        isWithDecimalSign = true;
+                        sec_startCt = STR.size() - 1;
+                    }
+                    // error message
+                    else if (deg_startCt == std::string::npos ||
+                        min_startCt == std::string::npos ||
+                        sec_startCt == std::string::npos
+                    ) {
+                        std::cerr << formErrorMessage;
+                        break;
+                    }
+
+                    ////////////////////
+                    // TAKE THE VALUE //
+                    ////////////////////
+
                     std::string degStr = "", minStr = "", secStr = "";
 
                     for (int i = deg_startCt - 1; i >= 0; i--) {
-                        degStr += str.at(i);
+                        degStr += STR.at(i);
                     }
+                    degStr = mini_tool::reverseString(degStr);
 
-                    for (int i = min_startCt - 1; i > deg_startCt; i--) {
-                        minStr += str.at(i);
+                    for (int i = min_startCt - 1; i > deg_startCt + 1; i--) {
+                        minStr += STR.at(i);
                     }
+                    minStr = mini_tool::reverseString(minStr);
 
                     for (int i = sec_startCt - 1; i > min_startCt; i--) {
-                        secStr += str.at(i);
+                        secStr += STR.at(i);
                     }
+                    secStr = mini_tool::reverseString(secStr);
 
                     // must be at 'int' converted 'char' of numbers interval
-                    if (int(degStr.front()) >= 48 && int(degStr.front()) <= 57 &&
-                        int(minStr.front()) >= 48 && int(minStr.front()) <= 57 &&
-                        int(secStr.front()) >= 48 && int(secStr.front()) <= 57
+                    if ((mini_tool::isANumber(degStr.front()) &&
+                        mini_tool::isANumber(minStr.front()) &&
+                        mini_tool::isANumber(secStr.front())) ||
+                        degStr.front() == '-'
                     ) {
                         int deg = std::stoi(degStr),
                             min = std::stoi(minStr);
@@ -143,56 +175,74 @@ class Converter {
                         double sec = std::stod(secStr);
 
                         // PRODUCT
-                        coor += (sec / 60.0) + min;
-                        coor += (min / 60.0) + deg;
+                        coor = (sec / 60.0) + min;
+                        coor = (coor / 60.0) + std::abs(deg);
                     }
                     else {
                         std::cerr << formErrorMessage;
                         break;
                     }
-                }
 
-                if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN) {
-                    if (ctr == 0) { // latitude
-                        if (str.back() == 'S' || str.back() == 's') {
-                            coor *= -1;
-                        }
-                    }
-                    else { // longitude
-                        if (str.back() == 'W' || str.back() == 'B' ||
-                            str.back() == 'w' || str.back() == 'b'
-                        ) {
-                            coor *= -1;
-                        }
-                    }
-                    str = std::to_string(coor);
-                }
-                else if (separateFlagIn == LNG_LAT_SEPARATE_FLAG_IN) {
-                    if (ctr == 0) { // latitude
-                        if (str.back() == 'W' || str.back() == 'B' ||
-                            str.back() == 'w' || str.back() == 'b'
-                        ) {
-                            coor *= -1;
-                        }
-                    }
-                    else { // longitude
-                        if (str.back() == 'S' || str.back() == 's') {
-                            coor *= -1;
-                        }
-                    }
-                    str = std::to_string(coor);
-                }
+                    //////////////////////
+                    // START CONVERTING //
+                    //////////////////////
 
-                ctr++;
+                    // with decimal sign
+                    if (isWithDecimalSign) {
+                        if (STR.front() == '-') {
+                            coor *= -1;
+                        }
+                        STR = std::to_string(coor);
+                    }
+
+                    /* NOTE:
+                    *  consider the 'seperate flag'!!
+                    *  the letter sign might be ignored
+                    *  if not adjusted with the flag
+                    */
+                    else { // with letter sign
+
+                        if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN) {
+                            if (CTR == X) { // latitude
+                                if (STR.back() == 'S' || STR.back() == 's') {
+                                    coor *= -1;
+                                }
+                            }
+                            else if (CTR == Y) { // longitude
+                                if (STR.back() == 'W' || STR.back() == 'B' ||
+                                    STR.back() == 'w' || STR.back() == 'b'
+                                ) {
+                                    coor *= -1;
+                                }
+                            }
+                            STR = std::to_string(coor);
+                        }
+                        else if (separateFlagIn == LNG_LAT_SEPARATE_FLAG_IN) {
+                            if (CTR == X) { // latitude
+                                if (STR.back() == 'W' || STR.back() == 'B' ||
+                                    STR.back() == 'w' || STR.back() == 'b'
+                                ) {
+                                    coor *= -1;
+                                }
+                            }
+                            else if (CTR == Y) { // longitude
+                                if (STR.back() == 'S' || STR.back() == 's') {
+                                    coor *= -1;
+                                }
+                            }
+                            STR = std::to_string(coor);
+                        }
+                    }
+                }
+                CTR++;
             }
 
-            swapCoorStringVector(&coorStrVec, separateFlagIn, separateFlagOut);
-            return coorStrVec;
+            swapCoorStringVector(&coorStrCouple, separateFlagIn, separateFlagOut);
+            return coorStrCouple;
         }
 
-    private:
         void swapCoorStringVector(
-            std::vector<std::string> *coorStrVec_ptr,
+            std::vector<std::string> *coorStrCouple_ptr,
             int separateFlagIn,
             int separateFlagOut
         ) {
@@ -201,11 +251,11 @@ class Converter {
                 (separateFlagOut == LNG_LAT_SEPARATE_FLAG_OUT &&
                 separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN)
             ) {
-                std::string buffer = coorStrVec_ptr->at(0);
-                coorStrVec_ptr->at(0) = coorStrVec_ptr->at(1);
-                coorStrVec_ptr->at(1) = buffer;
+                std::string buffer = coorStrCouple_ptr->at(0);
+                coorStrCouple_ptr->at(0) = coorStrCouple_ptr->at(1);
+                coorStrCouple_ptr->at(1) = buffer;
             }
-        }
+        }        
 };
 
 #endif // __KML_CONVERTER_H__
