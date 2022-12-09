@@ -1,25 +1,25 @@
-# KML-TOWN v.0.2.0 2022-11-25
+# KML-TOWN v.0.3.0 2022-12-09
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
-A simple and useful *'.kml'* editor program.</br>
+A simple and useful Google Earth *'.kml'* editor program.</br>
 I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
 -- **scan** and **convert** into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their date</br>
 -- **manipulate** *'.kml'* such as:</br>
------- change pin icon style with predefined styles</br>
------- set path into placemarks</br>
------- set placemarks into path</br>
+------ set path into pins</br>
+------ set pins into path</br>
 ------ set paths into one path</br>
------- crop group of placemarks</br>
+------ crop group of pins</br>
 ------ crop path or group of paths</br>
+------ sort placemarks inside selected rectangular area (you can number them as well)</br>
+------ change pins icon style with a bunch of predefined styles</br>
 ------ filter types of data:</br>
----------- pins into a folder</br>
----------- paths into a folder</br>
----------- similar name or descriptions into a folder</br>
----------- similar pin styles or path colors into a folder</br>
--- **create** order tags or numbering by direction of start to end location coordinate</br>
+---------- classify pins</br>
+---------- classify paths</br>
+---------- classify similar name or descriptions</br>
+---------- classify similar pin styles or path colors</br>
 -- **convert** *'.kml'* into *'.csv'* with folders as *columns* and data as *rows*
 
 **HOW TO INSTALL:**</br>
@@ -31,7 +31,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 -- and finally run *'kml-town'* in your CLI</br>
 ---- (type *'kml-town --help'* to start)</br>
 
-I use this software in my previous job, as a coordinate data entry.</br>
+I use this software in my previous job, as a coordinate data entry using Google Earth.</br>
 This really help me. And I hope this can help you too. Thank you.</br>
 
 **Boston Sinaga**
