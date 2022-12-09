@@ -1,83 +1,332 @@
 #ifndef __TXT_SAMPLES_H__
 #define __TXT_SAMPLES_H__
 
-class Samples {
+class Sample {
     public:
         std::string testDateTemplate(std::string &textLine) {
 
             int slashCtr = 0;
-            std::string date = "", month = "", year = "", *timePtr = &date;
+            std::string day = "", month = "", year = "", *timePtr = &day;
 
             /* the template is: (following WhatsApp '.txt' chat export format)
-            *  dd / mm / 20yy
+            *  dd / mm / 20yy (indonesia date format)
             */
 
-            std::vector<char> fingerNums {
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-            };
-
             // only number and slash sign
-            for (auto &ch : textLine) {
+            for (auto &CH : textLine) {
 
                 // still searching
-                if (ch == '/') {
+                if (CH == '/') {
                     slashCtr++;
                     if (slashCtr == 1) timePtr = &month;
                     else if (slashCtr == 2) timePtr = &year;
                 }
                 else {
-                    bool isLoopBreak = false;
-                    for (auto &chNum : fingerNums) {
-                        if (ch == chNum) {
-                            timePtr->push_back(ch);
-                            isLoopBreak = true;
-                            break;
-                        }
+                    bool isNumDetected = false;
+                    if (mini_tool::isANumber(CH)) {
+                        isNumDetected = true;
+                        timePtr->push_back(CH);
                     }
 
-                    if (isLoopBreak) break;
-                    else {
+                    // stop searching
+                    if (year.size() == 2 && slashCtr == 2) {
+                        return day + "/" + month + "/20" + year;
+                    }
+                    // reset
+                    else if (!isNumDetected) {
                         slashCtr = 0;
-                        date = "";
+                        day = "";
                         month = "";
                         year = "";
-                        timePtr = &date;
+                        timePtr = &day;
                     }
-                }
-
-                // stop searching
-                if (year.size() == 2 && slashCtr == 2) {
-                    return date + "/" + month + "/20" + year;
                 }
             }
 
             return "";
         }
 
-        std::string
-            google_map_tag = "https://maps.google.com/?q=",
-            degree_tag = "\xB0";
+        std::string testGoogleMapsTemplate(std::string &textLine) {
 
-        std::vector<std::string> warningTags {
-            "http",
+            std::string
+                templateStr = "https://maps.google.com/?q=",
+                retCoor = "";
 
-            //////////////////
-            // HSP SPECIALS //
-            //////////////////
+            size_t found = textLine.find(templateStr);
 
-            "6m",
-            "7m",
-            "9m",
-            "dc",
-            "dropcore",
-            "core",
-            "tube",
-            "6c",
-            "12c",
-            "24c",
-            "48c",
-            "96c"
-        };
+            if (found != std::string::npos) {
+
+                for (int chCtr = found + templateStr.size();
+                     chCtr < textLine.size();
+                     chCtr++
+                ) {
+                    if (textLine.at(chCtr) != ' ' ||
+                        textLine.at(chCtr) != '\n'
+                    ) {
+                        retCoor += textLine.at(chCtr);
+                    }
+                }
+            }
+
+            return retCoor;
+        }
+
+        // sample: [ 10°20'30.4"S 40°30'20.1"E ]
+        std::string testDegreeTemplateWithLetter(std::string &textLine) {
+            enum {
+                div_det,
+                axis_det,
+                secSg_det,
+                sec_det,
+                minSg_det,
+                min_det,
+                degSgNgt80_det,
+                degSgNgt62_det,
+                deg_det
+            };
+
+            bool isAllOff = true, isSearching = false;
+            std::vector<bool> isDetected(9, false);
+            std::string retCoor = "";
+        
+            for (auto &CH : textLine) {
+                // end
+                if (isDetected.at(div_det) &&
+                    isDetected.at(axis_det)
+                ) {
+                    break;
+                }
+                // divide
+                else if (
+                    isDetected.at(axis_det) &&
+                    (CH == ' ' || CH == ',' || mini_tool::isANumber(CH))
+                ) {
+                    isDetected = std::vector<bool>(9, false);
+                    isDetected.at(div_det) = true;
+                    retCoor.push_back(CH);
+                    isAllOff = true;
+                }
+                // axis
+                else if (
+                    isDetected.at(secSg_det) &&
+                    (mini_tool::isALetter(CH) || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(secSg_det) = false;
+                        isDetected.at(axis_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // second sign
+                else if (
+                    isDetected.at(sec_det) &&
+                    (CH == '"' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(sec_det) = false;
+                        isDetected.at(secSg_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // second value
+                else if (
+                    isDetected.at(minSg_det) &&
+                    (mini_tool::isANumber(CH) || CH == '.' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(minSg_det) = false;
+                        isDetected.at(sec_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // minute sign
+                else if (
+                    isDetected.at(min_det) &&
+                    (CH == '\'' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(min_det) = false;
+                        isDetected.at(minSg_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // minute value
+                else if (
+                    isDetected.at(degSgNgt80_det) &&
+                    (mini_tool::isANumber(CH) || CH == '.' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(degSgNgt80_det) = false;
+                        isDetected.at(min_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // degree sign DEG_INT_CHAR_PT2
+                else if (
+                    isDetected.at(degSgNgt62_det) &&
+                    int(CH) == DEG_INT_CHAR_PT2
+                ) {
+                    isDetected.at(degSgNgt62_det) = false;
+                    isDetected.at(degSgNgt80_det) = true;
+                    retCoor.push_back(CH);
+                }
+                // degree sign DEG_INT_CHAR_PT1
+                else if (
+                    isDetected.at(deg_det) &&
+                    int(CH) == DEG_INT_CHAR_PT1
+                ) {
+                    isDetected.at(deg_det) = false;
+                    isDetected.at(degSgNgt62_det) = true;
+                    retCoor.push_back(CH);
+                }
+                // degree value or the rest value 
+                else if (mini_tool::isANumber(CH) || CH == '.') {
+                    if (isAllOff) {
+                        isAllOff = false;
+                        isSearching = true;
+                        isDetected.at(deg_det) = true;
+                    }
+                    retCoor.push_back(CH);
+                }
+                // reset if not follow the form
+                else if (retCoor != "" || isSearching) {
+                    if (!(isDetected.at(div_det) && CH == ' ')) {
+                        isSearching = false;
+                        isDetected = std::vector<bool>(9, false);
+                        retCoor = "";
+                        isAllOff = true;
+                    }
+                }
+            }
+
+            // verifying
+            if (!isDetected.at(div_det)) {
+                retCoor = "";
+            }
+
+            return retCoor;
+        }
+
+        // sample: [ -10°20'30.4,40°30'20.1 ]
+        std::string testDegreeTemplateWithSign(std::string &textLine) {
+            enum {
+                div_det,
+                sec_det,
+                minSg_det,
+                min_det,
+                degSgNgt80_det,
+                degSgNgt62_det,
+                deg_det
+            };
+
+            std::vector<bool> isDetected(7, false);
+            std::string retCoor = "";
+            bool isAllOff = true, isSearching = false;
+            int chCtr = 0, secPtCtr = 0;
+        
+            for (auto &CH : textLine) {
+                // end
+                if (isDetected.at(div_det) &&
+                    isDetected.at(sec_det) &&
+                    !mini_tool::isANumber(CH) &&
+                    CH != '.' && secPtCtr < 1
+                ) {
+                    break;
+                }
+                // divide
+                else if (
+                    isDetected.at(sec_det) &&
+                    (CH == ' ' || CH == ',')
+                ) {
+                    isDetected = std::vector<bool>(7, false);
+                    isDetected.at(div_det) = true;
+                    retCoor.push_back(CH);
+                    isAllOff = true;
+                    secPtCtr = 0;
+                }
+                // second value
+                else if (
+                    isDetected.at(minSg_det) &&
+                    (mini_tool::isANumber(CH) || CH == '.' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(minSg_det) = false;
+                        isDetected.at(sec_det) = true;
+                        retCoor.push_back(CH);
+                        if (CH == '.') secPtCtr++;
+                    }
+                }
+                // minute sign
+                else if (
+                    isDetected.at(min_det) &&
+                    (CH == '\'' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(min_det) = false;
+                        isDetected.at(minSg_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // minute value
+                else if (
+                    isDetected.at(degSgNgt80_det) &&
+                    (mini_tool::isANumber(CH) || CH == '.' || CH == ' ')
+                ) {
+                    if (CH != ' ') {
+                        isDetected.at(degSgNgt80_det) = false;
+                        isDetected.at(min_det) = true;
+                        retCoor.push_back(CH);
+                    }
+                }
+                // degree sign DEG_INT_CHAR_PT2
+                else if (
+                    isDetected.at(degSgNgt62_det) &&
+                    int(CH) == DEG_INT_CHAR_PT2
+                ) {
+                    isDetected.at(degSgNgt62_det) = false;
+                    isDetected.at(degSgNgt80_det) = true;
+                    retCoor.push_back(CH);
+                }
+                // degree sign DEG_INT_CHAR_PT1
+                else if (
+                    isDetected.at(deg_det) &&
+                    int(CH) == DEG_INT_CHAR_PT1
+                ) {
+                    isDetected.at(deg_det) = false;
+                    isDetected.at(degSgNgt62_det) = true;
+                    retCoor.push_back(CH);
+                }
+                // degree value or rest value
+                else if (
+                    mini_tool::isANumber(CH) ||
+                    CH == '.' || CH == '-'
+                ) {
+                    if (isAllOff) {
+                        isAllOff = false;
+                        isSearching = true;
+                        isDetected.at(deg_det) = true;
+                    }
+                    retCoor.push_back(CH);
+                }
+                // reset if not follow the form
+                else if (retCoor != "" || isSearching) {
+                    if (!(isDetected.at(div_det) && CH == ' ')) {
+                        isSearching = false;
+                        isDetected = std::vector<bool>(7, false);
+                        retCoor = "";
+                        isAllOff = true;
+                        secPtCtr = 0;
+                    }
+                }
+            }
+
+            // verifying
+            if (!isDetected.at(div_det)) {
+                retCoor = "";
+            }
+
+            return retCoor;
+        }
 };
 
 #endif // __TXT_SAMPLES_H__
