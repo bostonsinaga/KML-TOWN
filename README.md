@@ -2,7 +2,7 @@
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
-A simple and useful Google Earth *'.kml'* editor program.</br>
+A simple and useful **Google Earth** *'.kml'* editor program.</br>
 I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
@@ -14,7 +14,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 ------ crop group of pins</br>
 ------ crop path or group of paths</br>
 ------ sort placemarks inside selected rectangular area (you can number them as well)</br>
------- change pins icon style with a bunch of predefined styles</br>
+------ change pins icon and paths color with a bunch of predefined styles (you can select desired area as well)</br>
 ------ filter types of data:</br>
 ---------- classify pins</br>
 ---------- classify paths</br>
@@ -31,7 +31,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 -- and finally run *'kml-town'* in your CLI</br>
 ---- (type *'kml-town --help'* to start)</br>
 
-I use this software in my previous job, as a coordinate data entry using Google Earth.</br>
+I use this software in my previous job, as a coordinate data entry using **Google Earth**.</br>
 This really help me. And I hope this can help you too. Thank you.</br>
 
 **Boston Sinaga**

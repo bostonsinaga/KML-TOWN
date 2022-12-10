@@ -28,6 +28,14 @@
 #include "tools/txt/txt.h"
 #include "tools/csv/csv.h"
 
+std::string checkOverwrite(
+    Menu *menu,
+    int selectedFlag,
+    int overwriteFlag,
+    std::string &fileDir_in,
+    std::string &fileDir_out
+);
+
 void cropPinsCallback(
     xml::Node *kmlNode,
     std::vector<std::string*> coorStr,
@@ -68,65 +76,100 @@ int main(int argc, char *argv[]) {
     // make row space under the command in CLI
     std::cout << std::endl;
 
-    switch (menu.select(inputStrings)) {
-        case CONVERT_TXT_KML_FLAG: {
-            txt::Scanner txtScanner;
+    // 50 available commands (most varied with different parameters)
+    int SELECTED_FLAG = menu.select(inputStrings);
 
-            xml::Node *kmlNode = txtScanner.parse(
-                inputStrings.at(2),
-                inputStrings.at(4)
-            );
+    //////////////////////////
+    // CONVERT TXT KML FLAG //
+    //////////////////////////
 
-            if (kmlNode) {
-                std::cout << "\n**SUCCEEDED**\n";
-                delete kmlNode;
+    if (SELECTED_FLAG == CONVERT_TXT_KML_FLAG) {
+        txt::Scanner txtScanner;
+
+        xml::Node *kmlNode = txtScanner.parse(
+            inputStrings.at(2),
+            inputStrings.at(4)
+        );
+
+        if (kmlNode) {
+            std::cout << "\n**SUCCEEDED**\n";
+            delete kmlNode;
+        }
+        else std::cerr << "\n**FAILED**\n";
+    }
+
+    //////////////////////////
+    // CONVERT KML CSV FLAG //
+    //////////////////////////
+
+    else if (SELECTED_FLAG == CONVERT_KML_CSV_FLAG) {
+        xml::Reader kmlReader;
+        xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+        if (kmlNode) {
+            xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
+
+            if (mainFolderNode) {
+                csv::Builder csvBuilder;
+                if (csvBuilder.compose(inputStrings.at(4), mainFolderNode)) {
+                    std::cout << "\n**SUCCEEDED**\n";
+                }
             }
             else std::cerr << "\n**FAILED**\n";
-        break;}
-        case CONVERT_KML_CSV_FLAG: {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            if (kmlNode) {
-                xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
+            delete kmlNode;
+        }
+        else std::cerr
+            << "KML-TOWN-> Error. '"
+            << inputStrings.at(2)
+            << "' not found or empty\n"
+            << "\n**FAILED**\n";
+    }
+    else if (
+        SELECTED_FLAG == KML_CROP_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CROP_OVERWRITE_FLAG
+    ) {
+        kml::Cropper(PRINT_NOTIFICATION, &menu);
+        xml::Reader kmlReader;
 
-                if (mainFolderNode) {
-                    csv::Builder csvBuilder;
-                    if (csvBuilder.compose(inputStrings.at(4), mainFolderNode)) {
-                        std::cout << "\n**SUCCEEDED**\n";
-                    }
-                }
-                else std::cerr << "\n**FAILED**\n";
+        std::string fileDir_out = checkOverwrite(
+            &menu,
+            SELECTED_FLAG,
+            KML_CROP_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(8)
+        );
 
-                delete kmlNode;
-            }
-            else std::cerr
-                << "KML-TOWN-> Error. '"
-                << inputStrings.at(2)
-                << "' not found or empty\n"
-                << "\n**FAILED**\n";
-        break;}
-        case KML_CROP_FLAG: {
-            kml::Cropper(PRINT_NOTIFICATION, &menu);
-            xml::Reader kmlReader;
-
+        if (fileDir_out != "") {
             cropPinsCallback(
                 kmlReader.fileParse(inputStrings.at(2)),
                 {&inputStrings.at(4), &inputStrings.at(6)},
-                inputStrings.at(8),
+                fileDir_out,
                 [=](xml::Node *node, std::vector<std::string*> &pt){}
             );
-        break;}
-        case KML_SORT_FLAG: {
-            kml::Cropper(PRINT_NOTIFICATION, &menu);
-            kml::Sorter(PRINT_NOTIFICATION, &menu);
-            xml::Reader kmlReader;
+        }
+    }
+    else if (
+        SELECTED_FLAG == KML_SORT_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_SORT_OVERWRITE_FLAG
+    ) {
+        kml::Cropper(PRINT_NOTIFICATION, &menu);
+        kml::Sorter(PRINT_NOTIFICATION, &menu);
+        xml::Reader kmlReader;
 
+        std::string fileDir_out = checkOverwrite(
+            &menu,
+            SELECTED_FLAG,
+            KML_SORT_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(8)
+        );
+
+        if (fileDir_out != "") {
             cropPinsCallback(
                 kmlReader.fileParse(inputStrings.at(2)),
                 {&inputStrings.at(4), &inputStrings.at(6)},
-                inputStrings.at(8),
-                
+                fileDir_out,
                 // placemarks sorting callback
                 [=](xml::Node *containerNode, std::vector<std::string*> &cropPt) {
                     kml::Sorter dirSort;
@@ -136,16 +179,29 @@ int main(int argc, char *argv[]) {
                     );
                 }
             );
-        break;}
-        case KML_CREATE_PATH_FLAG: {
-
-        break;}
-        case KML_JOIN_PATHS_FLAG: {
-
-        break;}
+        }
     }
     
     return 0;
+}
+
+std::string checkOverwrite(
+    Menu *menu,
+    int selectedFlag,
+    int overwriteFlag,
+    std::string &fileDir_in,
+    std::string &fileDir_out
+) {
+    if (selectedFlag == overwriteFlag) {
+        if (menu->setAlert(
+            std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
+            + fileDir_in + std::string("'?\n")
+        )) {
+            return fileDir_in;
+        }
+        else return "";
+    }
+    return fileDir_out;
 }
 
 void cropPinsCallback(
@@ -240,6 +296,7 @@ void cropPinsCallback(
 
                 // write file (end of process)
                 if (isFileWrite) {
+
                     // set name of 'main folder' upto 'root' element as 'fileDir_out' name
                     kml::setKMLDocumentName(kmlNode, fileDir_out);
 
