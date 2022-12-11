@@ -29,7 +29,7 @@
 #include "tools/csv/csv.h"
 
 std::string checkOverwrite(
-    Menu *menu,
+    Menu &menu,
     int selectedFlag,
     int overwriteFlag,
     std::string &fileDir_in,
@@ -39,8 +39,17 @@ std::string checkOverwrite(
 void cropPinsCallback(
     xml::Node *kmlNode,
     std::vector<std::string*> coorStr,
-    std::string fileDir_out,
+    std::string &fileDir_out,
     const std::function<void(xml::Node*, std::vector<std::string*>&)> &callback
+);
+
+void sortPinsCallback(
+    Menu &menu,
+    int selectedFlag,
+    int overwriteFlag,
+    std::string &fileDir_in,
+    std::string &fileDir_out,
+    std::vector<std::string*> coorStr
 );
 
 int main(int argc, char *argv[]) {
@@ -132,19 +141,19 @@ int main(int argc, char *argv[]) {
         kml::Cropper(PRINT_NOTIFICATION, &menu);
         xml::Reader kmlReader;
 
-        std::string fileDir_out = checkOverwrite(
-            &menu,
+        std::string fileDir_check = checkOverwrite(
+            menu,
             SELECTED_FLAG,
             KML_CROP_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
 
-        if (fileDir_out != "") {
+        if (fileDir_check != "") {
             cropPinsCallback(
                 kmlReader.fileParse(inputStrings.at(2)),
                 {&inputStrings.at(4), &inputStrings.at(6)},
-                fileDir_out,
+                fileDir_check,
                 [=](xml::Node *node, std::vector<std::string*> &pt){}
             );
         }
@@ -153,47 +162,34 @@ int main(int argc, char *argv[]) {
         SELECTED_FLAG == KML_SORT_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_SORT_OVERWRITE_FLAG
     ) {
-        kml::Cropper(PRINT_NOTIFICATION, &menu);
-        kml::Sorter(PRINT_NOTIFICATION, &menu);
-        xml::Reader kmlReader;
-
-        std::string fileDir_out = checkOverwrite(
-            &menu,
+        sortPinsCallback(
+            menu,
             SELECTED_FLAG,
             KML_SORT_OVERWRITE_FLAG,
             inputStrings.at(2),
-            inputStrings.at(8)
+            inputStrings.at(8),
+            {&inputStrings.at(4), &inputStrings.at(6)}
         );
+    }
+    else if (
+        SELECTED_FLAG == KML_PINS_PATH_CROP_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_PINS_PATH_CROP_OVERWRITE_FLAG
+    ) {
 
-        if (fileDir_out != "") {
-            cropPinsCallback(
-                kmlReader.fileParse(inputStrings.at(2)),
-                {&inputStrings.at(4), &inputStrings.at(6)},
-                fileDir_out,
-                // placemarks sorting callback
-                [=](xml::Node *containerNode, std::vector<std::string*> &cropPt) {
-                    kml::Sorter dirSort;
-                    dirSort.orderPins(
-                        containerNode,
-                        kml::Point(*cropPt.at(0))
-                    );
-                }
-            );
-        }
     }
     
     return 0;
 }
 
 std::string checkOverwrite(
-    Menu *menu,
+    Menu &menu,
     int selectedFlag,
     int overwriteFlag,
     std::string &fileDir_in,
     std::string &fileDir_out
 ) {
     if (selectedFlag == overwriteFlag) {
-        if (menu->setAlert(
+        if (menu.setAlert(
             std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
             + fileDir_in + std::string("'?\n")
         )) {
@@ -206,20 +202,20 @@ std::string checkOverwrite(
 
 void cropPinsCallback(
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStr,
-    std::string fileDir_out,
+    std::vector<std::string*> coorStrVec,
+    std::string &fileDir_out,
     const std::function<void(xml::Node*, std::vector<std::string*>&)> &callback
 ) { 
     if (kmlNode) {
         xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
 
         if (mainFolderNode) {
-            mini_tool::completeDegreeCoordinateSecondsSign(coorStr.at(0));
-            mini_tool::completeDegreeCoordinateSecondsSign(coorStr.at(1));
+            mini_tool::completeDegreeCoordinateSecondsSign(coorStrVec.at(0));
+            mini_tool::completeDegreeCoordinateSecondsSign(coorStrVec.at(1));
 
             // repair anomaly degree signs //
 
-            for (auto &str : coorStr) {
+            for (auto &str : coorStrVec) {
                 int ctr = 0;
                 bool isAnomaly = false;
 
@@ -275,8 +271,8 @@ void cropPinsCallback(
             kml::Cropper kmlCropper;
             kmlCropper.cutPins(
                 mainFolderNode,
-                kml::Point(*coorStr.at(0)),
-                kml::Point(*coorStr.at(1))
+                kml::Point(*coorStrVec.at(0)),
+                kml::Point(*coorStrVec.at(1))
             );
 
             // test the cropped folder
@@ -290,7 +286,7 @@ void cropPinsCallback(
                     == CROP_COMMAND_WORKING_FOLDER
                 ) {
                     // call the callback
-                    callback(croppedFolder, coorStr);
+                    callback(croppedFolder, coorStrVec);
                 }
                 else isFileWrite = false;
 
@@ -314,4 +310,41 @@ void cropPinsCallback(
         delete kmlNode;
     }
     else std::cerr << "\n**FAILED**\n";
+}
+
+void sortPinsCallback(
+    Menu &menu,
+    int selectedFlag,
+    int overwriteFlag,
+    std::string &fileDir_in,
+    std::string &fileDir_out,
+    std::vector<std::string*> coorStr
+) {
+    kml::Cropper(PRINT_NOTIFICATION, &menu);
+    kml::Sorter(PRINT_NOTIFICATION, &menu);
+    xml::Reader kmlReader;
+
+    std::string fileDir_check = checkOverwrite(
+        menu,
+        selectedFlag,
+        overwriteFlag,
+        fileDir_in,
+        fileDir_out
+    );
+
+    if (fileDir_check != "") {
+        cropPinsCallback(
+            kmlReader.fileParse(fileDir_in),
+            coorStr,
+            fileDir_check,
+            // placemarks sorting callback
+            [=](xml::Node *containerNode, std::vector<std::string*> &cropPt) {
+                kml::Sorter dirSort;
+                dirSort.orderPins(
+                    containerNode,
+                    kml::Point(*cropPt.at(0)) // start point
+                );
+            }
+        );
+    }
 }
