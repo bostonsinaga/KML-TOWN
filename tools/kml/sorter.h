@@ -19,9 +19,10 @@ class Sorter {
             }
         }
 
-        void orderPins(
+        std::vector<std::string> orderPins(
             xml::Node *pinsContainerNode,
-            Point startPt // decimal coordinate
+            Point startPt, // decimal coordinate
+            bool isReturnCoordinates
         ) {
             std::vector<xml::Node*>
                 pinNodes,     // parent // corresponding
@@ -70,13 +71,26 @@ class Sorter {
 
             delete firstCheckPointNode;
 
-            // insert into a different folder
-            insertEditedPlacemarksIntoFolder(
-                SORT_COMMAND_WORKING_FOLDER,
-                pinsContainerNode,
-                &sortedPinNodes,
-                {"Sorting", "Sort"}
-            );
+            if (!isReturnCoordinates) {
+                // insert into a different folder
+                insertEditedPlacemarksIntoFolder(
+                    SORT_COMMAND_WORKING_FOLDER,
+                    pinsContainerNode,
+                    &sortedPinNodes,
+                    {"Sorting", "Sort"}
+                );
+            }
+            else {
+                std::vector<std::string> retStrCoorVec;
+                for (auto &node : sortedPinNodes) {
+                    retStrCoorVec.push_back(
+                        node->getFirstDescendantByName("coordinates")->getInnerText()
+                    );
+                }
+                return retStrCoorVec;
+            }
+
+            return std::vector<std::string>{};
         }
 
     private:

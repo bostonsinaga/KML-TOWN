@@ -36,21 +36,26 @@ std::string checkOverwrite(
     std::string &fileDir_out
 );
 
-void cropPinsCallback(
+xml::Node *cropPinsModule(
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStr,
-    std::string &fileDir_out,
-    const std::function<void(xml::Node*, std::vector<std::string*>&)> &callback
+    std::vector<std::string*> coorStrVec
 );
 
-void sortPinsCallback(
+std::vector<std::string> sortPinsModule(
     Menu &menu,
-    int selectedFlag,
-    int overwriteFlag,
-    std::string &fileDir_in,
-    std::string &fileDir_out,
-    std::vector<std::string*> coorStr
+    xml::Node *kmlNode,
+    std::vector<std::string*> coorStrVec_in,
+    bool isReturnCoordinates
 );
+
+void writeFileModule(
+    xml::Node *kmlNode,
+    std::string &fileDir_out
+);
+
+//////////
+// MAIN //
+//////////
 
 int main(int argc, char *argv[]) {
 
@@ -139,7 +144,6 @@ int main(int argc, char *argv[]) {
         SELECTED_FLAG == KML_CROP_OVERWRITE_FLAG
     ) {
         kml::Cropper(PRINT_NOTIFICATION, &menu);
-        xml::Reader kmlReader;
 
         std::string fileDir_check = checkOverwrite(
             menu,
@@ -150,32 +154,49 @@ int main(int argc, char *argv[]) {
         );
 
         if (fileDir_check != "") {
-            cropPinsCallback(
-                kmlReader.fileParse(inputStrings.at(2)),
-                {&inputStrings.at(4), &inputStrings.at(6)},
-                fileDir_check,
-                [=](xml::Node *node, std::vector<std::string*> &pt){}
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+            cropPinsModule(
+                kmlNode,
+                {&inputStrings.at(4), &inputStrings.at(6)}
             );
+            writeFileModule(kmlNode, fileDir_check);
         }
     }
     else if (
         SELECTED_FLAG == KML_SORT_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_SORT_OVERWRITE_FLAG
     ) {
-        sortPinsCallback(
+        kml::Cropper(PRINT_NOTIFICATION, &menu);
+        kml::Sorter(PRINT_NOTIFICATION, &menu);
+        
+        std::string fileDir_check = checkOverwrite(
             menu,
             SELECTED_FLAG,
             KML_SORT_OVERWRITE_FLAG,
             inputStrings.at(2),
-            inputStrings.at(8),
-            {&inputStrings.at(4), &inputStrings.at(6)}
+            inputStrings.at(8)
         );
+        
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+            sortPinsModule(
+                menu,
+                kmlNode,
+                {&inputStrings.at(4), &inputStrings.at(6)},
+                false
+            );
+            writeFileModule(kmlNode, fileDir_check);
+        }
     }
     else if (
         SELECTED_FLAG == KML_PINS_PATH_CROP_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_PINS_PATH_CROP_OVERWRITE_FLAG
     ) {
-
+        
     }
     
     return 0;
@@ -195,17 +216,17 @@ std::string checkOverwrite(
         )) {
             return fileDir_in;
         }
-        else return "";
+        else return ""; // command canceled
     }
     return fileDir_out;
 }
 
-void cropPinsCallback(
+xml::Node *cropPinsModule(
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStrVec,
-    std::string &fileDir_out,
-    const std::function<void(xml::Node*, std::vector<std::string*>&)> &callback
-) { 
+    std::vector<std::string*> coorStrVec
+) {
+    xml::Node *retContainerNode = nullptr;
+    
     if (kmlNode) {
         xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
 
@@ -276,75 +297,60 @@ void cropPinsCallback(
             );
 
             // test the cropped folder
-            xml::Node *croppedFolder = mainFolderNode->getFirstChildByName("Folder", false);
+            xml::Node *croppedFolderNode = mainFolderNode->getFirstChildByName("Folder", false);
             
-            if (croppedFolder) {
-                bool isFileWrite = true;
-
-                // the pins must have been crop
-                if (croppedFolder->getFirstChildByName("name")->getInnerText()
+            if (croppedFolderNode) {
+                if (croppedFolderNode->getFirstChildByName("name", false)->getInnerText()
                     == CROP_COMMAND_WORKING_FOLDER
                 ) {
-                    // call the callback
-                    callback(croppedFolder, coorStrVec);
+                    retContainerNode = croppedFolderNode;
                 }
-                else isFileWrite = false;
-
-                // write file (end of process)
-                if (isFileWrite) {
-
-                    // set name of 'main folder' upto 'root' element as 'fileDir_out' name
-                    kml::setKMLDocumentName(kmlNode, fileDir_out);
-
-                    xml::Writer xmlWriter;
-                    xmlWriter.stringify(fileDir_out, kmlNode);
-                    std::cout << "\n**SUCCEEDED**\n";
-                }
-                // no need to write file if no cropped pins
                 else std::cerr << "\n**FAILED**\n";
             }
             else std::cerr << "\n**FAILED**\n";
         }
         else std::cerr << "\n**FAILED**\n";
-
-        delete kmlNode;
     }
     else std::cerr << "\n**FAILED**\n";
+
+    return retContainerNode;
 }
 
-void sortPinsCallback(
+std::vector<std::string> sortPinsModule(
     Menu &menu,
-    int selectedFlag,
-    int overwriteFlag,
-    std::string &fileDir_in,
-    std::string &fileDir_out,
-    std::vector<std::string*> coorStr
+    xml::Node *kmlNode,
+    std::vector<std::string*> coorStrVec_in,
+    bool isReturnCoordinates
 ) {
-    kml::Cropper(PRINT_NOTIFICATION, &menu);
-    kml::Sorter(PRINT_NOTIFICATION, &menu);
-    xml::Reader kmlReader;
-
-    std::string fileDir_check = checkOverwrite(
-        menu,
-        selectedFlag,
-        overwriteFlag,
-        fileDir_in,
-        fileDir_out
+    xml::Node *croppedFolderNode = cropPinsModule(
+        kmlNode,
+        coorStrVec_in
     );
 
-    if (fileDir_check != "") {
-        cropPinsCallback(
-            kmlReader.fileParse(fileDir_in),
-            coorStr,
-            fileDir_check,
-            // placemarks sorting callback
-            [=](xml::Node *containerNode, std::vector<std::string*> &cropPt) {
-                kml::Sorter dirSort;
-                dirSort.orderPins(
-                    containerNode,
-                    kml::Point(*cropPt.at(0)) // start point
-                );
-            }
-        );
+    // pins sorting //
+    kml::Sorter sorter;
+    std::vector<std::string> coorStrVec_sorted = sorter.orderPins(
+        croppedFolderNode,
+        kml::Point(*coorStrVec_in.at(0)), // start point
+        isReturnCoordinates
+    );
+
+    return coorStrVec_sorted;
+}
+
+// write file (end of process)
+void writeFileModule(
+    xml::Node *kmlNode,
+    std::string &fileDir_out
+) {
+    if (kmlNode) {
+        // set name of 'main folder' upto 'root' element as 'fileDir_out' name
+        kml::setKMLDocumentName(kmlNode, fileDir_out);
+
+        xml::Writer xmlWriter;
+        xmlWriter.stringify(fileDir_out, kmlNode);
+        std::cout << "\n**SUCCEEDED**\n";
+
+        delete kmlNode;
     }
 }
