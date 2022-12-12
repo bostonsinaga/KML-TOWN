@@ -22,7 +22,7 @@ namespace call_briefer {
         return fileDir_out;
     }
 
-    xml::Node *cropPinsModule(
+    xml::Node *cropPinsFunc(
         xml::Node *kmlNode,
         std::vector<std::string*> axisStrVec
     ) {
@@ -117,13 +117,13 @@ namespace call_briefer {
         return retContainerNode;
     }
 
-    std::vector<std::string> sortPinsModule(
+    std::vector<std::string> sortPinsFunc(
         Menu &menu,
         xml::Node *kmlNode,
         std::vector<std::string*> axisStrVec_in,
         bool isReturnCoordinates
     ) {
-        xml::Node *croppedFolderNode = cropPinsModule(
+        xml::Node *croppedFolderNode = cropPinsFunc(
             kmlNode,
             axisStrVec_in
         );
@@ -140,7 +140,7 @@ namespace call_briefer {
     }
 
     // write file (end of process)
-    void writeFileModule(
+    void writeFileFunc(
         xml::Node *kmlNode,
         std::string &fileDir_out
     ) {

@@ -129,11 +129,11 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            call_briefer::cropPins(
+            call_briefer::cropPinsFunc(
                 kmlNode,
                 {&inputStrings.at(4), &inputStrings.at(6)}
             );
-            call_briefer::writeFile(kmlNode, fileDir_check);
+            call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }
     else if (
@@ -155,13 +155,13 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            call_briefer::sortPins(
+            call_briefer::sortPinsFunc(
                 menu,
                 kmlNode,
                 {&inputStrings.at(4), &inputStrings.at(6)},
                 false
             );
-            call_briefer::writeFile(kmlNode, fileDir_check);
+            call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }
     else if (
