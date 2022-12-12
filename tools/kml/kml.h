@@ -9,7 +9,7 @@
 namespace kml {
     int checkCompass(std::string axisStr);
     
-    #include "pin-icon-strings.h"
+    #include "style-strings.h"
     #include "converter.h"
     #include "point.h"
     #include "builder.h"

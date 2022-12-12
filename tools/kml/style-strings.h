@@ -1,7 +1,7 @@
-#ifndef __KML_PIN_ICON_STRINGS_H__
-#define __KML_PIN_ICON_STRINGS_H__
+#ifndef __KML_STYLE_STRINGS_H__
+#define __KML_STYLE_STRINGS_H__
 
-class PinIconStrings {
+class StyleStrings {
     public:
         enum {
             PUSHPIN_PIN_TYPE_FLAG,
@@ -241,6 +241,65 @@ class PinIconStrings {
             }
             return "";
         }
+
+        // path's color codes //
+
+        enum {
+            PATH_RED_CLRFLG,
+            PATH_YELLOW_CLRFLG,
+            PATH_MAGENTA_CLRFLG,
+            PATH_CHOCOLATE_CLRFLG,
+            PATH_GREEN_CLRFLG,
+            PATH_ORANGE_CLRFLG,
+            PATH_PURPLE_CLRFLG,
+            PATH_WHITE_CLRFLG,
+            PATH_BLUE_CLRFLG,
+            PATH_CYAN_CLRFLG,
+            PATH_BLACK_CLRFLG,
+            PATH_GRAY_CLRFLG
+        };
+
+        std::string getPathColorCode(int colorFlag) {
+            switch (colorFlag) {
+                case PATH_RED_CLRFLG: {
+                    return "ff0000ff";
+                }
+                case PATH_YELLOW_CLRFLG: {
+                    return "ff00ffff";
+                }
+                case PATH_MAGENTA_CLRFLG: {
+                    return "ffff00ff";
+                }
+                case PATH_CHOCOLATE_CLRFLG: {
+                    return "ff385294";
+                }
+                case PATH_GREEN_CLRFLG: {
+                    return "ff00ff00";
+                }
+                case PATH_ORANGE_CLRFLG: {
+                    return "ff007fff";
+                }
+                case PATH_PURPLE_CLRFLG: {
+                    return "ffbf007f";
+                }
+                case PATH_WHITE_CLRFLG: {
+                    return "ffffffff";
+                }
+                case PATH_BLUE_CLRFLG: {
+                    return "ffff0000";
+                }
+                case PATH_CYAN_CLRFLG: {
+                    return "ffffff00";
+                }
+                case PATH_BLACK_CLRFLG: {
+                    return "ff000000";
+                }
+                case PATH_GRAY_CLRFLG: {
+                    return "ff7f7f7f";
+                }
+            }
+            return "";
+        }
 };
 
-#endif // __KML_PIN_ICON_STRINGS_H__
+#endif // __KML_STYLE_STRINGS_H__

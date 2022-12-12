@@ -9,8 +9,8 @@ class Builder {
             mainFolderNode = docNode->getChildrenByName("Folder").front();
 
             // determined as 'yellow_push_pin'
-            pinIconUrl = pinIconStrings.pinIconUrlArray[0];
-            pinIconTypeFlag = pinIconStrings.getPinTyleFlag(pinIconUrl);
+            pinIconUrl = styleStrings.pinIconUrlArray[0];
+            pinIconTypeFlag = styleStrings.getPinTyleFlag(pinIconUrl);
             styleSetNode = getStyleMap();
             insertStyleMap();
         }
@@ -77,19 +77,19 @@ class Builder {
             styleMapId = "msn_" + pinIconNamed;
 
             switch (pinIconTypeFlag) {
-                case pinIconStrings.PUSHPIN_PIN_TYPE_FLAG: {
+                case styleStrings.PUSHPIN_PIN_TYPE_FLAG: {
                     normalScale = pushpinScaleNormal;
                     highlightScale = pushpinScaleHighlight;
                     hotspotPos[0] = pushpinHotspotPos[0];
                     hotspotPos[1] = pushpinHotspotPos[1];
                 break;}
-                case pinIconStrings.PADDLE_PIN_TYPE_FLAG: {
+                case styleStrings.PADDLE_PIN_TYPE_FLAG: {
                     normalScale = paddleScaleNormal;
                     highlightScale = paddleScaleHighlight;
                     hotspotPos[0] = paddleHotspotPos[0];
                     hotspotPos[1] = paddleHotspotPos[1];
                 break;}
-                case pinIconStrings.SHAPES_PIN_TYPE_FLAG: {
+                case styleStrings.SHAPES_PIN_TYPE_FLAG: {
                     normalScale = shapesScaleNormal;
                     highlightScale = shapesScaleHighlight;
                     hotspotPos[0] = shapesHotspotPos[0];
@@ -210,7 +210,7 @@ class Builder {
 
     private:
         xml::Reader xmlReader;
-        PinIconStrings pinIconStrings;
+        StyleStrings styleStrings;
 
         xml::Node
             *kmlNode,
