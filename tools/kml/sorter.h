@@ -81,13 +81,13 @@ class Sorter {
                 );
             }
             else {
-                std::vector<std::string> retStrCoorVec;
+                std::vector<std::string> retCoorStrVec;
                 for (auto &node : sortedPinNodes) {
-                    retStrCoorVec.push_back(
+                    retCoorStrVec.push_back(
                         node->getFirstDescendantByName("coordinates")->getInnerText()
                     );
                 }
-                return retStrCoorVec;
+                return retCoorStrVec;
             }
 
             return std::vector<std::string>{};

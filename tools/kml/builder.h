@@ -3,7 +3,14 @@
 
 class Builder {
     public:
-        void setup() {
+        // only produce 'pins' (styled with yellow push pin icon)
+        xml::Node *createKMLFromScanner(
+            std::vector<std::string> dateStrVec,
+            std::vector<std::string> axisStrVec,
+            std::string docName_in = ""
+        ) {
+            // setup //
+
             kmlNode = getSkeleton();
             docNode = kmlNode->getChildrenByName("Document").front();
             mainFolderNode = docNode->getChildrenByName("Folder").front();
@@ -13,13 +20,9 @@ class Builder {
             pinIconTypeFlag = styleStrings.getPinTyleFlag(pinIconUrl);
             styleSetNode = getStyleMap();
             insertStyleMap();
-        }
 
-        xml::Node *createAsPinsFromScanner(
-            std::vector<std::string> dateStrVec,
-            std::vector<std::string> axisStrVec,
-            std::string docName_in = ""
-        ) {
+            // creation //
+
             // dates and coordinates size must be in same size
             if (dateStrVec.size() != axisStrVec.size()) {
                 std::cerr << dateCoorVecErrStr;
@@ -30,21 +33,13 @@ class Builder {
 
             int dateVecCtr = 0;
             for (auto &coor : axisStrVec) {
-                
                 mainFolderNode->addChild(
-                    getPlacemark(dateStrVec.at(dateVecCtr), coor)
+                    getPin(dateStrVec.at(dateVecCtr), coor)
                 );
                 dateVecCtr++;
             }
             
             return kmlNode;
-        }
-
-        xml::Node *createAsPathFromSorter(
-            std::vector<std::string> coorStrVec,
-            std::string docName_in = ""
-        ) {
-            return nullptr;
         }
 
         xml::Node *getFolder(
@@ -139,7 +134,7 @@ class Builder {
             );
         }
 
-        xml::Node *getPlacemark(
+        xml::Node *getPin(
             std::string description,
             std::string coorStr_float,
             std::string name = ""
@@ -155,6 +150,13 @@ class Builder {
                 std::string("</Placemark>"),
                 "Placemark [in runtime element]"
             );
+        }
+
+        xml::Node *(
+            std::vector<std::string> &coorStrVec,
+            std::string docName_in = ""
+        ) {
+            return nullptr;
         }
 
         xml::Node *getSkeleton() {

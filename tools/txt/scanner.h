@@ -129,11 +129,10 @@ class Scanner {
 
             // xml creation //
 
-            kml::Builder builderKML;
-            builderKML.setup();
             std::string docName = mini_tool::cutFileDirName(fileDir_out);
+            kml::Builder builderKML;
 
-            xml::Node *kmlNode = builderKML.createAsPinsFromScanner(
+            xml::Node *kmlNode = builderKML.createKMLFromScanner(
                 dateStrVector, axisStrVector, docName
             );
 

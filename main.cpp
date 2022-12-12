@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    ////////////////////
-    // MENU SELECTION //
-    ////////////////////
+    ////////////////////////
+    //// MENU SELECTION ////
+    ////////////////////////
 
     Menu menu = Menu();
 
@@ -111,6 +111,11 @@ int main(int argc, char *argv[]) {
             << "' not found or empty\n"
             << "\n**FAILED**\n";
     }
+
+    //////////////
+    // KML CROP //
+    //////////////
+    
     else if (
         SELECTED_FLAG == KML_CROP_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_CROP_OVERWRITE_FLAG
@@ -133,9 +138,15 @@ int main(int argc, char *argv[]) {
                 kmlNode,
                 {&inputStrings.at(4), &inputStrings.at(6)}
             );
+
             call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }
+
+    //////////////
+    // KML SORT //
+    //////////////
+
     else if (
         SELECTED_FLAG == KML_SORT_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_SORT_OVERWRITE_FLAG
@@ -161,14 +172,48 @@ int main(int argc, char *argv[]) {
                 {&inputStrings.at(4), &inputStrings.at(6)},
                 false
             );
+
             call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }
+
+    //////////////////////
+    // KML PINS TO PATH //
+    //////////////////////
+
     else if (
         SELECTED_FLAG == KML_PINS_PATH_CROP_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_PINS_PATH_CROP_OVERWRITE_FLAG
     ) {
+        kml::Cropper(PRINT_NOTIFICATION, &menu);
+        kml::Sorter(PRINT_NOTIFICATION, &menu);
+
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            KML_PINS_PATH_CROP_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(8)
+        );
         
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+            std::vector<std::string> coorStrVec = call_briefer::sortPinsFunc(
+                menu,
+                kmlNode,
+                {&inputStrings.at(4), &inputStrings.at(6)},
+                true
+            );
+
+            if (coorStrVec.size() > 0) {
+                
+            }
+            else {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+        }
     }
     
     return 0;

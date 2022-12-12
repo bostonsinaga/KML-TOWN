@@ -120,23 +120,23 @@ namespace call_briefer {
     std::vector<std::string> sortPinsFunc(
         Menu &menu,
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec_in,
+        std::vector<std::string*> axisStrVec,
         bool isReturnCoordinates
     ) {
         xml::Node *croppedFolderNode = cropPinsFunc(
             kmlNode,
-            axisStrVec_in
+            axisStrVec
         );
 
         // pins sorting //
         kml::Sorter sorter;
-        std::vector<std::string> axisStrVec_sorted = sorter.orderPins(
+        std::vector<std::string> coorStrVec = sorter.orderPins(
             croppedFolderNode,
-            kml::Point(*axisStrVec_in.at(0)), // start point
+            kml::Point(*axisStrVec.at(0)), // start point
             isReturnCoordinates
         );
 
-        return axisStrVec_sorted;
+        return coorStrVec;
     }
 
     // write file (end of process)
