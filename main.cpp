@@ -38,13 +38,13 @@ std::string checkOverwrite(
 
 xml::Node *cropPinsModule(
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStrVec
+    std::vector<std::string*> axisStrVec
 );
 
 std::vector<std::string> sortPinsModule(
     Menu &menu,
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStrVec_in,
+    std::vector<std::string*> axisStrVec_in,
     bool isReturnCoordinates
 );
 
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
     ) {
         kml::Cropper(PRINT_NOTIFICATION, &menu);
         kml::Sorter(PRINT_NOTIFICATION, &menu);
-        
+
         std::string fileDir_check = checkOverwrite(
             menu,
             SELECTED_FLAG,
@@ -223,7 +223,7 @@ std::string checkOverwrite(
 
 xml::Node *cropPinsModule(
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStrVec
+    std::vector<std::string*> axisStrVec
 ) {
     xml::Node *retContainerNode = nullptr;
     
@@ -231,12 +231,12 @@ xml::Node *cropPinsModule(
         xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
 
         if (mainFolderNode) {
-            mini_tool::completeDegreeCoordinateSecondsSign(coorStrVec.at(0));
-            mini_tool::completeDegreeCoordinateSecondsSign(coorStrVec.at(1));
+            mini_tool::completeDegreeCoordinateSecondsSign(axisStrVec.at(0));
+            mini_tool::completeDegreeCoordinateSecondsSign(axisStrVec.at(1));
 
             // repair anomaly degree signs //
 
-            for (auto &str : coorStrVec) {
+            for (auto &str : axisStrVec) {
                 int ctr = 0;
                 bool isAnomaly = false;
 
@@ -292,8 +292,8 @@ xml::Node *cropPinsModule(
             kml::Cropper kmlCropper;
             kmlCropper.cutPins(
                 mainFolderNode,
-                kml::Point(*coorStrVec.at(0)),
-                kml::Point(*coorStrVec.at(1))
+                kml::Point(*axisStrVec.at(0)),
+                kml::Point(*axisStrVec.at(1))
             );
 
             // test the cropped folder
@@ -319,23 +319,23 @@ xml::Node *cropPinsModule(
 std::vector<std::string> sortPinsModule(
     Menu &menu,
     xml::Node *kmlNode,
-    std::vector<std::string*> coorStrVec_in,
+    std::vector<std::string*> axisStrVec_in,
     bool isReturnCoordinates
 ) {
     xml::Node *croppedFolderNode = cropPinsModule(
         kmlNode,
-        coorStrVec_in
+        axisStrVec_in
     );
 
     // pins sorting //
     kml::Sorter sorter;
-    std::vector<std::string> coorStrVec_sorted = sorter.orderPins(
+    std::vector<std::string> axisStrVec_sorted = sorter.orderPins(
         croppedFolderNode,
-        kml::Point(*coorStrVec_in.at(0)), // start point
+        kml::Point(*axisStrVec_in.at(0)), // start point
         isReturnCoordinates
     );
 
-    return coorStrVec_sorted;
+    return axisStrVec_sorted;
 }
 
 // write file (end of process)

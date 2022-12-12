@@ -9,7 +9,8 @@ class Scanner {
         //////////////////////////////////////
 
         /* note:
-        *  don't forget to take care returned node
+        *  -don't forget to take care returned node
+        *  -this will parse into pins only
         */
         xml::Node *parse(
             std::string fileDir_in,
@@ -39,7 +40,7 @@ class Scanner {
             /////////////////////////////////////////////////////////
 
             /* note: no 'altitude' when converting coor */
-            std::vector<std::string> dateStrVector, coorStrVector;
+            std::vector<std::string> dateStrVector, axisStrVector;
 
             for (int i = 0; i < textVector.size(); i++) {
                 std::string rawCoor;
@@ -56,15 +57,15 @@ class Scanner {
 
                 if (rawCoor != "") {                    
                     std::vector<std::string>
-                        separatedCoorStrVector = kmlConverter.separateCoordinate(
+                        separatedaxisStrVector = kmlConverter.separateCoordinate(
                             rawCoor,
                             kmlConverter.LAT_LNG_SEPARATE_FLAG_IN,
                             kmlConverter.LNG_LAT_SEPARATE_FLAG_OUT
                         );
 
-                    coorStrVector.push_back(
-                        separatedCoorStrVector.at(0) + "," +
-                        separatedCoorStrVector.at(1) + ",0"
+                    axisStrVector.push_back(
+                        separatedaxisStrVector.at(0) + "," +
+                        separatedaxisStrVector.at(1) + ",0"
                     );
 
                     continue;
@@ -99,7 +100,7 @@ class Scanner {
                         kmlConverter.LNG_LAT_SEPARATE_FLAG_OUT
                     );
 
-                    coorStrVector.push_back(
+                    axisStrVector.push_back(
                         rawCoorCouple.at(0) + "," +
                         rawCoorCouple.at(1) + ",0"
                     );
@@ -111,7 +112,7 @@ class Scanner {
                 dateStrVector.pop_back();
             }
 
-            if (coorStrVector.size() == 0) {
+            if (axisStrVector.size() == 0) {
                 std::cerr
                     << "TXT-> Scan error. No coordinate found in '"
                     << mini_tool::cutFileDirName(fileDir_in)
@@ -132,8 +133,8 @@ class Scanner {
             builderKML.setup();
             std::string docName = mini_tool::cutFileDirName(fileDir_out);
 
-            xml::Node *kmlNode = builderKML.createAsPlacemarks(
-                dateStrVector, coorStrVector, docName
+            xml::Node *kmlNode = builderKML.createAsPinsFromScanner(
+                dateStrVector, axisStrVector, docName
             );
 
             // writable

@@ -15,13 +15,13 @@ class Builder {
             insertStyleMap();
         }
 
-        xml::Node *createAsPlacemarks(
+        xml::Node *createAsPinsFromScanner(
             std::vector<std::string> dateStrVec,
-            std::vector<std::string> coorStrVec,
+            std::vector<std::string> axisStrVec,
             std::string docName_in = ""
         ) {
             // dates and coordinates size must be in same size
-            if (dateStrVec.size() != coorStrVec.size()) {
+            if (dateStrVec.size() != axisStrVec.size()) {
                 std::cerr << dateCoorVecErrStr;
                 return nullptr;
             }
@@ -29,7 +29,7 @@ class Builder {
             setTitle(docName_in);
 
             int dateVecCtr = 0;
-            for (auto &coor : coorStrVec) {
+            for (auto &coor : axisStrVec) {
                 
                 mainFolderNode->addChild(
                     getPlacemark(dateStrVec.at(dateVecCtr), coor)
@@ -40,7 +40,7 @@ class Builder {
             return kmlNode;
         }
 
-        xml::Node *createAsPath(
+        xml::Node *createAsPathFromSorter(
             std::vector<std::string> coorStrVec,
             std::string docName_in = ""
         ) {
