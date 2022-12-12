@@ -87,6 +87,14 @@ namespace kml {
         return nullptr;
     }
 
+    xml::Node *getRootDocument(xml::Node *kmlNode) {
+        xml::Node *docNode = kmlNode->getFirstChildByName("Document", false);
+        if (!docNode) {
+            docNode =  kmlNode->getFirstChildByName("Folder", false);
+        }
+        return docNode;
+    }
+
     void fillWithPlacemarks(
         xml::Node *containerNode,
         std::vector<xml::Node*> *placemarkVec,           // should be empty

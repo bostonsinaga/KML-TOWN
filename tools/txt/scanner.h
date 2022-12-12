@@ -40,13 +40,15 @@ class Scanner {
             /////////////////////////////////////////////////////////
 
             /* note: no 'altitude' when converting coor */
-            std::vector<std::string> dateStrVector, axisStrVector;
+            std::vector<std::string>
+                dateStrVector,
+                axisStrVector; // will has a '0' altitude extension in the back
 
             for (int i = 0; i < textVector.size(); i++) {
                 std::string rawCoor;
 
                 // DATE //
-                // can be an empty string if no date detected
+                // will be an empty string if no date detected
                 dateStrVector.push_back(sample.testDateTemplate(textVector.at(i)));
 
                 /////////////////////
@@ -65,7 +67,7 @@ class Scanner {
 
                     axisStrVector.push_back(
                         separatedaxisStrVector.at(0) + "," +
-                        separatedaxisStrVector.at(1) + ",0"
+                        separatedaxisStrVector.at(1)
                     );
 
                     continue;
@@ -102,7 +104,7 @@ class Scanner {
 
                     axisStrVector.push_back(
                         rawCoorCouple.at(0) + "," +
-                        rawCoorCouple.at(1) + ",0"
+                        rawCoorCouple.at(1)
                     );
 
                     continue;
@@ -127,16 +129,43 @@ class Scanner {
                     << "' completed!\n";
             }
 
-            // xml creation //
-
+            // create xml
             std::string docName = mini_tool::cutFileDirName(fileDir_out);
             kml::Builder builderKML;
 
-            xml::Node *kmlNode = builderKML.createKMLFromScanner(
-                dateStrVector, axisStrVector, docName
+            // BUILDER SETUP //
+            
+            xml::Node *kmlNode = builderKML.getSkeleton(docName);
+
+            // determined as 'yellow_push_pin'
+            std::string styleMapId;
+            builderKML.insertStyleMap(
+                kmlNode,
+                builderKML.getPinStyleMap(&styleMapId, "", "1.0")
             );
 
-            // writable
+            // KML CREATION //
+
+            builderKML.setTitle(kmlNode, docName);
+
+            int dateVecCtr = 0;
+            xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
+
+            // 'axisStrVector' and 'dateStrVector' size are certainly equal
+            for (auto &coorStr : axisStrVector) {
+                mainFolderNode->addChild(
+                    builderKML.getPin(
+                        styleMapId,
+                        coorStr,
+                        "",
+                        dateStrVector.at(dateVecCtr)
+                    )
+                );
+                dateVecCtr++;
+            }
+
+            // WRITING //
+
             if (fileDir_out != "" && kmlNode) {
                 xml::Writer writer;
                 writer.stringify(fileDir_out, kmlNode);

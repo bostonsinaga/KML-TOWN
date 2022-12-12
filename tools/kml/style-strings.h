@@ -2,6 +2,9 @@
 #define __KML_STYLE_STRINGS_H__
 
 class StyleStrings {
+    private:
+        static const int pinIconUrlArray_count = 170;
+
     public:
         enum {
             PUSHPIN_PIN_TYPE_FLAG,
@@ -15,7 +18,7 @@ class StyleStrings {
             mapLinkPaddle = googleMapLink + "paddle/",
             mapLinkShapes = googleMapLink + "shapes/";
 
-        std::string pinIconUrlArray[170] = {
+        std::string pinIconUrlArray[pinIconUrlArray_count] = {
 
             ///////////////
             // PUSH PINS //
@@ -215,11 +218,18 @@ class StyleStrings {
             return -1;
         }
 
-        int getPinTyleFlag(std::string &pinIconNamed) {
+        std::string getPinIconNamedUrl(std::string &pinIconNamed) {
             int index = getPinIconNamedIndex(pinIconNamed);
-
             if (index != -1) {
-                std::string url = pinIconUrlArray[index];
+                return pinIconUrlArray[index];
+            }
+            return "";
+        }
+
+        int getPinTyleFlag(std::string &pinIconNamed) {
+            std::string url = getPinIconNamedUrl(pinIconNamed);
+
+            if (url != "") {
                 
                 if (url.find("/pushpin/") != std::string::npos) {
                     return PUSHPIN_PIN_TYPE_FLAG;
@@ -234,70 +244,55 @@ class StyleStrings {
             return -1;
         }
 
-        std::string getpinIconNamedUrl(std::string &pinIconNamed) {
-            int index = getPinIconNamedIndex(pinIconNamed);
-            if (index != -1) {
-                return pinIconUrlArray[index];
+        // identify if an icon
+        bool isAnIconName(std::string &pinIconNamed) {
+            for (int i = 0; i < pinIconUrlArray_count; i++) {
+                if (pinIconNamed == pinIconUrlArray[i]) {
+                    return true;
+                }
             }
-            return "";
+            return false;
         }
 
-        // path's color codes //
-
-        enum {
-            PATH_RED_CLRFLG,
-            PATH_YELLOW_CLRFLG,
-            PATH_MAGENTA_CLRFLG,
-            PATH_CHOCOLATE_CLRFLG,
-            PATH_GREEN_CLRFLG,
-            PATH_ORANGE_CLRFLG,
-            PATH_PURPLE_CLRFLG,
-            PATH_WHITE_CLRFLG,
-            PATH_BLUE_CLRFLG,
-            PATH_CYAN_CLRFLG,
-            PATH_BLACK_CLRFLG,
-            PATH_GRAY_CLRFLG
-        };
-
-        std::string getPathColorCode(int colorFlag) {
-            switch (colorFlag) {
-                case PATH_RED_CLRFLG: {
-                    return "ff0000ff";
-                }
-                case PATH_YELLOW_CLRFLG: {
-                    return "ff00ffff";
-                }
-                case PATH_MAGENTA_CLRFLG: {
-                    return "ffff00ff";
-                }
-                case PATH_CHOCOLATE_CLRFLG: {
-                    return "ff385294";
-                }
-                case PATH_GREEN_CLRFLG: {
-                    return "ff00ff00";
-                }
-                case PATH_ORANGE_CLRFLG: {
-                    return "ff007fff";
-                }
-                case PATH_PURPLE_CLRFLG: {
-                    return "ffbf007f";
-                }
-                case PATH_WHITE_CLRFLG: {
-                    return "ffffffff";
-                }
-                case PATH_BLUE_CLRFLG: {
-                    return "ffff0000";
-                }
-                case PATH_CYAN_CLRFLG: {
-                    return "ffffff00";
-                }
-                case PATH_BLACK_CLRFLG: {
-                    return "ff000000";
-                }
-                case PATH_GRAY_CLRFLG: {
-                    return "ff7f7f7f";
-                }
+        // path's color codes from name
+        std::string getPathColorCode(std::string pathColorNamed) {
+            if (pathColorNamed == "red") {
+                return "ff0000ff";
             }
+            else if (pathColorNamed == "yellow") {
+                return "ff00ffff";
+            }
+            else if (pathColorNamed == "magenta") {
+                return "ffff00ff";
+            }
+            else if (pathColorNamed == "chocolate") {
+                return "ff385294";
+            }
+            else if (pathColorNamed == "green") {
+                return "ff00ff00";
+            }
+            else if (pathColorNamed == "orange") {
+                return "ff007fff";
+            }
+            else if (pathColorNamed == "purple") {
+                return "ffbf007f";
+            }
+            else if (pathColorNamed == "white") {
+                return "ffffffff";
+            }
+            else if (pathColorNamed == "blue") {
+                return "ffff0000";
+            }
+            else if (pathColorNamed == "cyan") {
+                return "ffffff00";
+            }
+            else if (pathColorNamed == "black") {
+                return "ff000000";
+            }
+            else if (pathColorNamed == "gray") {
+                return "ff7f7f7f";
+            }
+            else return "ffffffff";
             return "";
         }
 };

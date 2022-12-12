@@ -8,13 +8,13 @@
 
 namespace kml {
     int checkCompass(std::string axisStr);
+    xml::Node *searchMainFolder(xml::Node *kmlNode);
+    xml::Node *getRootDocument(xml::Node *kmlNode);
     
     #include "style-strings.h"
     #include "converter.h"
     #include "point.h"
     #include "builder.h"
-
-    xml::Node *searchMainFolder(xml::Node *kmlNode);
 
     void fillWithPlacemarks(
         xml::Node *containerNode,

@@ -3,73 +3,65 @@
 
 class Builder {
     public:
-        // only produce 'pins' (styled with yellow push pin icon)
-        xml::Node *createKMLFromScanner(
-            std::vector<std::string> dateStrVec,
-            std::vector<std::string> axisStrVec,
-            std::string docName_in = ""
-        ) {
-            // setup //
-
-            kmlNode = getSkeleton();
-            docNode = kmlNode->getChildrenByName("Document").front();
-            mainFolderNode = docNode->getChildrenByName("Folder").front();
-
-            // determined as 'yellow_push_pin'
-            pinIconUrl = styleStrings.pinIconUrlArray[0];
-            pinIconTypeFlag = styleStrings.getPinTyleFlag(pinIconUrl);
-            styleSetNode = getStyleMap();
-            insertStyleMap();
-
-            // creation //
-
-            // dates and coordinates size must be in same size
-            if (dateStrVec.size() != axisStrVec.size()) {
-                std::cerr << dateCoorVecErrStr;
-                return nullptr;
-            }
-
-            setTitle(docName_in);
-
-            int dateVecCtr = 0;
-            for (auto &coor : axisStrVec) {
-                mainFolderNode->addChild(
-                    getPin(dateStrVec.at(dateVecCtr), coor)
-                );
-                dateVecCtr++;
-            }
-            
-            return kmlNode;
-        }
-
         xml::Node *getFolder(
             std::string name = "",
             bool isOpen = true
         ) {
             if (name == "") name = "Folder";
 
+            std::stringstream placemark_strStream;
+            placemark_strStream
+                << "<Folder>"
+                << "<name>" << name  << "</name>"
+                << "<open>" << std::to_string(isOpen) << "</open>"
+                << "</Folder>";
+
             return xmlReader.parse(
-                std::string("<Folder>") +
-                std::string("<name>") + name + std::string("</name>") +
-                std::string("<open>") + std::to_string(isOpen) + std::string("</open>") +
-                std::string("</Folder>"),
+                placemark_strStream.str(),
                 "Folder [in runtime element]"
             );
         }
 
-        // return one style map set
-        xml::Node *getStyleMap() {
-
+        // return one style map set of pins
+        xml::Node *getPinStyleMap(
+            std::string *styleMapId_hook,
+            std::string pinIconNamed = "",
+            std::string pinIconScaleStr = "1.0"
+        ) {
             std::string
                 normalId, highlightId,
                 normalScale, highlightScale,
-                hotspotPos[2];
+                styleMapId, hotspotPos[2];
 
-            pinIconNamed = mini_tool::cutFileDirName(pinIconUrl);
+            std::stringstream styleMap_strStream;
+
+            std::string pinIconUrl;
+            int pinIconTypeFlag;
+
+            // using default 'ylw-pushpin'
+            if (pinIconNamed == "" ||
+                !styleStrings.isAnIconName(pinIconNamed)
+            ) {
+                pinIconUrl = styleStrings.pinIconUrlArray[0];
+                pinIconNamed = mini_tool::cutFileDirName(pinIconUrl);
+            }
+            // using custom
+            else {
+                pinIconUrl = styleStrings.getPinIconNamedUrl(pinIconNamed);
+            }
+
+            // remove '.png' extension string
+            size_t containsPNGDex = pinIconNamed.find(".png");
+            if (containsPNGDex != std::string::npos) {
+                pinIconNamed = pinIconNamed.substr(0, containsPNGDex);
+            }
 
             normalId = "sn_" + pinIconNamed;
             highlightId = "sh_" + pinIconNamed;
             styleMapId = "msn_" + pinIconNamed;
+            *styleMapId_hook =  styleMapId;
+
+            pinIconTypeFlag = styleStrings.getPinTyleFlag(pinIconNamed);
 
             switch (pinIconTypeFlag) {
                 case styleStrings.PUSHPIN_PIN_TYPE_FLAG: {
@@ -91,109 +83,243 @@ class Builder {
                     hotspotPos[1] = shapesHotspotPos[1];
                 break;}
             }
+
+            // mutliply string's float value
+            auto multStrFlt = [=](
+                std::string *defSclStr,
+                std::string *cusSclStr
+            ) {
+                *defSclStr = std::to_string(
+                    std::stof(*defSclStr) *
+                    std::stof(*cusSclStr)
+                );
+                
+                *defSclStr = defSclStr->substr(
+                    0, defSclStr->find('.') + 3 // takes only two digits behind decimal point
+                );
+            };
+
+            multStrFlt(&normalScale, &pinIconScaleStr);
+            multStrFlt(&highlightScale, &pinIconScaleStr);
+            
+            styleMap_strStream
+                << "<StyleSet>"
+                // normal style
+                << "<Style id=\"" << normalId << "\">"
+                << "<IconStyle>"
+                << "<scale>" << normalScale << "</scale>"
+                << "<Icon>"
+                << "<href>" << pinIconUrl << "</href>"
+                << "</Icon>"
+                << "<hotSpot x=\""
+                    << hotspotPos[0] << "\" y=\""
+                    << hotspotPos[1] << "\" xunits=\"pixels\" yunits=\"pixels\"/>"
+                << "</IconStyle>"
+                << "</Style>"
+                // highlight style
+                << "<Style id=\"" << highlightId << "\">"
+                << "<IconStyle>"
+                << "<scale>" << highlightScale << "</scale>"
+                << "<Icon>"
+                << "<href>" << pinIconUrl << "</href>"
+                << "</Icon>"
+                << "<hotSpot x=\""
+                    << hotspotPos[0] << "\" y=\""
+                    << hotspotPos[1] << "\" xunits=\"pixels\" yunits=\"pixels\"/>"
+                << "</IconStyle>"
+                << "</Style>"
+                // style map
+                << "<StyleMap id=\"" << styleMapId << "\">"
+                << "<Pair>"
+                << "<key>normal</key>"
+                << "<styleUrl>#" << normalId << "</styleUrl>"
+                << "</Pair>"
+                << "<Pair>"
+                << "<key>highlight</key>"
+                << "<styleUrl>#" << highlightId << "</styleUrl>"
+                << "</Pair>"
+                << "</StyleMap>"
+                << "</StyleSet>";
+
+            return xmlReader.parse(
+                styleMap_strStream.str(),
+                "StyleSet [in runtime element]"
+            );
+        }
+
+        // return one style map set of path
+        xml::Node *getPathStyleMap(
+            std::string *styleMapId_hook,
+            std::string pathColorNamed = "",
+            std::string pathThicknessStr = "1.0"
+        ) {    
+            std::string
+                normalId,
+                highlightId,
+                styleMapId;
+                
+            std::stringstream styleMap_strStream;
+
+            if (pathColorNamed == "") {
+                pathColorNamed = "white";
+            }
+
+            std::string pathColorCode = (
+                styleStrings.getPathColorCode(pathColorNamed)
+            );
+
+            /*
+            *   if the name no matched pre-defined color's (but not empty)
+            *   (eg. 'foo')
+            *   the result id would be 'foo-path'
+            */
+            pathColorNamed += "-path";
+
+            normalId = "sn_" + pathColorNamed;
+            highlightId = "sh_" + pathColorNamed;
+            styleMapId = "msn_" + pathColorNamed;
+            *styleMapId_hook =  styleMapId;
+            
+            styleMap_strStream
+                << "<StyleSet>"
+                // normal style
+                << "<Style id=\"" << normalId << "\">"
+                << "<LineStyle>"
+                << "<color>" << pathColorCode << "</color>"
+                << "<width>" << pathThicknessStr << "</width>"
+                << "</LineStyle>"
+                << "</Style>"
+                // highlight style
+                << "<Style id=\"" << highlightId << "\">"
+                << "<LineStyle>"
+                << "<color>" << pathColorCode << "</color>"
+                << "<width>" << pathThicknessStr << "</width>"
+                << "</LineStyle>"
+                << "</Style>"
+                // style map
+                << "<StyleMap id=\"" << styleMapId << "\">"
+                << "<Pair>"
+                << "<key>normal</key>"
+                << "<styleUrl>#" << normalId << "</styleUrl>"
+                << "</Pair>"
+                << "<Pair>"
+                << "<key>highlight</key>"
+                << "<styleUrl>#" << highlightId << "</styleUrl>"
+                << "</Pair>"
+                << "</StyleMap>"
+                << "</StyleSet>";
             
             return xmlReader.parse(
-                std::string("<StyleSet>") +
-                // normal style
-                std::string("<Style id=\"") + normalId + std::string("\">") +
-                std::string("<IconStyle>") +
-                std::string("<scale>") + normalScale + std::string("</scale>") +
-                std::string("<Icon>") +
-                std::string("<href>") + pinIconUrl + std::string("</href>") +
-                std::string("</Icon>") +
-                std::string("<hotSpot x=\"")
-                    + hotspotPos[0] + std::string("\" y=\"")
-                    + hotspotPos[1] + std::string("\" xunits=\"pixels\" yunits=\"pixels\"/>") +
-                std::string("</IconStyle>") +
-                std::string("</Style>") +
-                // highlight style
-                std::string("<Style id=\"") + highlightId + std::string("\">") +
-                std::string("<IconStyle>") +
-                std::string("<scale>") + highlightScale + std::string("</scale>") +
-                std::string("<Icon>") +
-                std::string("<href>") + pinIconUrl + std::string("</href>") +
-                std::string("</Icon>") +
-                std::string("<hotSpot x=\"")
-                    + hotspotPos[0] + std::string("\" y=\"")
-                    + hotspotPos[1] + std::string("\" xunits=\"pixels\" yunits=\"pixels\"/>") +
-                std::string("</IconStyle>") +
-                std::string("</Style>") +
-                // style map
-                std::string("<StyleMap id=\"") + styleMapId + std::string("\">") +
-                std::string("<Pair>") +
-                std::string("<key>normal</key>") +
-                std::string("<styleUrl>#") + normalId + std::string("</styleUrl>") +
-                std::string("</Pair>") +
-                std::string("<Pair>") +
-                std::string("<key>highlight</key>") +
-                std::string("<styleUrl>#") + highlightId + std::string("</styleUrl>") +
-                std::string("</Pair>") +
-                std::string("</StyleMap>") +
-                std::string("</StyleSet>"),
+                styleMap_strStream.str(),
                 "StyleSet [in runtime element]"
             );
         }
 
         xml::Node *getPin(
-            std::string description,
-            std::string coorStr_float,
-            std::string name = ""
+            std::string styleMapId,
+            std::string decimalCoorStr,
+            std::string name = "",
+            std::string description = ""
         ) {
+            decimalCoorStr += ",0";
+
+            std::stringstream placemark_strStream;
+            placemark_strStream 
+                << "<Placemark>"
+                << "<name>" << name << "</name>"
+                << "<description>" << description << "</description>"
+                << "<styleUrl>#" << styleMapId << "</styleUrl>"
+                << "<Point>"
+                << "<coordinates>" << decimalCoorStr << "</coordinates>"
+                << "</Point>"
+                <<" </Placemark>";
+
             return xmlReader.parse(
-                std::string("<Placemark>") +
-                std::string("<name>") + name + std::string("</name>") +
-                std::string("<description>") + description + std::string("</description>") +
-                std::string("<styleUrl>#") + styleMapId + std::string("</styleUrl>") +
-                std::string("<Point>") +
-                std::string("<coordinates>") + coorStr_float + std::string("</coordinates>") +
-                std::string("</Point>") +
-                std::string("</Placemark>"),
+                placemark_strStream.str(),
                 "Placemark [in runtime element]"
             );
         }
 
-        xml::Node *(
+        xml::Node *getPath(
+            std::string styleMapId,
             std::vector<std::string> &coorStrVec,
-            std::string docName_in = ""
+            std::string name = "",
+            std::string description = ""
         ) {
-            return nullptr;
+            std::string decimalCoorStrVec_joinStr = "";
+            for (auto &coorStr : coorStrVec) {
+                decimalCoorStrVec_joinStr += coorStr + ",0 ";
+            }
+
+            std::stringstream placemark_strStream;
+            placemark_strStream 
+                << "<Placemark>"
+                << "<name>" << name << "</name>"
+                << "<description>" << description << "</description>"
+                << "<styleUrl>#" << styleMapId << "</styleUrl>"
+                << "<Point>"
+                << "<coordinates>" << decimalCoorStrVec_joinStr << "</coordinates>"
+                << "</Point>"
+                <<" </Placemark>";
+
+            return xmlReader.parse(
+                placemark_strStream.str(),
+                "Placemark [in runtime element]"
+            );
         }
 
-        xml::Node *getSkeleton() {
+        xml::Node *getSkeleton(std::string &docName) {
             if (docName == "") docName = "KML-TOWN";
-            
-            return xmlReader.parse(
+
+            std::stringstream placemark_strStream;
+            placemark_strStream
                 // kml doc
-                std::string("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">") +
-                std::string("<Document>") +
-                std::string("<name>") + docName + std::string("</name>") +
+                << "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" "
+                << "xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">"
+                << "<Document>"
+                << "<name>" << docName << "</name>"
 
                     // main folder
-                    std::string("<Folder>") +
-                    std::string("<name>") + docName + std::string("</name>") +
-                    std::string("<open>1</open>") +
+                    << "<Folder>"
+                    << "<name>" << docName << "</name>"
+                    << "<open>1</open>"
                     // all stuff branches from here
-                    std::string("</Folder>") +
+                    << "</Folder>"
 
-                std::string("</Document>") +
-                std::string("</kml>"),
+                << "</Document>"
+                << "</kml>";
+            
+            return xmlReader.parse(
+                placemark_strStream.str(),
                 "kml [in runtime element]"
             );
         }
 
-        void setTitle(std::string &docName_in) {
-            docName = docName_in;
+        void setTitle(xml::Node *kmlNode, std::string &docName) {
+            xml::Node *docNode = getRootDocument(kmlNode);
 
             if (docNode) {
-                docNode->getFirstChildByName("name")->setInnerText(docName);
+                xml::Node *nameNode = docNode->getFirstChildByName("name", false);
+                if (!nameNode) {
+                    nameNode = new xml::Node("name", docNode);
+                }
+                nameNode->setInnerText(docName);
             }
 
+            xml::Node *mainFolderNode = searchMainFolder(kmlNode);
+
             if (mainFolderNode) {
-                mainFolderNode->getFirstChildByName("name")->setInnerText(docName);
+                xml::Node *nameNode = mainFolderNode->getFirstChildByName("name", false);
+                if (!nameNode) {
+                    nameNode = new xml::Node("name", mainFolderNode);
+                }
+                nameNode->setInnerText(docName);
             }
         }
 
-        void insertStyleMap() {
+        void insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode) {
+
+            xml::Node *docNode = getRootDocument(kmlNode);
             int childCtr = 0;
 
             for (auto &child : *docNode->getChildren()) {
@@ -201,32 +327,22 @@ class Builder {
                 childCtr++;
             }
 
-            std::vector<xml::Node*> styleSetNodeVec = styleSetNode->releaseChildren();
-            if (styleSetNode) delete styleSetNode;
+            std::vector<xml::Node*> styleSetNodeVec;
 
-            for (auto &node : styleSetNodeVec) {
-                docNode->addChild(node, childCtr);
-                childCtr++; // still pointing to named 'Folder'
+            if (styleSetNode) {
+                styleSetNodeVec = styleSetNode->releaseChildren();
+                delete styleSetNode;
+
+                for (auto &node : styleSetNodeVec) {
+                    docNode->addChild(node, childCtr);
+                    childCtr++; // still pointing to named 'Folder'
+                }
             }
         }
 
     private:
         xml::Reader xmlReader;
         StyleStrings styleStrings;
-
-        xml::Node
-            *kmlNode,
-            *docNode,
-            *mainFolderNode,
-            *styleSetNode;
-
-        std::string
-            docName,
-            pinIconUrl,
-            pinIconNamed,
-            styleMapId;
-
-        int pinIconTypeFlag;
 
         std::string
             pushpinHotspotPos[2] = {"20", "2"},
@@ -237,10 +353,6 @@ class Builder {
             pushpinScaleNormal = "1.1", pushpinScaleHighlight = "1.3",
             paddleScaleNormal = "1.1", paddleScaleHighlight = "1.3",
             shapesScaleNormal = "1.2", shapesScaleHighlight = "1.4";
-
-        std::string dateCoorVecErrStr = (
-            "KML-> Error. Vector strings of date and coordinate are not in same size\n"
-        );
 };
 
 #endif // __KML_BUILDER_H__
