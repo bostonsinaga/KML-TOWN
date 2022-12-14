@@ -19,16 +19,41 @@ class Sorter {
             }
         }
 
-        std::vector<std::string> orderPins(
-            xml::Node *pinsContainerNode,
+        std::vector<xml::Node*> orderPins(
+            /*
+            *   - basic (purely) use is just need single node for 'dualismVector'
+            *   -'dualismVector' may contains nodes for command that involves 'sorter'
+            */
+            std::vector<xml::Node*> dualismVector, /* count = 1: container, count > 1: cropped pins */
+            /******/
             Point startPt, // decimal coordinate
-            bool isReturnCoordinates
+            bool isFolderInsertion // 'false' return nodes, 'true' return empty
         ) {
             std::vector<xml::Node*>
                 pinNodes,     // parent // corresponding
                 pinCoorNodes; // child  // corresponding
 
-            fillWithPlacemarks(pinsContainerNode, &pinNodes, &pinCoorNodes);
+            xml::Node *pinsContainerNode = nullptr;
+
+            if (dualismVector.size() == 1) {
+                pinsContainerNode = dualismVector.front();
+                
+                fillWithPlacemarks(
+                    pinsContainerNode,
+                    pinNodes,
+                    pinCoorNodes,
+                    true
+                );
+            }
+            else {
+                // contains vector of pin 'Placemark'
+                pinNodes = dualismVector;
+                for (auto &node : dualismVector) {
+                    pinCoorNodes.push_back(
+                        node->getFirstDescendantByName("coordinates", false)
+                    );
+                }
+            }
 
             /*
             *   sorting pins chaining from start point to nearest one
@@ -71,26 +96,38 @@ class Sorter {
 
             delete firstCheckPointNode;
 
-            if (!isReturnCoordinates) {
+            if (isFolderInsertion) {
                 // insert into a different folder
                 insertEditedPlacemarksIntoFolder(
                     SORT_COMMAND_WORKING_FOLDER,
                     pinsContainerNode,
-                    &sortedPinNodes,
-                    {"Sorting", "Sort"}
+                    sortedPinNodes,
+                    {"Sorting", "Sort"},
+                    "pin"
                 );
-            }
-            else {
-                std::vector<std::string> retCoorStrVec;
-                for (auto &node : sortedPinNodes) {
-                    retCoorStrVec.push_back(
-                        node->getFirstDescendantByName("coordinates")->getInnerText()
-                    );
+                
+                if (sortedPinNodes.size() > 0) {
+                    return std::vector<xml::Node*>{sortedPinNodes.front()->getParent()};
                 }
-                return retCoorStrVec;
+                else return std::vector<xml::Node*>{pinsContainerNode};
+            }
+            else { // logging
+                /* 'dualismVector' has multiple nodes */
+
+                if (logEditedPlacemarks(
+                    "pin",
+                    {"Sorting", "Sort"},
+                    sortedPinNodes,
+                    pinsContainerNode
+                )) { // succeeded
+                    return sortedPinNodes;
+                }
+                else { // failed
+                    return std::vector<xml::Node*>{};
+                }
             }
 
-            return std::vector<std::string>{};
+            return std::vector<xml::Node*>{};
         }
 
     private:

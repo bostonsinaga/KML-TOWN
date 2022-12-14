@@ -22,11 +22,14 @@ namespace call_briefer {
         return fileDir_out;
     }
 
-    xml::Node *cropPinsFunc(
+    std::vector<xml::Node*> cropPinsFunc(
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec
+        std::vector<std::string*> axisStrVec,
+        bool isFolderInsertion // 'false' return nodes, 'true' return empty
     ) {
         xml::Node *retContainerNode = nullptr;
+        std::vector<xml::Node*> croppedPinNodes;
+        bool isSucceeded = true;
         
         if (kmlNode) {
             xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
@@ -90,53 +93,75 @@ namespace call_briefer {
                 }
 
                 // cut the pins
-                kml::Cropper kmlCropper;
-                kmlCropper.cutPins(
-                    mainFolderNode,
-                    kml::Point(*axisStrVec.at(0)),
-                    kml::Point(*axisStrVec.at(1))
+                kml::Cropper kmlCropper;              /* NOTE: */
+                croppedPinNodes = kmlCropper.cutPins( // may return nodes if 'isFolderInsertion' false
+                    mainFolderNode,                   // (actually if there were pins in selection
+                    kml::Point(*axisStrVec.at(0)),    // otherwise return empty as on 'isFolderInsertion' true)
+                    kml::Point(*axisStrVec.at(1)),
+                    isFolderInsertion
                 );
 
-                // test the cropped folder
-                xml::Node *croppedFolderNode = mainFolderNode->getFirstChildByName("Folder", false);
+                // test the cropped folder //
+
+                xml::Node *croppedFolderNode = (
+                    mainFolderNode->getFirstChildByName("Folder", false)
+                );
                 
-                if (croppedFolderNode) {
+                if (croppedFolderNode && isFolderInsertion) {
                     if (croppedFolderNode->getFirstChildByName("name", false)->getInnerText()
                         == CROP_COMMAND_WORKING_FOLDER
                     ) {
-                        retContainerNode = croppedFolderNode;
+                        retContainerNode = croppedFolderNode; // 'croppedPinNodes' is empty
                     }
-                    else std::cerr << "\n**FAILED**\n";
+                    else isSucceeded = false;
                 }
-                else std::cerr << "\n**FAILED**\n";
             }
-            else std::cerr << "\n**FAILED**\n";
+            else isSucceeded = false;
         }
-        else std::cerr << "\n**FAILED**\n";
+        else isSucceeded = false;
 
-        return retContainerNode;
+        if (isSucceeded) {
+            if (croppedPinNodes.size() == 0) {
+                if (isFolderInsertion) {
+                    return std::vector<xml::Node*>{retContainerNode};
+                }
+                else { /* no pins detected on 'isFolderInsertion' false (no cropped folder) */
+                    std::cerr << "\n**FAILED**\n";
+                    return std::vector<xml::Node*>{};
+                }
+            }
+            else return croppedPinNodes;
+        }
+        else {
+            std::cerr << "\n**FAILED**\n";
+            return std::vector<xml::Node*>{};
+        }
     }
 
-    std::vector<std::string> sortPinsFunc(
+    std::vector<xml::Node*> sortPinsFunc(
         Menu &menu,
         xml::Node *kmlNode,
         std::vector<std::string*> axisStrVec,
-        bool isReturnCoordinates
+        bool isFolderInsertion // 'false' return nodes, 'true' return empty
     ) {
-        xml::Node *croppedFolderNode = cropPinsFunc(
+        /* 'dualismVector' may contains nodes for command that involves 'sorter' */
+        std::vector<xml::Node*> dualismVector = cropPinsFunc(
             kmlNode,
-            axisStrVec
+            axisStrVec,
+            isFolderInsertion
         );
 
-        // pins sorting //
-        kml::Sorter sorter;
-        std::vector<std::string> coorStrVec = sorter.orderPins(
-            croppedFolderNode,
-            kml::Point(*axisStrVec.at(0)), // start point
-            isReturnCoordinates
-        );
-
-        return coorStrVec;
+        if (dualismVector.size() > 0) {
+            // pins sorting
+            kml::Sorter sorter;
+            std::vector<xml::Node*> sortedPinNodes = sorter.orderPins(
+                dualismVector,
+                kml::Point(*axisStrVec.at(0)), // start point
+                isFolderInsertion
+            );
+            return sortedPinNodes;
+        }
+        else return std::vector<xml::Node*>{};
     }
 
     // write file (end of process)

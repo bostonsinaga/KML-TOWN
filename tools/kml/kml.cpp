@@ -97,34 +97,34 @@ namespace kml {
 
     void fillWithPlacemarks(
         xml::Node *containerNode,
-        std::vector<xml::Node*> *placemarkVec,           // should be empty
-        std::vector<xml::Node*> *placemarksCoorNodeVec,  // should be empty
-        bool isPin
+        std::vector<xml::Node*> &placemarkVec,           // should be empty
+        std::vector<xml::Node*> &placemarksCoorNodeVec,  // should be empty
+        bool isProcessingPin
     ) {
         // collect pins
-        *placemarkVec = containerNode->getDescendantsByName("Placemark");
+        placemarkVec = containerNode->getDescendantsByName("Placemark");
 
         // collect pins coordinate //
 
         std::vector<int> noCoorIndexes;
 
         int ctr = 0;
-        for (auto &pin : *placemarkVec) {
+        for (auto &pin : placemarkVec) {
             xml::Node *pinCoor;
             pinCoor = pin->getFirstDescendantByName("coordinates", false);
 
-            if (pinCoor) { 
-                if ((isPin && pinCoor->getParent()->getName() == "Point") || // pins
-                    (!isPin && pinCoor->getParent()->getName() != "Point")   // paths
+            if (pinCoor) {
+                if ((isProcessingPin && pinCoor->getParent()->getName() == "Point") || // pins
+                    (!isProcessingPin && pinCoor->getParent()->getName() != "Point")   // paths
                 ) {
-                    if (isPin) {
+                    if (isProcessingPin) {
                         if (mini_tool::getInStringCharCount(pinCoor->getInnerText(), ',') == 2) {
-                            if (placemarksCoorNodeVec) placemarksCoorNodeVec->push_back(pinCoor);
+                            placemarksCoorNodeVec.push_back(pinCoor);
                         }
                         else noCoorIndexes.push_back(ctr);
                     }
-                    else if (placemarksCoorNodeVec) {
-                        placemarksCoorNodeVec->push_back(pinCoor);
+                    else {
+                        placemarksCoorNodeVec.push_back(pinCoor);
                     }
                 }
             }
@@ -136,9 +136,9 @@ namespace kml {
         // remove no coordinate nodes
         int idxShrinkRate = 0;
         for (auto &idx : noCoorIndexes) {
-            placemarkVec->erase(
-                placemarkVec->begin() + idx + idxShrinkRate,
-                placemarkVec->begin() + idx + idxShrinkRate + 1
+            placemarkVec.erase(
+                placemarkVec.begin() + idx + idxShrinkRate,
+                placemarkVec.begin() + idx + idxShrinkRate + 1
             );
             idxShrinkRate--;
         }
@@ -147,8 +147,9 @@ namespace kml {
     void insertEditedPlacemarksIntoFolder(
         std::string newFolderName,
         xml::Node *containerNode,
-        std::vector<xml::Node*> *placemarks, // or any node
-        const std::vector<std::string> &noticeFuncName
+        std::vector<xml::Node*> &placemarks, // or any node
+        const std::vector<std::string> &noticeFuncName,
+        std::string typeStr
     ) {
         // previous container name for noticing purpose //
 
@@ -159,8 +160,79 @@ namespace kml {
             prevFolderName = prevFolderNameNode->getInnerText();
         }
 
-        // failed stop
-        if (placemarks->size() == 0) {
+        // succeeded
+        if (placemarks.size() > 0) {
+            
+            // create new pins folder
+            Builder kmlBuilder;
+            xml::Node *folderNode = kmlBuilder.getFolder(newFolderName);
+            containerNode->addChild(folderNode);
+
+            // move up the folder //
+
+            int priorityFolderDataNode = 0;
+            if (containerNode->getFirstChildByName("name", false)) {
+                priorityFolderDataNode++;
+            }
+            if (containerNode->getFirstChildByName("visibility", false)) {
+                priorityFolderDataNode++;
+            }
+            if (containerNode->getFirstChildByName("open", false)) {
+                priorityFolderDataNode++;
+            }
+
+            containerNode->swapChildren(
+                containerNode->getChildren()->at(priorityFolderDataNode),
+                folderNode
+            );
+
+            // insert pins into the folder
+            for (auto &plmrk : placemarks) {
+                plmrk->removeFromParent();
+                folderNode->addChild(plmrk);
+            }
+        }
+
+        // logging
+        if (!logEditedPlacemarks(
+            typeStr,
+            noticeFuncName,
+            placemarks,
+            containerNode
+        )) {return;} // failed
+    }
+
+    bool logEditedPlacemarks(
+        std::string typeStr,
+        std::vector<std::string> noticeFuncName,
+        std::vector<xml::Node*> &placemarks,
+        xml::Node *containerNode
+    ) {
+        // set folder name //
+        std::string folderName = "noname";
+        bool isFolderNaming = true;
+
+        xml::Node *groupParentNameNode;
+        if (!containerNode) {
+            if (placemarks.size() > 0) {
+                containerNode = placemarks.front()->getParent();
+            }
+            else isFolderNaming = false;
+        }
+
+        if (isFolderNaming) {
+            groupParentNameNode = (
+                containerNode->getFirstChildByName("name", false)
+            );
+
+            if (groupParentNameNode) {
+                folderName = groupParentNameNode->getInnerText();
+            }
+        }
+
+        // evaluate //
+
+        if (placemarks.size() == 0) { // failed
             std::string taskName = noticeFuncName.at(1);
 
             // task name lower case
@@ -172,47 +244,24 @@ namespace kml {
 
             std::cerr
                 << "KML-> "
-                << noticeFuncName.at(0) << " error. No pin to "
+                << noticeFuncName.at(0) << " error. No "
+                << typeStr << " to "
                 << taskName << " inside '"
-                << prevFolderName << "' node\n";
-            return;
+                << (containerNode ? containerNode->getName() : "unknown") << "' named '"
+                << folderName << "'\n";
+
+            return false;
         }
+        else { // succeeded
+            std::cout
+                << "KML-> "
+                << noticeFuncName.at(1) << " "
+                << typeStr << (typeStr != "" ? "s " : "") << "inside '"
+                << (containerNode ? containerNode->getName() : "unknown") << "' named '"
+                << folderName << "' completed!\n";
 
-        // create new pins folder
-        Builder kmlBuilder;
-        xml::Node *folderNode = kmlBuilder.getFolder(newFolderName);
-        containerNode->addChild(folderNode);
-
-        // move up the folder //
-
-        int priorityFolderDataNode = 0;
-        if (containerNode->getFirstChildByName("name", false)) {
-            priorityFolderDataNode++;
+            return true;
         }
-        if (containerNode->getFirstChildByName("visibility", false)) {
-            priorityFolderDataNode++;
-        }
-        if (containerNode->getFirstChildByName("open", false)) {
-            priorityFolderDataNode++;
-        }
-
-        containerNode->swapChildren(
-            containerNode->getChildren()->at(priorityFolderDataNode),
-            folderNode
-        );
-
-        // insert pins into the folder
-
-        for (auto &plmrk : *placemarks) {
-            plmrk->removeFromParent();
-            folderNode->addChild(plmrk);
-        }
-
-        // success notice
-        std::cout
-            << "KML-> "
-            << noticeFuncName.at(1) << " pins inside '"
-            << prevFolderName << "' node completed!\n";
     }
 
     //set document name as 'fileDir_out' file name

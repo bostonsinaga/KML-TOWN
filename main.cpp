@@ -134,12 +134,13 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            call_briefer::cropPinsFunc(
+            if (call_briefer::cropPinsFunc(
                 kmlNode,
-                {&inputStrings.at(4), &inputStrings.at(6)}
-            );
-
-            call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                {&inputStrings.at(4), &inputStrings.at(6)},
+                true
+            ).size() > 0) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
         }
     }
 
@@ -166,14 +167,14 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            call_briefer::sortPinsFunc(
+            if (call_briefer::sortPinsFunc(
                 menu,
                 kmlNode,
                 {&inputStrings.at(4), &inputStrings.at(6)},
-                false
-            );
-
-            call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                true
+            ).size() > 0) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
         }
     }
 
@@ -200,17 +201,19 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            std::vector<std::string> coorStrVec = call_briefer::sortPinsFunc(
+            std::vector<xml::Node*> sortedPinNodes = call_briefer::sortPinsFunc(
                 menu,
                 kmlNode,
                 {&inputStrings.at(4), &inputStrings.at(6)},
-                true
+                false
             );
 
-            if (coorStrVec.size() > 0) {
-                
-            }
-            else {
+            if (sortedPinNodes.size() > 0) {
+                kml::Placemark placemarkKML;
+                placemarkKML.pinsPath(
+                    kmlNode,
+                    sortedPinNodes
+                );
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
             }
         }

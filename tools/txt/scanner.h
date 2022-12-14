@@ -141,7 +141,7 @@ class Scanner {
             std::string styleMapId;
             builderKML.insertStyleMap(
                 kmlNode,
-                builderKML.getPinStyleMap(&styleMapId, "", "1.0")
+                builderKML.getPinStyleMap(&styleMapId)
             );
 
             // KML CREATION //
@@ -155,6 +155,7 @@ class Scanner {
             for (auto &coorStr : axisStrVector) {
                 mainFolderNode->addChild(
                     builderKML.getPin(
+                        builderKML.COORSTR_ZERO_ADD_ALTITUDE,
                         styleMapId,
                         coorStr,
                         "",

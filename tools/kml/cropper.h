@@ -15,19 +15,25 @@ class Cropper {
             }
         }
 
-        void cutPins(
+        std::vector<xml::Node*> cutPins(
             xml::Node *pinsContainerNode,
-            Point startPt, // decimal coordinate
-            Point endPt    // decimal coordinate
+            Point startPt,  // decimal coordinate
+            Point endPt,    // decimal coordinate
+            bool isFolderInsertion
         ) {
             std::vector<xml::Node*>
                 pinNodes,
                 pinCoorNodes;
 
-            fillWithPlacemarks(pinsContainerNode, &pinNodes, &pinCoorNodes);
+            fillWithPlacemarks(
+                pinsContainerNode,
+                pinNodes,
+                pinCoorNodes,
+                true
+            );
  
             // new pins from cropped (inside rectangular)
-            std::vector<xml::Node*> croppedPins;
+            std::vector<xml::Node*> croppedPinNodes;
 
             int ctr = 0;
             for (auto &pinCoor : pinCoorNodes) {
@@ -45,19 +51,41 @@ class Cropper {
                     (pinPoint.x >= endPt.x && pinPoint.x <= startPt.x && // BR - TL
                     pinPoint.y >= startPt.y && pinPoint.y <= endPt.y)
                 ) {
-                    croppedPins.push_back(pinNodes.at(ctr));
+                    croppedPinNodes.push_back(pinNodes.at(ctr));
                 }
 
                 ctr++;
             }
 
-            // insert into a different folder
-            insertEditedPlacemarksIntoFolder(
-                CROP_COMMAND_WORKING_FOLDER,
-                pinsContainerNode,
-                &croppedPins,
-                {"Cropping", "Crop"}
-            );
+            if (isFolderInsertion) { // insert into a different folder
+                insertEditedPlacemarksIntoFolder(
+                    CROP_COMMAND_WORKING_FOLDER,
+                    pinsContainerNode,
+                    croppedPinNodes,
+                    {"Cropping", "Crop"},
+                    "pin"
+                );
+                
+                if (croppedPinNodes.size() > 0) {
+                    return std::vector<xml::Node*>{croppedPinNodes.front()->getParent()};
+                }
+                else return std::vector<xml::Node*>{pinsContainerNode};
+            }
+            else { // logging
+                if (logEditedPlacemarks(
+                    "pin",
+                    {"Cropping", "Crop"},
+                    croppedPinNodes,
+                    pinsContainerNode
+                )) { // succeeded
+                    return croppedPinNodes;
+                }
+                else { // failed
+                    return std::vector<xml::Node*>{};
+                }
+            }
+
+            return std::vector<xml::Node*>{};
         }
 };
 

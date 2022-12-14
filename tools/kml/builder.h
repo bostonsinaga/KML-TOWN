@@ -215,13 +215,26 @@ class Builder {
             );
         }
 
+        enum {
+            COORSTR_AUTO_ADD_ALTITUDE,
+            COORSTR_ZERO_ADD_ALTITUDE,
+            COORSTR_NO_ADD_ALTITUDE
+        };
+
         xml::Node *getPin(
+            int altitudeAdditionFlag,
             std::string styleMapId,
             std::string decimalCoorStr,
             std::string name = "",
             std::string description = ""
         ) {
-            decimalCoorStr += ",0";
+            if (altitudeAdditionFlag == COORSTR_AUTO_ADD_ALTITUDE) {
+                decimalCoorStr += getAltitudeAddition(
+                    altitudeAdditionFlag,
+                    decimalCoorStr
+                );
+            }
+            else decimalCoorStr += getAltitudeAddition(altitudeAdditionFlag);
 
             std::stringstream placemark_strStream;
             placemark_strStream 
@@ -241,14 +254,41 @@ class Builder {
         }
 
         xml::Node *getPath(
+            int altitudeAdditionFlag,
             std::string styleMapId,
             std::vector<std::string> &coorStrVec,
             std::string name = "",
             std::string description = ""
         ) {
-            std::string decimalCoorStrVec_joinStr = "";
+            std::string
+                decimalCoorStrVec_joinStr = "",
+                altAddStr;
+
+            bool isAltAddStrUpdate = false;
+            
+            if (altitudeAdditionFlag == COORSTR_AUTO_ADD_ALTITUDE) {
+                isAltAddStrUpdate = true;
+            }
+            else {
+                altAddStr = getAltitudeAddition(altitudeAdditionFlag);
+            }
+
             for (auto &coorStr : coorStrVec) {
-                decimalCoorStrVec_joinStr += coorStr + ",0 ";
+
+                /* if unsure of comma count (coordinat form) consistency */
+                if (isAltAddStrUpdate) {
+                    altAddStr = getAltitudeAddition(
+                        altitudeAdditionFlag,
+                        coorStr
+                    );
+                }
+
+                decimalCoorStrVec_joinStr += coorStr + altAddStr + " ";
+            }
+
+            // remove last space
+            if (decimalCoorStrVec_joinStr != "") {
+                decimalCoorStrVec_joinStr.pop_back();
             }
 
             std::stringstream placemark_strStream;
@@ -257,9 +297,10 @@ class Builder {
                 << "<name>" << name << "</name>"
                 << "<description>" << description << "</description>"
                 << "<styleUrl>#" << styleMapId << "</styleUrl>"
-                << "<Point>"
+                << "<LineString>"
+                << "<tessellate>1</tessellate>"
                 << "<coordinates>" << decimalCoorStrVec_joinStr << "</coordinates>"
-                << "</Point>"
+                << "</LineString>"
                 <<" </Placemark>";
 
             return xmlReader.parse(
@@ -341,6 +382,29 @@ class Builder {
         }
 
     private:
+        std::string getAltitudeAddition(
+            int altitudeAdditionFlag,
+            std::string coorStrAuto = "" // must be filled if using 'COORSTR_AUTO_ADD_ALTITUDE'
+        ) {
+            switch (altitudeAdditionFlag) {
+
+                case COORSTR_AUTO_ADD_ALTITUDE: {
+                    int commaCount = mini_tool::getInStringCharCount(coorStrAuto, ',');
+                    if (commaCount == 1) {
+                        return ",0";
+                    }
+                }
+                case COORSTR_ZERO_ADD_ALTITUDE: {
+                    return ",0";
+                }
+                case COORSTR_NO_ADD_ALTITUDE: {
+                    return "";
+                }
+            }
+
+            return "";
+        }
+
         xml::Reader xmlReader;
         StyleStrings styleStrings;
 
