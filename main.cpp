@@ -93,11 +93,26 @@ int main(int argc, char *argv[]) {
         xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
         if (kmlNode) {
+
+            std::string separatorSign = "|";
+
+            if (menu.setAlert(
+                "KML-TOWN-> Do you want to change columns separator? (default is '|')\n",
+                false
+            )) {
+                csv::singleCharacterInputNotify(menu, false);
+
+                std::string additionalInput = menu.setAdditionalInput(
+                    "KML-TOWN-> Set columns separator sign:  "
+                );
+                separatorSign = additionalInput;
+            }
+
             xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
 
             if (mainFolderNode) {
                 csv::Builder csvBuilder;
-                if (csvBuilder.compose(inputStrings.at(4), mainFolderNode)) {
+                if (csvBuilder.compose(inputStrings.at(4), mainFolderNode, separatorSign)) {
                     std::cout << "\n**SUCCEEDED**\n";
                 }
             }
@@ -216,6 +231,34 @@ int main(int argc, char *argv[]) {
                 );
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
             }
+        }
+    }
+
+    //////////////////////////
+    // CSV CHANGE SEPARATOR //
+    //////////////////////////
+
+    else if (
+        SELECTED_FLAG == CSV_CHANGE_SEPARATOR_NEWFILE_FLAG ||
+        SELECTED_FLAG == CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG
+    ) {
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(8)
+        );
+        
+        if (fileDir_check != "") {
+            csv::singleCharacterInputNotify(menu, true);
+
+            csv::changeCSVSeparator(
+                inputStrings.at(2),
+                fileDir_check,
+                inputStrings.at(4),
+                inputStrings.at(6)
+            );
         }
     }
     

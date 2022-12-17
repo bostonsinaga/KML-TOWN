@@ -10,7 +10,8 @@ class Builder {
         */
         bool compose(
             std::string fileDir_out,
-            xml::Node *mainFolderNode
+            xml::Node *mainFolderNode,
+            std::string separatorSign = "|"
         ) {
             if (!mainFolderNode) return false;
 
@@ -107,7 +108,6 @@ class Builder {
             std::vector<int> subColumnsCounts;
 
             std::ofstream writeFile(fileDir_out);
-            char separatorSign = '|';
 
             /* name is use as order names (row list) as well */
             std::vector<std::string> colNodeNames;

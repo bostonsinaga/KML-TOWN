@@ -2,8 +2,9 @@
 #define __CSV_H__
 
 namespace csv {
-    bool changeCSVSeparator(
+    void changeCSVSeparator(
         std::string fileDir_in,
+        std::string fileDir_out,
         std::string preSep,
         std::string newSep
     ) {
@@ -11,7 +12,7 @@ namespace csv {
         std::string text = "", strBuff;
 
         while (std::getline(readFile, strBuff)) {
-            text += strBuff;
+            text += strBuff + "\n";
         }
 
         if (text != "") {
@@ -26,9 +27,25 @@ namespace csv {
                 }
                 else break;
             }
-            return true;
+
+            std::ofstream writeFile(fileDir_out);
+            writeFile << text;
+            writeFile.close();
+
+            std::cerr << "CSV-> Change columns separator sign completed!\n";
         }
-        return false;
+        else {
+            std::cerr << "CSV-> Error. '" << fileDir_in << "' is empty\n";
+        }
+    }
+
+    void singleCharacterInputNotify(Menu &menu, bool isNeedEnterKey) {
+        menu.setNotification(
+            std::string("KML-TOWN-> Please input single character like '|', '&', etc. to be inside double quotes (\"x\")\n") +
+            std::string("           Also don't input '*' (asterisk) wildcard character\n") +
+            std::string("           because this will attach current directory file names\n"),
+            isNeedEnterKey
+        );
     }
 
     #include "builder.h"

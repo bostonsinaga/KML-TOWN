@@ -189,7 +189,7 @@ class Menu {
                 << "    -below is '.csv' editor tool\n\n"
 
                 << "--csv --change-separator [FILE_NAME] --old-sign [STRING] --new-sign [STRING] --out [FILE_NAME]\n"
-                << "****** change '.csv' separator string with desired string as the sign\n"
+                << "****** change '.csv' columns separator string (sign)\n"
                 << "       (consider to not use space in string to avoid parsing error)\n";
 
             styleNamesMenuText_stream
@@ -337,9 +337,13 @@ class Menu {
             return retFlag;
         }
 
-        void setNotification(std::string message) {
-            std::cout << message << "\n**PRESS ENTER TO CONTINUE**\n";
-            std::cin.get();
+        void setNotification(std::string message, bool isNeedEnterKey = true) {
+            std::cout << message;
+            if (isNeedEnterKey) {
+                std::cout << "\n**PRESS ENTER TO CONTINUE**\n";
+                std::cin.get();
+            }
+            else std::cout << std::endl; // line separator
         }
 
         bool setAlert(std::string message, bool isUseFailedMessage = true) {
@@ -358,6 +362,17 @@ class Menu {
                 }
                 return false;
             }
+        }
+
+        // input is first CLI strings
+        std::string setAdditionalInput(std::string message) {
+            std::cout << message;
+
+            std::string input;
+            std::cin >> input;
+            std::cout << std::endl;
+
+            return input;
         }
 
     private:
