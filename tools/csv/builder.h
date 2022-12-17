@@ -109,6 +109,9 @@ class Builder {
             std::ofstream writeFile(fileDir_out);
             char separatorSign = '|';
 
+            /* name is use as order names (row list) as well */
+            std::vector<std::string> colNodeNames;
+
             CTR = 0;
             for (auto &node : columnNodes) {
                 if (mini_tool::isMatchButIgnoreCase(node->getName(), "PATH")  ||
@@ -119,9 +122,13 @@ class Builder {
                 }
                 else subColumnsCounts.push_back(3);
 
-                xml::Node *colNameNode = node->getFirstChildByName("name", false);
-                if (colNameNode) writeFile << colNameNode->getInnerText();
-                else writeFile << "PLACEMARKS";
+                xml::Node *nameNode = node->getFirstChildByName("name", false);
+                if (nameNode) {
+                    colNodeNames.push_back(nameNode->getInnerText());
+                }
+                else colNodeNames.push_back("PLACEMARKS");
+
+                writeFile << colNodeNames.back();
 
                 // space from sub columns
                 for (int i = 0; i < subColumnsCounts.back() - 1; i++) {
@@ -229,6 +236,7 @@ class Builder {
             CTR = 0;
             for (int i = 0; i < maxRowsCount; i++) {
                 for (auto &rowNodes : rowNodesVector) {
+
                     if (i <= rowNodes.size() - 1) {
 
                         std::function<void()> printNoCoorWarningMessage = [=]() {
@@ -257,32 +265,73 @@ class Builder {
                         if (rowNameNode) {
                             rowNameStr = rowNameNode->getInnerText();
                         }
-                        else rowNameStr = "Placemark " + std::to_string(i+1);
+                        else {
+                            if (colNodeNames.at(CTR) == "PLACEMARKS") {
+                                rowNameStr = "Placemark " + std::to_string(i+1);
+                            }
+                            else {
+                                rowNameStr = colNodeNames.at(CTR) + " " + std::to_string(i+1);
+                            }
+                        }
 
                         if (rowDescNode) {
                             rowDescStr = rowDescNode->getInnerText();
                         }
 
-                        // write the rows //
+                        // WRITE THE ROWS //
 
-                        if (subColumnsCounts.at(CTR) == 4) { // paths
+                        kml::Converter kmlConverter;
 
-                            writeFile << rowNameStr;
-                            writeFile << separatorSign;
-                            writeFile << rowDescStr;
-                            writeFile << separatorSign;
-                            writeFile << getFrontCoordinate(coorStr);
-                            writeFile << separatorSign;
-                            writeFile << getBackCoordinate(coorStr);
-                        }
-                        else { // 3 sub folder as pins
+                        // PATHS
+                        if (subColumnsCounts.at(CTR) == 4) {
+                            std::string frontCoorStr = getFrontCoordinate(coorStr);
+                            std::string backCoorStr = getBackCoordinate(coorStr);
 
                             writeFile << rowNameStr;
                             writeFile << separatorSign;
                             writeFile << rowDescStr;
                             writeFile << separatorSign;
-                            writeFile << getFrontCoordinate(coorStr);
+                            writeFile << frontCoorStr;
+                            writeFile << separatorSign;
+                            writeFile << backCoorStr;
                         }
+                        // 3 sub folder as PINS
+                        else {
+                            std::string frontCoorStr = getFrontCoordinate(coorStr);
+
+                            for (int i = frontCoorStr.size() - 1; i >= 0; i--) {
+                                if (frontCoorStr.at(i) == ',') {
+                                    frontCoorStr = frontCoorStr.substr(0, i);
+                                    break;
+                                }
+                            }
+
+                            // separate decimal string coordinate
+                            std::vector<std::string> decimalAxisStrVec = (
+                                kmlConverter.separateCoordinate(frontCoorStr)
+                            );
+
+                            // convert decimal (in string form) to degree coordinate
+                            std::vector<std::string> axisDegreeStrVec = kmlConverter.convertCoor_decimalDegree(
+                                decimalAxisStrVec,
+                                kmlConverter.LNG_LAT_SEPARATE_FLAG_IN,
+                                kmlConverter.LAT_LNG_SEPARATE_FLAG_OUT
+                            );
+
+                            // stringify degree coordinate vector
+                            frontCoorStr = axisDegreeStrVec.at(0);
+                            frontCoorStr += " " + axisDegreeStrVec.at(1);
+
+                            writeFile << rowNameStr;
+                            writeFile << separatorSign;
+                            writeFile << rowDescStr;
+                            writeFile << separatorSign;
+                            writeFile << frontCoorStr;
+                        }
+                    }
+                    else { // keep the blanks
+                        writeFile << separatorSign;
+                        writeFile << separatorSign;
                     }
 
                     if (CTR != rowNodesVector.size() - 1) {
@@ -292,6 +341,8 @@ class Builder {
 
                     CTR++;
                 }
+
+                writeFile << '\n';
                 CTR = 0;
             }
 

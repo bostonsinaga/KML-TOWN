@@ -58,6 +58,7 @@ class Converter {
             return std::vector<std::string>{"", ""};
         }
 
+        // return value e.g: '{1°10'100"S,100°10'100"E}' (no minus sign '-')
         std::vector<std::string> convertCoor_decimalDegree(
             std::vector<std::string> coorStrCouple,
             int separateFlagIn,
@@ -70,10 +71,10 @@ class Converter {
             for (auto &str : coorStrCouple) {
 
                 coor = std::stod(str);
-                deg = std::to_string(std::abs(coor)) + mini_tool::DEGREE_SIGN;
-                minNum = (coor - std::abs(coor)) * 60.0;
-                sec = std::to_string((minNum - std::abs(minNum)) * 60.0) + "\"";
-                min = std::to_string(std::abs(minNum)) + "'";
+                deg = std::to_string(std::abs(int(coor))) + mini_tool::DEGREE_SIGN;
+                minNum = (coor - int(coor)) * 60.0;
+                sec = std::to_string(std::abs(minNum - int(minNum)) * 60.0) + "\"";
+                min = std::to_string(std::abs(int(minNum))) + "'";
                 str = deg + min + sec;
 
                 if (separateFlagIn == LAT_LNG_SEPARATE_FLAG_IN) {

@@ -1,1 +1,1 @@
-kml-town --kml --crop ../test-in.kml --start-point "  6°15'6.16S 106°46'31.79T" --end-point "  6°12'17.24S 106°51'56.73T" --out ../test-out.kml
+kml-town --kml --crop ../test-in.kml --start-point "  6°13'34.23S 106°48'51.19T" --end-point "  6°14'0.55S 106°49'35.19T" --out ../test-out.kml
