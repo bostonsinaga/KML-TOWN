@@ -49,6 +49,16 @@ class Node {
         std::string getInnerText() {return innerText;}
 
         Node *getParent() {return parent;}
+
+        Node *getRoot() {
+            Node *retNode = this;
+
+            while (retNode->getParent()) {
+                retNode = retNode->getParent();
+            }
+
+            return retNode;
+        }
         
         std::vector<Node*> *getChildren() {return &children;}
         std::vector<Attribute> *getAttributes() {return &attributes;}

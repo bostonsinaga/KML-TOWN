@@ -69,13 +69,25 @@ int main(int argc, char *argv[]) {
     // CONVERT TXT KML FLAG //
     //////////////////////////
 
-    if (SELECTED_FLAG == CONVERT_TXT_KML_FLAG) {
+    if (SELECTED_FLAG == CONVERT_TXT_KML_AS_PINS_FLAG ||
+        SELECTED_FLAG == CONVERT_TXT_KML_AS_PATHS_FLAG
+    ) {
         txt::Scanner txtScanner;
+        xml::Node *kmlNode;
 
-        xml::Node *kmlNode = txtScanner.parse(
-            inputStrings.at(2),
-            inputStrings.at(4)
-        );
+        // AS PINS
+        if (SELECTED_FLAG == CONVERT_TXT_KML_AS_PINS_FLAG ) {
+            kmlNode = txtScanner.parsePins(
+                inputStrings.at(2),
+                inputStrings.at(4)
+            );
+        }
+        else { // AS PATHS
+            kmlNode = txtScanner.parsePaths(
+                inputStrings.at(2),
+                inputStrings.at(4)
+            );
+        }
 
         if (kmlNode) {
             std::cout << "\n**SUCCEEDED**\n";

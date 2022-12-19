@@ -1,57 +1,58 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#define TOTAL_COMMANDS_COUNT 48
+#define TOTAL_COMMANDS_COUNT 49
 #define MAX_INPUT_STRINGS_COUNT 9
 
 #define MAIN_MENU_FLAG 0
 #define HELP_MENU_FLAG 1
 #define STYLE_NAMES_MENU_FLAG 2
 #define VERSION_NUMBER_FLAG 3
-#define CONVERT_TXT_KML_FLAG 4
-#define CONVERT_KML_CSV_FLAG 5
-#define KML_CROP_NEWFILE_FLAG 6
-#define KML_CROP_OVERWRITE_FLAG 7
-#define KML_SORT_NEWFILE_FLAG 8
-#define KML_SORT_OVERWRITE_FLAG 9
-#define KML_PINS_PATH_CROP_NEWFILE_FLAG 10
-#define KML_PINS_PATH_CROP_OVERWRITE_FLAG 11
-#define KML_PATHS_PINS_CROP_NEWFILE_FLAG 12
-#define KML_PATHS_PINS_CROP_OVERWRITE_FLAG 13
-#define KML_PATHS_PINS_NEWFILE_FLAG 14
-#define KML_PATHS_PINS_OVERWRITE_FLAG 15
-#define KML_JOIN_PATHS_CROP_NEWFILE_FLAG 16
-#define KML_JOIN_PATHS_CROP_OVERWRITE_FLAG 17
-#define KML_JOIN_PATHS_NEWFILE_FLAG 18
-#define KML_JOIN_PATHS_OVERWRITE_FLAG 19
-#define KML_SPLIT_PATHS_CROP_NEWFILE_FLAG 20
-#define KML_SPLIT_PATHS_CROP_OVERWRITE_FLAG 21
-#define KML_SPLIT_PATHS_NEWFILE_FLAG 22
-#define KML_SPLIT_PATHS_OVERWRITE_FLAG 23
-#define KML_FILTER_AUTO_NEWFILE_FLAG 24
-#define KML_FILTER_AUTO_FLAG 25
-#define KML_FILTER_PINICON_NEWFILE_FLAG 26
-#define KML_FILTER_PINICON_OVERWRITE_FLAG 27
-#define KML_FILTER_PATHCOLOR_NEWFILE_FLAG 28
-#define KML_FILTER_PATHCOLOR_OVERWRITE_FLAG 29
-#define KML_FILTER_NAME_NEWFILE_FLAG 30
-#define KML_FILTER_NAME_OVERWRITE_FLAG 31
-#define KML_FILTER_DESCRIPTION_NEWFILE_FLAG 32
-#define KML_FILTER_DESCRIPTION_OVERWRITE_FLAG 33
-#define KML_FILTER_TEXT_NEWFILE_FLAG 34
-#define KML_FILTER_TEXT_OVERWRITE_FLAG 35
-#define KML_STYLEPINS_ICON_NEWFILE_FLAG 36
-#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 37
-#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 38
-#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 39
-#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 40
-#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 41
-#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 42
-#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 43
-#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 44
-#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 45
-#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 46
-#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 47
+#define CONVERT_TXT_KML_AS_PINS_FLAG 4
+#define CONVERT_TXT_KML_AS_PATHS_FLAG 5
+#define CONVERT_KML_CSV_FLAG 6
+#define KML_CROP_NEWFILE_FLAG 7
+#define KML_CROP_OVERWRITE_FLAG 8
+#define KML_SORT_NEWFILE_FLAG 9
+#define KML_SORT_OVERWRITE_FLAG 10
+#define KML_PINS_PATH_CROP_NEWFILE_FLAG 11
+#define KML_PINS_PATH_CROP_OVERWRITE_FLAG 12
+#define KML_PATHS_PINS_CROP_NEWFILE_FLAG 13
+#define KML_PATHS_PINS_CROP_OVERWRITE_FLAG 14
+#define KML_PATHS_PINS_NEWFILE_FLAG 15
+#define KML_PATHS_PINS_OVERWRITE_FLAG 16
+#define KML_JOIN_PATHS_CROP_NEWFILE_FLAG 17
+#define KML_JOIN_PATHS_CROP_OVERWRITE_FLAG 18
+#define KML_JOIN_PATHS_NEWFILE_FLAG 19
+#define KML_JOIN_PATHS_OVERWRITE_FLAG 20
+#define KML_SPLIT_PATHS_CROP_NEWFILE_FLAG 21
+#define KML_SPLIT_PATHS_CROP_OVERWRITE_FLAG 22
+#define KML_SPLIT_PATHS_NEWFILE_FLAG 23
+#define KML_SPLIT_PATHS_OVERWRITE_FLAG 24
+#define KML_FILTER_AUTO_NEWFILE_FLAG 25
+#define KML_FILTER_AUTO_FLAG 26
+#define KML_FILTER_PINICON_NEWFILE_FLAG 27
+#define KML_FILTER_PINICON_OVERWRITE_FLAG 28
+#define KML_FILTER_PATHCOLOR_NEWFILE_FLAG 29
+#define KML_FILTER_PATHCOLOR_OVERWRITE_FLAG 30
+#define KML_FILTER_NAME_NEWFILE_FLAG 31
+#define KML_FILTER_NAME_OVERWRITE_FLAG 32
+#define KML_FILTER_DESCRIPTION_NEWFILE_FLAG 33
+#define KML_FILTER_DESCRIPTION_OVERWRITE_FLAG 34
+#define KML_FILTER_TEXT_NEWFILE_FLAG 35
+#define KML_FILTER_TEXT_OVERWRITE_FLAG 36
+#define KML_STYLEPINS_ICON_NEWFILE_FLAG 37
+#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 38
+#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 39
+#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 40
+#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 41
+#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 42
+#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 43
+#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 44
+#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 45
+#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 46
+#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 47
+#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 48
 
 #define COMMAND_WORKING_FOLDER "--KML-TOWN --"
 #define CROP_COMMAND_WORKING_FOLDER "--KML-TOWN --CROP"
@@ -88,7 +89,7 @@ class Menu {
                 << "****** show version number\n"
 
                 << "\n~CONVERTING COMMANDS:\n\n"
-                << ">>> --convert --txt-in [FILE_NAME] --kml-out [FILE_NAME]\n"
+                << ">>> --convert --txt-in [FILE_NAME] --kml-out [FILE_NAME] --[pins or paths]\n"
                 << "****** read '.txt' and write location keywords as '.kml' placemarks\n\n"
                 << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] : \n"
                 << "****** read '.kml' and write placemarks information as formated '.csv' sheet\n"
@@ -174,13 +175,13 @@ class Menu {
                 << "****** change pins icon (default is 'ylw-pushpin' for '.txt' pins scanner)\n\n"
 
                 << "--kml --style-pins [FILE_NAME] --scale [PIN_ICON_NAME] --out [FILE_NAME]\n"
-                << "****** set pins scale (default are: pins 1.1, paddles 1.1, shapes 1.2)\n\n"
+                << "****** set pins scale (default is 1.0)\n\n"
                 
                 << "--kml --style-paths [FILE_NAME] --color [PATH_COLOR_NAME] --out [FILE_NAME]\n"
                 << "****** change paths color (default is white)\n\n"
 
                 << "--kml --style-paths [FILE_NAME] --thickness [PATH_COLOR_NAME] --out [FILE_NAME]\n"
-                << "****** change paths thickness (default is 1.0)\n\n"
+                << "****** change paths thickness (default is 2.0)\n\n"
 
                 << "--kml --style-paths [FILE_NAME] --opacity [PATH_COLOR_NAME] --out [FILE_NAME]\n"
                 << "****** change paths opacity (default is 1.0 [0.0 - 1.0])\n\n"
@@ -385,7 +386,8 @@ class Menu {
             {"--version", "", "", "", "", "", "", "", ""},
 
             // CONVERTING //
-            {"--convert", "--txt-in", "DATA_STRING", "--kml-out", "DATA_STRING", "", "", "", ""},
+            {"--convert", "--txt-in", "DATA_STRING", "--kml-out", "DATA_STRING", "--pins", "", "", ""},
+            {"--convert", "--txt-in", "DATA_STRING", "--kml-out", "DATA_STRING", "--paths", "", "", ""},
             {"--convert", "--kml-in", "DATA_STRING", "--csv-out", "DATA_STRING", "", "", "", ""},
 
             // KML EDITOR (no '--out' means output will overwrite file input) //

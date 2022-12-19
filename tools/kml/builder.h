@@ -151,8 +151,8 @@ class Builder {
         xml::Node *getPathStyleMap(
             std::string *styleMapId_hook,
             std::string pathColorNamed = "",
-            std::string pathThicknessStr = "1.0"
-        ) {    
+            std::string pathThicknessStr = "2.0"
+        ) {
             std::string
                 normalId,
                 highlightId,

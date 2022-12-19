@@ -3,7 +3,8 @@
 
 namespace txt {
     #include "samples.h"
-    #include "scanner.h"
+    #include "sorter.h"
+    #include "scanner.cpp"
 }
 
 #endif // __TXT_H__
