@@ -11,10 +11,10 @@ namespace kml {
     xml::Node *searchMainFolder(xml::Node *kmlNode);
     xml::Node *getRootDocument(xml::Node *kmlNode);
     
-    #include "style-strings.h"
-    #include "converter.h"
-    #include "point.h"
-    #include "builder.h"
+    #include "style-strings.cpp"
+    #include "converter.cpp"
+    #include "point.cpp"
+    #include "builder.cpp"
 
     void fillWithPlacemarks(
         xml::Node *containerNode,
@@ -40,9 +40,9 @@ namespace kml {
 
     void setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out);
 
-    #include "cropper.h"
-    #include "sorter.h"
-    #include "placemark.h"
+    #include "cropper.cpp"
+    #include "sorter.cpp"
+    #include "placemark.cpp"
 }
 
 #endif // __KML_H__

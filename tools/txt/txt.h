@@ -2,7 +2,7 @@
 #define __TXT_H__
 
 namespace txt {
-    #include "samples.h"
+    #include "samples.cpp"
     #include "sorter.h"
     #include "scanner.cpp"
 }

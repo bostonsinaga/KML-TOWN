@@ -48,7 +48,7 @@ namespace csv {
         );
     }
 
-    #include "builder.h"
+    #include "builder.cpp"
 }
 
 #endif // __CSV_H__

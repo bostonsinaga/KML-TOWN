@@ -5,9 +5,9 @@
 #define XML_TOPPER_COUNT 38
 
 namespace xml {
-    #include "node.h"
-    #include "reader.h"
-    #include "writer.h"
+    #include "node.cpp"
+    #include "reader.cpp"
+    #include "writer.cpp"
 }
 
 #endif // __XML_H__

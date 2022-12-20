@@ -1,3 +1,6 @@
+#ifndef __TXT_SCANNER_CPP__
+#define __TXT_SCANNER_CPP__
+
 #include "scanner.h"
 
 /* Note:
@@ -21,13 +24,13 @@ xml::Node *Scanner::parsePins(
         std::string styleMapId;
         xml::Node *mainFolderNode = getMainFolder(fileDir_out, &styleMapId, true);
 
-        kml::Builder builderKML;
+        kml::Builder kmlBuilder;
 
         int dateVecCtr = 0;
         for (auto &coorStr : yieldParseFunc.at(coorStrVec_flag)) {
             mainFolderNode->addChild(
-                builderKML.getPin(
-                    builderKML.COORSTR_ZERO_ADD_ALTITUDE,
+                kmlBuilder.getPin(
+                    kmlBuilder.COORSTR_ZERO_ADD_ALTITUDE,
                     styleMapId,
                     coorStr,
                     "",
@@ -67,7 +70,7 @@ xml::Node *Scanner::parsePaths(
         std::string styleMapId;
         xml::Node *mainFolderNode = getMainFolder(fileDir_out, &styleMapId, false);
 
-        kml::Builder builderKML;
+        kml::Builder kmlBuilder;
 
         for (int i = 0; i < yieldParseFunc.at(coorStrVec_flag).size() - 1; i++) {
             
@@ -77,8 +80,8 @@ xml::Node *Scanner::parsePaths(
             };
 
             mainFolderNode->addChild(
-                builderKML.getPath(
-                    builderKML.COORSTR_ZERO_ADD_ALTITUDE,
+                kmlBuilder.getPath(
+                    kmlBuilder.COORSTR_ZERO_ADD_ALTITUDE,
                     styleMapId,
                     coorStrPair,
                     "Path " + std::to_string(i + 1),
@@ -122,7 +125,7 @@ std::vector<std::vector<std::string>> Scanner::parse(
         return std::vector<std::vector<std::string>>{};
     }
 
-    Sample sample;
+    Samples txtSamples;
     kml::Converter kmlConverter;
 
     /////////////////////////////////////////////////////////
@@ -142,13 +145,13 @@ std::vector<std::vector<std::string>> Scanner::parse(
 
         // DATE //
         // will be an empty string if no date detected
-        dateStrVector.push_back(sample.testDateTemplate(textVector.at(i)));
+        dateStrVector.push_back(txtSamples.testDateTemplate(textVector.at(i)));
 
         /////////////////////
         // GOOGLE MAP LINK //
         /////////////////////
 
-        rawCoor = sample.testGoogleMapsTemplate(textVector.at(i));
+        rawCoor = txtSamples.testGoogleMapsTemplate(textVector.at(i));
 
         if (rawCoor != "") {                    
             std::vector<std::string>
@@ -171,11 +174,11 @@ std::vector<std::vector<std::string>> Scanner::parse(
         /////////////////
         
         // with letter
-        rawCoor = sample.testDegreeTemplateWithLetter(textVector.at(i));
+        rawCoor = txtSamples.testDegreeTemplateWithLetter(textVector.at(i));
 
         // with sign
         if (rawCoor == "") {
-            rawCoor = sample.testDegreeTemplateWithSign(textVector.at(i));
+            rawCoor = txtSamples.testDegreeTemplateWithSign(textVector.at(i));
         }
 
         if (rawCoor != "") {
@@ -242,28 +245,30 @@ xml::Node *Scanner::getMainFolder(
     // XML CREATION //
 
     std::string docName = mini_tool::cutFileDirName(fileDir_out);
-    kml::Builder builderKML;
+    kml::Builder kmlBuilder;
 
     // BUILDER SETUP //
     
-    xml::Node *kmlNode = builderKML.getSkeleton(docName);
+    xml::Node *kmlNode = kmlBuilder.getSkeleton(docName);
 
     if (isPins) {
         // determined as 'yellow_push_pin'
-        builderKML.insertStyleMap(
+        kmlBuilder.insertStyleMap(
             kmlNode,
-            builderKML.getPinStyleMap(styleMapId_hook)
+            kmlBuilder.getPinStyleMap(styleMapId_hook)
         );
     }
     else {
-        builderKML.insertStyleMap(
+        kmlBuilder.insertStyleMap(
             kmlNode,
-            builderKML.getPathStyleMap(styleMapId_hook)
+            kmlBuilder.getPathStyleMap(styleMapId_hook)
         );
     }
 
     // KML CREATION //
 
-    builderKML.setTitle(kmlNode, docName);
+    kmlBuilder.setTitle(kmlNode, docName);
     return kml::searchMainFolder(kmlNode);
 }
+
+#endif // __TXT_SCANNER_CPP__
