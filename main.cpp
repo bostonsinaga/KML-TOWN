@@ -27,7 +27,7 @@
 #include "tools/kml/kml.cpp"
 #include "tools/txt/txt.h"
 #include "tools/csv/csv.h"
-#include "call-briefer.h"
+#include "call-briefer.cpp"
 
 int main(int argc, char *argv[]) {
 
