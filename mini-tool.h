@@ -23,6 +23,7 @@ namespace mini_tool {
     std::string reverseString(std::string &str_in);
     bool isMatchButIgnoreCase(std::string strA, std::string strB);
     int getInStringCharCount(std::string str, char ch);
+    double filterStringDecimal(std::string strIn);
 
     enum {
         LOWER_CASE_FLAG,

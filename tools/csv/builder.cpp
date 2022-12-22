@@ -27,7 +27,7 @@ bool Builder::compose(
     for (auto &node : *mainFolderNode->getChildren()) {
         if (node->getName() == "Document") {
             // folders of document
-            std::vector<xml::Node*> innerDocFolVec = node->getChildrenByName("Folder", false);
+            std::vector<xml::Node*> innerDocFolVec = node->getChildrenByName("Folder");
             columnNodes.insert(
                 columnNodes.end(),
                 innerDocFolVec.begin(),
@@ -35,7 +35,7 @@ bool Builder::compose(
             );
 
             // documents of document
-            std::vector<xml::Node*> innerDocDocVec = node->getChildrenByName("Document", false);
+            std::vector<xml::Node*> innerDocDocVec = node->getChildrenByName("Document");
             outsiderNodes.insert(
                 outsiderNodes.end(),
                 innerDocDocVec.begin(),
@@ -123,7 +123,7 @@ bool Builder::compose(
         }
         else subColumnsCounts.push_back(3);
 
-        xml::Node *nameNode = node->getFirstChildByName("name", false);
+        xml::Node *nameNode = node->getFirstChildByName("name");
         if (nameNode) {
             colNodeNames.push_back(nameNode->getInnerText());
         }
@@ -246,7 +246,7 @@ bool Builder::compose(
 
                 // coordinate //
 
-                xml::Node *coorNode = rowNodes.at(i)->getFirstDescendantByName("coordinates", false);
+                xml::Node *coorNode = rowNodes.at(i)->getFirstDescendantByName("coordinates");
                 std::string coorStr = "";
 
                 if (coorNode) {
@@ -258,8 +258,8 @@ bool Builder::compose(
                 // name and description //
 
                 xml::Node
-                    *rowNameNode = rowNodes.at(i)->getFirstChildByName("name", false),
-                    *rowDescNode = rowNodes.at(i)->getFirstChildByName("description", false);
+                    *rowNameNode = rowNodes.at(i)->getFirstChildByName("name"),
+                    *rowDescNode = rowNodes.at(i)->getFirstChildByName("description");
 
                 std::string rowNameStr, rowDescStr = "";
 

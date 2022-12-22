@@ -10,6 +10,7 @@ namespace kml {
     int checkCompass(std::string axisStr);
     xml::Node *searchMainFolder(xml::Node *kmlNode);
     xml::Node *getRootDocument(xml::Node *kmlNode);
+    std::string getRootDocumentName(xml::Node *kmlNode);
     
     #include "style-strings.cpp"
     #include "converter.cpp"
@@ -43,6 +44,7 @@ namespace kml {
     #include "cropper.cpp"
     #include "sorter.cpp"
     #include "placemark.cpp"
+    #include "twins-checker.cpp"
 }
 
 #endif // __KML_H__

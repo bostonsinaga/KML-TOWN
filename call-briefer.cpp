@@ -8,18 +8,21 @@ namespace call_briefer {
     std::string checkOverwrite(
         Menu &menu,
         int selectedFlag,
-        int overwriteFlag,
+        const std::vector<int> &overwriteFlags,
         std::string &fileDir_in,
         std::string &fileDir_out
     ) {
-        if (selectedFlag == overwriteFlag) {
-            if (menu.setAlert(
-                std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
-                + fileDir_in + std::string("'?\n")
-            )) {
-                return fileDir_in;
+        for (auto &flag : overwriteFlags) {
+            if (selectedFlag == flag) {
+                if (menu.setAlert(
+                    std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
+                    + fileDir_in + std::string("'?\n")
+                )) {
+                    return fileDir_in;
+                }
+                else return ""; // command canceled
+                break;
             }
-            else return ""; // command canceled
         }
         return fileDir_out;
     }

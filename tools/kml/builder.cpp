@@ -334,7 +334,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
     xml::Node *docNode = getRootDocument(kmlNode);
 
     if (docNode) {
-        xml::Node *nameNode = docNode->getFirstChildByName("name", false);
+        xml::Node *nameNode = docNode->getFirstChildByName("name");
         if (!nameNode) {
             nameNode = new xml::Node("name", docNode);
         }
@@ -344,7 +344,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
     xml::Node *mainFolderNode = searchMainFolder(kmlNode);
 
     if (mainFolderNode) {
-        xml::Node *nameNode = mainFolderNode->getFirstChildByName("name", false);
+        xml::Node *nameNode = mainFolderNode->getFirstChildByName("name");
         if (!nameNode) {
             nameNode = new xml::Node("name", mainFolderNode);
         }

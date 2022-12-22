@@ -3,6 +3,8 @@
 
 class Builder {
     public:
+        Builder() {}
+        
         xml::Node *getFolder(
             std::string name = "",
             bool isOpen = true

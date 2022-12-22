@@ -18,7 +18,7 @@ void Placemark::pinsPath(
     std::vector<std::string> coorStrVec;
     for (auto &pinNode : sortedPinNodes) {
         coorStrVec.push_back(
-            pinNode->getFirstDescendantByName("coordinates", false)->getInnerText()
+            pinNode->getFirstDescendantByName("coordinates")->getInnerText()
         );
     }
 

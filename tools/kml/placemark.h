@@ -3,6 +3,8 @@
 
 class Placemark {
     public:
+        Placemark() {}
+        
         void pinsPath(
             xml::Node *kmlNode,
             std::vector<xml::Node*> &sortedPinNodes

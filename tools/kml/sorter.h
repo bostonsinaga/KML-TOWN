@@ -10,7 +10,8 @@
 class Sorter {
     public:
         Sorter() {}
-        Sorter(bool isPrintNotification, Menu *menu);
+        
+        void printNotification(Menu &menu);
 
         std::vector<xml::Node*> orderPins(
             /*

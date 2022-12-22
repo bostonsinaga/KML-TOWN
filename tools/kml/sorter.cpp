@@ -9,13 +9,11 @@
 *   (this using cropper)
 */
 
-Sorter::Sorter(bool isPrintNotification, Menu *menu) {
-    if (isPrintNotification) {
-        menu->setNotification(
-            std::string("KML-TOWN-> Make sure to put a start point\n") +
-            std::string("           closest to the first desired placemark!\n")
-        );
-    }
+void Sorter::printNotification(Menu &menu) {
+    menu.setNotification(
+        std::string("KML-TOWN-> Make sure to put a start point\n") +
+        std::string("           closest to the first desired placemark!\n")
+    );
 }
 
 std::vector<xml::Node*> Sorter::orderPins(
@@ -49,7 +47,7 @@ std::vector<xml::Node*> Sorter::orderPins(
         pinNodes = dualismVector;
         for (auto &node : dualismVector) {
             pinCoorNodes.push_back(
-                node->getFirstDescendantByName("coordinates", false)
+                node->getFirstDescendantByName("coordinates")
             );
         }
     }

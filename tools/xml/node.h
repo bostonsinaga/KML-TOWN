@@ -41,24 +41,24 @@ class Node {
 
         Node *getFirstChildByName(
             std::string searchName,
-            bool isPrintMessage = true
+            bool isPrintMessage = false
         );
 
         std::vector<Node*> getChildrenByName(
             std::string searchName,
-            bool isPrintMessage = true
+            bool isPrintMessage = false
         );
 
         // pull by name as first child from upper to lower generations
         Node *getFirstDescendantByName(
             std::string searchName,
-            bool isPrintMessage = true
+            bool isPrintMessage = false
         );
 
         // pull by name as children from upper to lower generations
         std::vector<Node*> getDescendantsByName(
             std::string searchName,
-            bool isPrintMessage = true
+            bool isPrintMessage = false
         );
 
         int getGender();

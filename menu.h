@@ -1,7 +1,7 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#define TOTAL_COMMANDS_COUNT 49
+#define TOTAL_COMMANDS_COUNT 53
 #define MAX_INPUT_STRINGS_COUNT 9
 
 #define MAIN_MENU_FLAG 0
@@ -29,46 +29,49 @@
 #define KML_SPLIT_PATHS_CROP_OVERWRITE_FLAG 22
 #define KML_SPLIT_PATHS_NEWFILE_FLAG 23
 #define KML_SPLIT_PATHS_OVERWRITE_FLAG 24
-#define KML_FILTER_AUTO_NEWFILE_FLAG 25
-#define KML_FILTER_AUTO_FLAG 26
-#define KML_FILTER_PINICON_NEWFILE_FLAG 27
-#define KML_FILTER_PINICON_OVERWRITE_FLAG 28
-#define KML_FILTER_PATHCOLOR_NEWFILE_FLAG 29
-#define KML_FILTER_PATHCOLOR_OVERWRITE_FLAG 30
-#define KML_FILTER_NAME_NEWFILE_FLAG 31
-#define KML_FILTER_NAME_OVERWRITE_FLAG 32
-#define KML_FILTER_DESCRIPTION_NEWFILE_FLAG 33
-#define KML_FILTER_DESCRIPTION_OVERWRITE_FLAG 34
-#define KML_FILTER_TEXT_NEWFILE_FLAG 35
-#define KML_FILTER_TEXT_OVERWRITE_FLAG 36
-#define KML_STYLEPINS_ICON_NEWFILE_FLAG 37
-#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 38
-#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 39
-#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 40
-#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 41
-#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 42
-#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 43
-#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 44
-#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 45
-#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 46
-#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 47
-#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 48
+#define KML_TWINS_CHECK_RADIUS_NEWFILE_FLAG 25
+#define KML_TWINS_CHECK_RADIUS_OVERWRITE_FLAG 26
+#define KML_TWINS_CHECK_NORADIUS_NEWFILE_FLAG 27
+#define KML_TWINS_CHECK_NORADIUS_OVERWRITE_FLAG 28
+#define KML_FILTER_AUTO_NEWFILE_FLAG 29
+#define KML_FILTER_AUTO_FLAG 30
+#define KML_FILTER_PINICON_NEWFILE_FLAG 31
+#define KML_FILTER_PINICON_OVERWRITE_FLAG 32
+#define KML_FILTER_PATHCOLOR_NEWFILE_FLAG 33
+#define KML_FILTER_PATHCOLOR_OVERWRITE_FLAG 34
+#define KML_FILTER_NAME_NEWFILE_FLAG 35
+#define KML_FILTER_NAME_OVERWRITE_FLAG 36
+#define KML_FILTER_DESCRIPTION_NEWFILE_FLAG 37
+#define KML_FILTER_DESCRIPTION_OVERWRITE_FLAG 38
+#define KML_FILTER_TEXT_NEWFILE_FLAG 39
+#define KML_FILTER_TEXT_OVERWRITE_FLAG 40
+#define KML_STYLEPINS_ICON_NEWFILE_FLAG 41
+#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 42
+#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 43
+#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 44
+#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 45
+#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 46
+#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 47
+#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 48
+#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 49
+#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 50
+#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 51
+#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 52
 
-#define COMMAND_WORKING_FOLDER "--KML-TOWN --"
-#define CROP_COMMAND_WORKING_FOLDER "--KML-TOWN --CROP"
-#define SORT_COMMAND_WORKING_FOLDER "--KML-TOWN --SORT"
-#define PINS_PATH_COMMAND_WORKING_FOLDER "--KML-TOWN --PINS-PATH"
-#define PATHS_PINS_COMMAND_WORKING_FOLDER "--KML-TOWN --PATHS-PINS"
-#define JOIN_PATHS_COMMAND_WORKING_FOLDER "--KML-TOWN --JOIN-PATHS"
-#define SPLIT_PATHS_COMMAND_WORKING_FOLDER "--KML-TOWN --SPLIT-PATHS"
-#define CLASSIFY_COMMAND_WORKING_FOLDER "--KML-TOWN --CLASSIFY"
-#define FILTER_PINICON_COMMAND_WORKING_FOLDER "--KML-TOWN --FILTER-PINICON"
-#define FILTER_PATHCOLOR_COMMAND_WORKING_FOLDER "--KML-TOWN --FILTER-PATHCOLOR"
-#define FILTER_NAME_COMMAND_WORKING_FOLDER "--KML-TOWN --FILTER-NAME"
-#define FILTER_DESCRIPTION_COMMAND_WORKING_FOLDER "--KML-TOWN --FILTER-DESCRIPTION"
-#define FILTER_TEXT_COMMAND_WORKING_FOLDER "--KML-TOWN --FILTER-TEXT"
-
-#define PRINT_NOTIFICATION 1
+#define COMMAND_WORKING_FOLDER "KML-TOWN  --"
+#define CROP_COMMAND_WORKING_FOLDER "KML-TOWN  --CROP"
+#define SORT_COMMAND_WORKING_FOLDER "KML-TOWN  --SORT"
+#define PINS_PATH_COMMAND_WORKING_FOLDER "KML-TOWN  --PINS-PATH"
+#define PATHS_PINS_COMMAND_WORKING_FOLDER "KML-TOWN  --PATHS-PINS"
+#define JOIN_PATHS_COMMAND_WORKING_FOLDER "KML-TOWN  --JOIN-PATHS"
+#define SPLIT_PATHS_COMMAND_WORKING_FOLDER "KML-TOWN  --SPLIT-PATHS"
+#define CLASSIFY_COMMAND_WORKING_FOLDER "KML-TOWN  --CLASSIFY"
+#define TWINS_CHECK_COMMAND_WORKING_FOLDER "KML-TOWN  --TWINS-CHECK"
+#define FILTER_PINICON_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-PINICON"
+#define FILTER_PATHCOLOR_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-PATHCOLOR"
+#define FILTER_NAME_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-NAME"
+#define FILTER_DESCRIPTION_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-DESCRIPTION"
+#define FILTER_TEXT_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-TEXT"
 
 class Menu {
     public:
@@ -133,8 +136,12 @@ class Menu {
                 << "       and insert them into new folder named '" << SPLIT_PATHS_COMMAND_WORKING_FOLDER << "'\n\n"
 
                 << "~~NOTE:\n"
-                << "    -below commands cannot use area selection (but on styling it will prompt)\n"
-                << "    -[STRING] can be any words\n\n"
+                << "    -below commands cannot use area selection (but on styling it will prompt)\n\n"
+
+                << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME]\n"
+                << "****** checking placemark twins with given radius (0-100 meters)\n"
+                << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n"
+                << "       (if radius not specified, the default will be zero meter or exact position checking)\n\n"
 
                 << "--kml --classify [FILE_NAME] --out [FILE_NAME]\n"
                 << "****** classify placemarks based on their type or style\n"
@@ -143,7 +150,8 @@ class Menu {
 
                 << "~~NOTE:\n"
                 << "    -style and text editor will prompt after\n"
-                << "     first parameters set (enter pressed)\n\n"
+                << "     first parameters set (enter pressed)\n"
+                << "    -[STRING] can be any words\n\n"
 
                 << "--kml --filter [FILE_NAME] --pin-icon [PIN_ICON_NAME] --out [FILE_NAME]\n"
                 << "****** filter placemarks based on their pin icon style\n"
@@ -304,7 +312,7 @@ class Menu {
         int select(std::vector<std::string> inputStrings) {
 
             int passCount = 0, retFlag = -1;
-            bool isUsingKMLTool = false;
+            bool isUsingSelectionArea = false;
             
             // loop 'TOTAL_COMMANDS_COUNT' times
             for (int i = 0; i < sizeof(listStrings) / sizeof(*listStrings); i++) {
@@ -316,8 +324,8 @@ class Menu {
                         passCount++;
                     }
 
-                    if (!isUsingKMLTool && inputStrings.at(j) == "--start-point") {
-                        isUsingKMLTool = true;
+                    if (!isUsingSelectionArea && inputStrings.at(j) == "--start-point") {
+                        isUsingSelectionArea = true;
                     }
                 }
                 
@@ -332,7 +340,7 @@ class Menu {
             }
 
             if (passCount != MAX_INPUT_STRINGS_COUNT) {
-                std::cerr << getErrorString(isUsingKMLTool);
+                std::cerr << getErrorString(isUsingSelectionArea);
             }
 
             return retFlag;
@@ -418,6 +426,11 @@ class Menu {
             {"--kml", "--split-paths", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", ""},
             {"--kml", "--split-paths", "DATA_STRING", "--out", "DATA_STRING", "", "", "", ""},
             {"--kml", "--split-paths", "DATA_STRING", "", "", "", "", "", ""},
+
+            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "--out", "DATA_STRING"},
+            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "", ""},
+            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--out", "DATA_STRING", "", ""},
+            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "", "", "", ""},
 
             // >>>> FILTER
             {"--kml", "--classify", "DATA_STRING", "--out", "DATA_STRING", "", "", "", ""},

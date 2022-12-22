@@ -5,13 +5,11 @@
 
 // CROPPING BY RECTANGULAR AREA FROM START TO END POINT //
 
-Cropper::Cropper(bool isPrintNotification, Menu *menu) {
-    if (isPrintNotification) {
-        menu->setNotification(
-            std::string("KML-TOWN-> Make sure to enter only 2D coordinate\n") +
-            std::string("           of 'latitude' and 'longitude' sequentially!\n")
-        );
-    }
+void Cropper::printNotification(Menu &menu) {
+    menu.setNotification(
+        std::string("KML-TOWN-> Make sure to enter only 2D coordinate\n") +
+        std::string("           of 'latitude' and 'longitude' sequentially!\n")
+    );
 }
 
 std::vector<xml::Node*> Cropper::cutPins(

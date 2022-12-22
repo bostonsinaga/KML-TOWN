@@ -83,7 +83,7 @@ Node *Node::getFirstDescendantByName(
             return child;
         }
         else {
-            Node *retNode = child->getFirstDescendantByName(searchName, false);
+            Node *retNode = child->getFirstDescendantByName(searchName);
             if (retNode) return retNode;
         }
     }
@@ -107,7 +107,7 @@ std::vector<Node*> Node::getDescendantsByName(
             retNodes.push_back(child);
         }
 
-        std::vector<Node*> pulledNodes = child->getDescendantsByName(searchName, false);
+        std::vector<Node*> pulledNodes = child->getDescendantsByName(searchName);
         
         retNodes.insert(
             retNodes.end(),
@@ -155,6 +155,7 @@ void Node::setParent(Node *parent_in) {
     parent = parent_in;
 }
 
+// node still exist (take care)
 void Node::removeFromParent() {
     if (parent) {
         int ctr = 0;

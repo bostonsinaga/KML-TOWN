@@ -51,7 +51,7 @@ namespace kml {
         if (!kmlNode) return nullptr;
 
         std::vector<xml::Node*> documentNodes = (
-            kmlNode->getChildrenByName("Document", false)
+            kmlNode->getChildrenByName("Document")
         );
 
         if (documentNodes.size() > 0) {
@@ -62,7 +62,7 @@ namespace kml {
             }
             else {
                 std::vector<xml::Node*> folderNodes = (
-                    documentNodes.front()->getChildrenByName("Folder", false)
+                    documentNodes.front()->getChildrenByName("Folder")
                 );
 
                 if (folderNodes.size() > 0) {
@@ -76,7 +76,7 @@ namespace kml {
                         return folderNodes.front();
                     }
                 }
-                else if (documentNodes.front()->getFirstChildByName("Placemark", false)) {
+                else if (documentNodes.front()->getFirstChildByName("Placemark")) {
                     // document as main folder (empty folder but may has placemarks)
                     return documentNodes.front();
                 }
@@ -88,11 +88,24 @@ namespace kml {
     }
 
     xml::Node *getRootDocument(xml::Node *kmlNode) {
-        xml::Node *docNode = kmlNode->getFirstChildByName("Document", false);
+        xml::Node *docNode = kmlNode->getFirstChildByName("Document");
         if (!docNode) {
-            docNode =  kmlNode->getFirstChildByName("Folder", false);
+            docNode =  kmlNode->getFirstChildByName("Folder");
         }
         return docNode;
+    }
+
+    std::string getRootDocumentName(xml::Node *kmlNode) {
+        xml::Node *docNode = getRootDocument(kmlNode);
+        if (docNode) {
+            xml::Node *nameNode = docNode->getFirstChildByName("name");
+            if (nameNode) {
+                std::string retStr = nameNode->getInnerText();
+                if (retStr != "") return retStr;
+                return "noname";
+            }
+        }
+        return "noname";
     }
 
     void fillWithPlacemarks(
@@ -102,7 +115,7 @@ namespace kml {
         bool isProcessingPin
     ) {
         // collect pins
-        placemarkVec = containerNode->getDescendantsByName("Placemark");
+        placemarkVec = containerNode->getDescendantsByName("Placemark", true);
 
         // collect pins coordinate //
 
@@ -111,7 +124,7 @@ namespace kml {
         int ctr = 0;
         for (auto &pin : placemarkVec) {
             xml::Node *pinCoor;
-            pinCoor = pin->getFirstDescendantByName("coordinates", false);
+            pinCoor = pin->getFirstDescendantByName("coordinates");
 
             if (pinCoor) {
                 if ((isProcessingPin && pinCoor->getParent()->getName() == "Point") || // pins
@@ -164,20 +177,19 @@ namespace kml {
         if (placemarks.size() > 0) {
             
             // create new pins folder
-            Builder kmlBuilder;
-            xml::Node *folderNode = kmlBuilder.getFolder(newFolderName);
+            xml::Node *folderNode = Builder().getFolder(newFolderName);
             containerNode->addChild(folderNode);
 
             // move up the folder //
 
             int priorityFolderDataNode = 0;
-            if (containerNode->getFirstChildByName("name", false)) {
+            if (containerNode->getFirstChildByName("name")) {
                 priorityFolderDataNode++;
             }
-            if (containerNode->getFirstChildByName("visibility", false)) {
+            if (containerNode->getFirstChildByName("visibility")) {
                 priorityFolderDataNode++;
             }
-            if (containerNode->getFirstChildByName("open", false)) {
+            if (containerNode->getFirstChildByName("open")) {
                 priorityFolderDataNode++;
             }
 
@@ -194,12 +206,12 @@ namespace kml {
         }
 
         // logging
-        if (!logEditedPlacemarks(
+        logEditedPlacemarks(
             typeStr,
             noticeFuncName,
             placemarks,
             containerNode
-        )) {return;} // failed
+        );
     }
 
     bool logEditedPlacemarks(
@@ -222,7 +234,7 @@ namespace kml {
 
         if (isFolderNaming) {
             groupParentNameNode = (
-                containerNode->getFirstChildByName("name", false)
+                containerNode->getFirstChildByName("name")
             );
 
             if (groupParentNameNode) {
@@ -270,7 +282,7 @@ namespace kml {
 
         while (mainFolderNode) {
 
-            xml::Node *nameNode = kmlNode->getFirstChildByName("name", false);
+            xml::Node *nameNode = kmlNode->getFirstChildByName("name");
             if (!nameNode) {
                 nameNode = new xml::Node("name", mainFolderNode);
             }

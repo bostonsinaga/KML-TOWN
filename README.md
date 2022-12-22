@@ -1,4 +1,4 @@
-# KML-TOWN v.0.5.0 2022-12-17 ALPHA
+# KML-TOWN v.0.6.0 2022-12-20 ALPHA
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -16,6 +16,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 ------ *crop* pins and paths</br>
 ------ *sort* pins and paths inside selected rectangular area (you can number them as well)</br>
 ------ *change* pins icon and paths color with a bunch of predefined styles (you can select desired area)</br>
+------ *check* twin of pins and paths (you can perform some after process commands)</br>
 ------ *filter* types of data:</br>
 ---------- classify pins</br>
 ---------- classify paths</br>

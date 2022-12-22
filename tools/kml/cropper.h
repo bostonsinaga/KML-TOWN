@@ -6,7 +6,8 @@
 class Cropper {
     public:
         Cropper() {}
-        Cropper(bool isPrintNotification, Menu *menu);
+
+        void printNotification(Menu &menu);
 
         std::vector<xml::Node*> cutPins(
             xml::Node *pinsContainerNode,

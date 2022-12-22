@@ -158,6 +158,32 @@ namespace mini_tool {
             ctr++;
         }
     }
+
+    double filterStringDecimal(std::string strIn) {
+        int ctr = 0,
+            dcPtCtr = 0; // decimal point counter
+
+        std::string strVal = "";
+        bool isHasNumber = false;
+
+        for (auto &ch : strIn) {
+            if (isANumber(ch)) {
+                strVal += ch;
+                isHasNumber = true;
+            }
+            else if (dcPtCtr == 0 && ch == '.') {
+                if (ctr = 0) strVal += "0";
+                dcPtCtr++;
+            }
+            else if (ctr == 0 && ch == '-') {
+                strVal += ch;
+            }
+            ctr++;
+        }
+
+        if (!isHasNumber) return 0.000;
+        return std::stod(strVal);
+    }
 }
 
 #endif // __MINI_TOOL_CPP__
