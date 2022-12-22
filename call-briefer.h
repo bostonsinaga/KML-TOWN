@@ -6,7 +6,7 @@ namespace call_briefer {
     std::string checkOverwrite(
         Menu &menu,
         int selectedFlag,
-        const std::vector<int> &overwriteFlags,
+        int overwriteFlags,
         std::string &fileDir_in,
         std::string &fileDir_out
     );
@@ -28,6 +28,13 @@ namespace call_briefer {
     void writeFileFunc(
         xml::Node *kmlNode,
         std::string &fileDir_out
+    );
+
+    // return command working folder
+    xml::Node *selectFunctionByPlacemarkType(
+        std::string placemarksType,
+        const std::function<xml::Node*()> &funcPins,
+        const std::function<xml::Node*()> &funcPaths
     );
 }
 

@@ -268,7 +268,7 @@ xml::Node *Scanner::getMainFolder(
     // KML CREATION //
 
     kmlBuilder.setTitle(kmlNode, docName);
-    return kml::searchMainFolder(kmlNode);
+    return kml::General().searchMainFolder(kmlNode);
 }
 
 #endif // __TXT_SCANNER_CPP__

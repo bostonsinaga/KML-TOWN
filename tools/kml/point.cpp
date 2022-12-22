@@ -106,7 +106,7 @@ Point::Point(std::string coorString) {
         }
         
         // compass rate for swapping purpose
-        int compassRate = checkCompass(coorStringVec.at(X));
+        int compassRate = General().checkCompass(coorStringVec.at(X));
         if (std::abs(compassRate) == 1) { // horizontal
             coorStringVec = converter.convertCoor_degreeDecimal(
                 coorStringVec,

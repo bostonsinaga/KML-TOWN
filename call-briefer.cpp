@@ -8,21 +8,18 @@ namespace call_briefer {
     std::string checkOverwrite(
         Menu &menu,
         int selectedFlag,
-        const std::vector<int> &overwriteFlags,
+        int overwriteFlags,
         std::string &fileDir_in,
         std::string &fileDir_out
     ) {
-        for (auto &flag : overwriteFlags) {
-            if (selectedFlag == flag) {
-                if (menu.setAlert(
-                    std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
-                    + fileDir_in + std::string("'?\n")
-                )) {
-                    return fileDir_in;
-                }
-                else return ""; // command canceled
-                break;
+        if (selectedFlag == overwriteFlags) {
+            if (menu.setAlert(
+                std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
+                + fileDir_in + std::string("'?\n")
+            )) {
+                return fileDir_in;
             }
+            else return ""; // command canceled
         }
         return fileDir_out;
     }
@@ -37,7 +34,7 @@ namespace call_briefer {
         bool isSucceeded = true;
         
         if (kmlNode) {
-            xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
+            xml::Node *mainFolderNode = kml::General().searchMainFolder(kmlNode);
 
             if (mainFolderNode) {
                 mini_tool::completeDegreeCoordinateSecondsSign(axisStrVec.at(0));
@@ -176,13 +173,32 @@ namespace call_briefer {
     ) {
         if (kmlNode) {
             // set name of 'main folder' upto 'root' element as 'fileDir_out' name
-            kml::setKMLDocumentName(kmlNode, fileDir_out);
+            kml::General().setKMLDocumentName(kmlNode, fileDir_out);
 
             xml::Writer xmlWriter;
             xmlWriter.stringify(fileDir_out, kmlNode);
             std::cout << "\n**SUCCEEDED**\n";
 
             delete kmlNode;
+        }
+    }
+
+    // return command working folder
+    xml::Node *selectFunctionByPlacemarkType(
+        std::string placemarksType,
+        const std::function<xml::Node*()> &funcPins,
+        const std::function<xml::Node*()> &funcPaths
+    ) {
+        if (placemarksType == "path" || placemarksType == "paths") {
+            return funcPaths();
+        }
+        else {
+            if (placemarksType != "pin" && placemarksType != "pins") {
+                std::cerr
+                    << "KML-TOWN-> Placemarks type input warning. Unknown type of '"
+                    << placemarksType << "'. Default set to 'pins'\n";
+            }
+            return funcPins();
         }
     }
 }

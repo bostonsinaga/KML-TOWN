@@ -331,7 +331,8 @@ xml::Node *Builder::getSkeleton(std::string &docName) {
 }
 
 void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
-    xml::Node *docNode = getRootDocument(kmlNode);
+    General kmlGeneral;
+    xml::Node *docNode = kmlGeneral.getRootDocument(kmlNode);
 
     if (docNode) {
         xml::Node *nameNode = docNode->getFirstChildByName("name");
@@ -341,7 +342,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
         nameNode->setInnerText(docName);
     }
 
-    xml::Node *mainFolderNode = searchMainFolder(kmlNode);
+    xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
 
     if (mainFolderNode) {
         xml::Node *nameNode = mainFolderNode->getFirstChildByName("name");
@@ -354,7 +355,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
 
 void Builder::insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode) {
 
-    xml::Node *docNode = getRootDocument(kmlNode);
+    xml::Node *docNode = General().getRootDocument(kmlNode);
     int childCtr = 0;
 
     for (auto &child : *docNode->getChildren()) {

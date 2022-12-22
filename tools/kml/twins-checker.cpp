@@ -87,19 +87,28 @@ xml::Node *TwinsChecker::findPins(
     return insertFoundPlacemarks(kmlNode, matchedIndexes, pinNodes, "pins");
 }
 
+xml::Node *TwinsChecker::findPaths(
+    xml::Node *kmlNode,
+    std::string meterRadiusRateString
+) {
+    std::cout << "KML-> Twins check for 'paths' is coming soon!!\n";
+    return nullptr;
+}
+
 xml::Node *TwinsChecker::insertFoundPlacemarks(
     xml::Node *kmlNode,
     std::vector<int> *matchedIndexes, // int vector array (has 2 members)
     std::vector<xml::Node*> &placemarkNodes,
     std::string placemarksType
 ) {
-    std::string kmlNameString = getRootDocumentName(kmlNode);
+    General kmlGeneral;
+    std::string kmlNameString = kmlGeneral.getRootDocumentName(kmlNode);
 
     if (matchedIndexes[0].size() > 0) {
         Builder kmlBuilder;
 
         xml::Node *folder = kmlBuilder.getFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
-        getRootDocument(kmlNode)->addChild(folder);
+        kmlGeneral.getRootDocument(kmlNode)->addChild(folder);
 
         xml::Node *folderOri = kmlBuilder.getFolder(
             COMMAND_WORKING_FOLDER + std::string("ORIGINALS")
@@ -131,23 +140,6 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
             << "KML-> Twins checking warning. No '" << placemarksType << "' twins inside '"
             << kmlNameString << "' document\n";
         return nullptr;
-    }
-}
-
-xml::Node *TwinsChecker::selectFindFunction(
-    xml::Node *kmlNode,
-    std::string placemarksType,
-    std::string radiusString
-) {
-    if (placemarksType == "path" || placemarksType == "paths") {
-        std::cout << "KML-> Twins check for 'paths' is coming soon!!\n";
-        return nullptr;
-    }
-    else {
-        if (placemarksType != "pin" && placemarksType != "pins") {
-            std::cerr << "KML-> Twins checking warning. Unknown placemarks type. Default set to 'pins'\n";
-        }
-        return findPins(kmlNode, radiusString);
     }
 }
 

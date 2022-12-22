@@ -31,11 +31,12 @@ std::vector<xml::Node*> Sorter::orderPins(
         pinCoorNodes; // child  // corresponding
 
     xml::Node *pinsContainerNode = nullptr;
+    General kmlGeneral;
 
     if (dualismVector.size() == 1) {
         pinsContainerNode = dualismVector.front();
         
-        fillWithPlacemarks(
+        kmlGeneral.fillWithPlacemarks(
             pinsContainerNode,
             pinNodes,
             pinCoorNodes,
@@ -95,9 +96,9 @@ std::vector<xml::Node*> Sorter::orderPins(
 
     if (isFolderInsertion) {
         // insert into a different folder
-        insertEditedPlacemarksIntoFolder(
-            SORT_COMMAND_WORKING_FOLDER,
+        kmlGeneral.insertEditedPlacemarksIntoFolder(
             pinsContainerNode,
+            Builder().getFolder(SORT_COMMAND_WORKING_FOLDER),
             sortedPinNodes,
             {"Sorting", "Sort"},
             "pin"
@@ -111,7 +112,7 @@ std::vector<xml::Node*> Sorter::orderPins(
     else { // logging
         /* 'dualismVector' has multiple nodes */
 
-        if (logEditedPlacemarks(
+        if (kmlGeneral.logEditedPlacemarks(
             "pin",
             {"Sorting", "Sort"},
             sortedPinNodes,

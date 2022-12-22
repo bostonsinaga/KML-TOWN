@@ -22,7 +22,9 @@ std::vector<xml::Node*> Cropper::cutPins(
         pinNodes,
         pinCoorNodes;
 
-    fillWithPlacemarks(
+    General kmlGeneral;
+
+    kmlGeneral.fillWithPlacemarks(
         pinsContainerNode,
         pinNodes,
         pinCoorNodes,
@@ -55,9 +57,9 @@ std::vector<xml::Node*> Cropper::cutPins(
     }
 
     if (isFolderInsertion) { // insert into a different folder
-        insertEditedPlacemarksIntoFolder(
-            CROP_COMMAND_WORKING_FOLDER,
+        kmlGeneral.insertEditedPlacemarksIntoFolder(
             pinsContainerNode,
+            Builder().getFolder(CROP_COMMAND_WORKING_FOLDER),
             croppedPinNodes,
             {"Cropping", "Crop"},
             "pin"
@@ -69,7 +71,7 @@ std::vector<xml::Node*> Cropper::cutPins(
         else return std::vector<xml::Node*>{pinsContainerNode};
     }
     else { // logging
-        if (logEditedPlacemarks(
+        if (kmlGeneral.logEditedPlacemarks(
             "pin",
             {"Cropping", "Crop"},
             croppedPinNodes,

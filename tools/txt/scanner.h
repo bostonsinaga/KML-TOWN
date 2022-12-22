@@ -12,6 +12,8 @@ class Scanner {
         *  -don't forget to take care returned node
         */
 
+        Scanner() {}
+
         xml::Node *parsePins(
             std::string fileDir_in,
             std::string fileDir_out = ""

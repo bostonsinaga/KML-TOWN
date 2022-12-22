@@ -30,9 +30,11 @@ void Placemark::pinsPath(
         "Created with KML-TOWN"
     )};
 
-    insertEditedPlacemarksIntoFolder(
-        PINS_PATH_COMMAND_WORKING_FOLDER,
-        searchMainFolder(kmlNode),
+    General kmlGeneral;
+
+    kmlGeneral.insertEditedPlacemarksIntoFolder(
+        kmlGeneral.searchMainFolder(kmlNode),
+        Builder().getFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-path unifying", "Pins-path unify"},
         ""

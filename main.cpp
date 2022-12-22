@@ -26,9 +26,9 @@
 #define MERIDIAN_DISTANCE 20003.93 // latitude  (-90° to 90°)
 
 #include "mini-tool.cpp"
-#include "menu.h"
+#include "menu.cpp"
 #include "tools/xml/xml.h"
-#include "tools/kml/kml.cpp"
+#include "tools/kml/kml.h"
 #include "tools/txt/txt.h"
 #include "tools/csv/csv.h"
 #include "call-briefer.cpp"
@@ -73,25 +73,17 @@ int main(int argc, char *argv[]) {
     // CONVERT TXT KML FLAG //
     //////////////////////////
 
-    if (SELECTED_FLAG == CONVERT_TXT_KML_AS_PINS_FLAG ||
-        SELECTED_FLAG == CONVERT_TXT_KML_AS_PATHS_FLAG
-    ) {
-        txt::Scanner txtScanner;
-        xml::Node *kmlNode;
+    if (SELECTED_FLAG == CONVERT_TXT_KML_FLAG) {
 
-        // AS PINS
-        if (SELECTED_FLAG == CONVERT_TXT_KML_AS_PINS_FLAG ) {
-            kmlNode = txtScanner.parsePins(
-                inputStrings.at(2),
-                inputStrings.at(4)
-            );
-        }
-        else { // AS PATHS
-            kmlNode = txtScanner.parsePaths(
-                inputStrings.at(2),
-                inputStrings.at(4)
-            );
-        }
+        xml::Node *kmlNode = call_briefer::selectFunctionByPlacemarkType(
+            inputStrings.at(6),
+            [=]()->xml::Node* {return txt::Scanner().parsePins(
+                inputStrings.at(2), inputStrings.at(4)
+            );},
+            [=]()->xml::Node* {return txt::Scanner().parsePaths(
+                inputStrings.at(2), inputStrings.at(4)
+            );}
+        );
 
         if (kmlNode) {
             std::cout << "\n**SUCCEEDED**\n";
@@ -109,7 +101,6 @@ int main(int argc, char *argv[]) {
         xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
         if (kmlNode) {
-
             std::string separatorSign = "|";
 
             if (menu.setAlert(
@@ -117,14 +108,13 @@ int main(int argc, char *argv[]) {
                 false
             )) {
                 csv::singleCharacterInputNotify(menu, false);
-
                 std::string additionalInput = menu.setAdditionalInput(
                     "KML-TOWN-> Set columns separator sign:  "
                 );
                 separatorSign = additionalInput;
             }
 
-            xml::Node *mainFolderNode = kml::searchMainFolder(kmlNode);
+            xml::Node *mainFolderNode = kml::General().searchMainFolder(kmlNode);
 
             if (mainFolderNode) {
                 csv::Builder csvBuilder;
@@ -156,7 +146,7 @@ int main(int argc, char *argv[]) {
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            {KML_CROP_OVERWRITE_FLAG},
+            KML_CROP_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
@@ -189,7 +179,7 @@ int main(int argc, char *argv[]) {
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            {KML_SORT_OVERWRITE_FLAG},
+            KML_SORT_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
@@ -223,7 +213,7 @@ int main(int argc, char *argv[]) {
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            {KML_PINS_PATH_CROP_OVERWRITE_FLAG},
+            KML_PINS_PATH_CROP_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
@@ -254,26 +244,15 @@ int main(int argc, char *argv[]) {
     /////////////////////
 
     else if (
-        SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_OVERWRITE_FLAG ||
-        SELECTED_FLAG == KML_TWINS_CHECK_NORADIUS_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_TWINS_CHECK_NORADIUS_OVERWRITE_FLAG
+        SELECTED_FLAG == KML_TWINS_CHECK_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_TWINS_CHECK_OVERWRITE_FLAG
     ) {
-        std::string fileDir_out;
-
-        if (SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_NEWFILE_FLAG ||
-            SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_OVERWRITE_FLAG
-        ) {
-            fileDir_out = inputStrings.at(8);
-        }
-        else fileDir_out = inputStrings.at(6);
-
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            {KML_TWINS_CHECK_RADIUS_OVERWRITE_FLAG, KML_TWINS_CHECK_NORADIUS_OVERWRITE_FLAG},
+            KML_TWINS_CHECK_OVERWRITE_FLAG,
             inputStrings.at(2),
-            fileDir_out
+            inputStrings.at(8)
         );
         
         if (fileDir_check != "") {
@@ -283,18 +262,10 @@ int main(int argc, char *argv[]) {
                 *kmlNode = kmlReader.fileParse(inputStrings.at(2)),
                 *twinsCheckedFolder;
 
-            if (SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_NEWFILE_FLAG ||
-                SELECTED_FLAG == KML_TWINS_CHECK_RADIUS_OVERWRITE_FLAG
-            ) {
-                twinsCheckedFolder = kml::TwinsChecker().selectFindFunction(
-                    kmlNode,
-                    inputStrings.at(4),
-                    inputStrings.at(6)
-                );
-            }
-            else twinsCheckedFolder = kml::TwinsChecker().selectFindFunction(
-                kmlNode,
-                inputStrings.at(4)
+            twinsCheckedFolder = call_briefer::selectFunctionByPlacemarkType(
+                inputStrings.at(4),
+                [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6));},
+                [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));}
             );
 
             if (twinsCheckedFolder) {
@@ -318,7 +289,7 @@ int main(int argc, char *argv[]) {
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            {CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG},
+            CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
