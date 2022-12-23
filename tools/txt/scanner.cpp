@@ -17,7 +17,7 @@ xml::Node *Scanner::parsePins(
     std::string fileDir_out
 ) {
     std::vector<std::vector<std::string>> yieldParseFunc = parse(
-        fileDir_in, fileDir_out, "Pins"
+        fileDir_in, fileDir_out, "pins"
     );
 
     if (yieldParseFunc.size() > 0) {
@@ -57,16 +57,17 @@ xml::Node *Scanner::parsePaths(
     std::string fileDir_out
 ) {
     std::vector<std::vector<std::string>> yieldParseFunc = parse(
-        fileDir_in, fileDir_out, "Paths"
-    );
-
-    // firstly sort to prevent doodling paths
-    Sorter().orderCoordinates(
-        yieldParseFunc.at(dateStrVec_flag),
-        yieldParseFunc.at(coorStrVec_flag)
+        fileDir_in, fileDir_out, "paths"
     );
 
     if (yieldParseFunc.size() > 0) {
+        
+        // firstly sort to prevent doodling paths
+        Sorter().orderCoordinates(
+            yieldParseFunc.at(dateStrVec_flag),
+            yieldParseFunc.at(coorStrVec_flag)
+        );
+
         std::string styleMapId;
         xml::Node *mainFolderNode = getMainFolder(fileDir_out, &styleMapId, false);
 
@@ -117,9 +118,8 @@ std::vector<std::vector<std::string>> Scanner::parse(
 
     if (textVector.size() == 0) {
         std::cerr
-            << "TXT-> '"
-            << mini_tool::cutFileDirName(fileDir_in)
-            << "' error! file not found or empty\n";
+            << "TXT-> Scanning for '"<< messageTypeName <<"' error. File named '"
+            << mini_tool::cutFileDirName(fileDir_in) <<"' not found or empty\n";
         
         // failed
         return std::vector<std::vector<std::string>>{};
@@ -212,16 +212,15 @@ std::vector<std::vector<std::string>> Scanner::parse(
 
     if (coorStrVector.size() == 0) {
         std::cerr
-            << "TXT-> " << messageTypeName << " scanning error. No coordinate found in '"
-            << mini_tool::cutFileDirName(fileDir_in)
-            << "' \n";
+            << "TXT-> Scanning for '" << messageTypeName << "' error. No coordinate found in file named '"
+            << mini_tool::cutFileDirName(fileDir_in) << "'\n";
             
         // failed
         return std::vector<std::vector<std::string>>{};
     }
     else {
         std::cout
-            << "TXT-> " << messageTypeName << " scan for '"
+            << "TXT-> Scan for '" << messageTypeName << "' from '"
             << mini_tool::cutFileDirName(fileDir_in)
             << "' completed!\n";
     }
