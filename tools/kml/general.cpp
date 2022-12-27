@@ -214,7 +214,7 @@ void General::insertEditedPlacemarksIntoFolder(
 
 bool General::logEditedPlacemarks(
     std::string typeStr,
-    std::vector<std::string> noticeFuncName,
+    std::vector<std::string> noticeFuncName, // [error, correct]
     std::vector<xml::Node*> &placemarks,
     xml::Node *containerNode
 ) {
@@ -252,13 +252,22 @@ bool General::logEditedPlacemarks(
             0
         );
 
-        std::cerr
-            << "KML-> "
-            << noticeFuncName.at(0) << " error. No "
-            << typeStr << " to "
-            << taskName << " inside '"
-            << (containerNode ? containerNode->getName() : "unknown") << "' named '"
-            << folderName << "'\n";
+        if (taskName != "") {
+            std::cerr
+                << "KML-> "
+                << noticeFuncName.at(0) << " error. No "
+                << typeStr << " to "
+                << taskName << " inside '"
+                << (containerNode ? containerNode->getName() : "unknown") << "' named '"
+                << folderName << "'\n";
+        }
+        else {
+            std::cerr
+                << "KML-> " << noticeFuncName.at(0)
+                << " error. Nothing to process inside '"
+                << (containerNode ? containerNode->getName() : "unknown") << "' named '"
+                << folderName << "'\n";
+        }
 
         return false;
     }

@@ -77,18 +77,52 @@ int main(int argc, char *argv[]) {
 
         xml::Node *kmlNode = call_briefer::selectFunctionByPlacemarkType(
             inputStrings.at(6),
-            [=]()->xml::Node* {return txt::Scanner().parsePins(
+            [&]()->xml::Node* {return txt::Scanner().parsePins(
                 inputStrings.at(2), inputStrings.at(4)
             );},
-            [=]()->xml::Node* {return txt::Scanner().parsePaths(
-                inputStrings.at(2), inputStrings.at(4)
-            );}
+            [&]()->xml::Node* {
+                std::cout << "KML-TOWN-> Parsing 'pins'..\n";
+
+                xml::Node *kmlNode_baby = txt::Scanner().parsePins(
+                    inputStrings.at(2), inputStrings.at(4)
+                );
+
+                if (kmlNode_baby) {
+
+                    // USING PINS SORTER //
+                    /* before directly sorting in '.txt' coordinates available */
+
+                    // from south west - north east
+                    std::string selectCoorStr[2] = {
+                        "90°0'0.0S 180°0'0.0W", "90°0'0.0N 180°0'0.0E"
+                    };
+
+                    std::cout << "KML-TOWN-> Sorting 'pins'..\n";
+
+                    std::vector<xml::Node*> sortedPinNodes = call_briefer::sortPinsFunc(
+                        menu,
+                        kmlNode_baby,
+                        {&selectCoorStr[0], &selectCoorStr[1]},
+                        false
+                    );
+
+                    if (sortedPinNodes.size() > 0) {
+                        std::cout << "KML-TOWN-> Create 'path' segments..\n";
+
+                        kml::Placemark().pinsPathSegments(
+                            kmlNode_baby,
+                            sortedPinNodes
+                        );
+                        
+                        call_briefer::writeFileFunc(kmlNode_baby, inputStrings.at(4));
+                    }
+                }
+
+                return kmlNode_baby;
+            }
         );
 
-        if (kmlNode) {
-            std::cout << "\n**SUCCEEDED**\n";
-            delete kmlNode;
-        }
+        if (kmlNode) delete kmlNode;
         else std::cerr << "\n**FAILED**\n";
     }
 

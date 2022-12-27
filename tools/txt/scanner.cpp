@@ -56,47 +56,10 @@ xml::Node *Scanner::parsePaths(
     std::string fileDir_in,
     std::string fileDir_out
 ) {
-    std::vector<std::vector<std::string>> yieldParseFunc = parse(
-        fileDir_in, fileDir_out, "paths"
-    );
-
-    if (yieldParseFunc.size() > 0) {
-        
-        // firstly sort to prevent doodling paths
-        Sorter().orderCoordinates(
-            yieldParseFunc.at(dateStrVec_flag),
-            yieldParseFunc.at(coorStrVec_flag)
-        );
-
-        std::string styleMapId;
-        xml::Node *mainFolderNode = getMainFolder(fileDir_out, &styleMapId, false);
-
-        kml::Builder kmlBuilder;
-
-        for (int i = 0; i < yieldParseFunc.at(coorStrVec_flag).size() - 1; i++) {
-            
-            std::vector<std::string> coorStrPair {
-                yieldParseFunc.at(coorStrVec_flag).at(i),
-                yieldParseFunc.at(coorStrVec_flag).at(i + 1)
-            };
-
-            mainFolderNode->addChild(
-                kmlBuilder.getPath(
-                    kmlBuilder.COORSTR_ZERO_ADD_ALTITUDE,
-                    styleMapId,
-                    coorStrPair,
-                    "Path " + std::to_string(i + 1),
-                    yieldParseFunc.at(dateStrVec_flag).at(i)
-                )
-            );
-        }
-        
-        xml::Node *kmlNode = mainFolderNode->getRoot();
-        writeOut(fileDir_out, kmlNode);
-        return kmlNode;
-    }
-
-    return nullptr;
+    std::cout
+        << "TXT-> Command warning. Scan into 'paths' is not available yet.\n"
+        << "      Scanning switched for 'pins'!\n";
+    return parsePins(fileDir_in, fileDir_out);
 }
 
 ////////////////////

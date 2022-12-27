@@ -3,7 +3,6 @@
 
 namespace txt {
     #include "samples.cpp"
-    #include "sorter.h"
     #include "scanner.cpp"
 }
 
