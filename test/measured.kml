@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <name>chat.kml</name>
+        <Style id="sn_ylw-pushpin">
+            <IconStyle>
+                <scale>1.10</scale>
+                <Icon>
+                    <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+                </Icon>
+                <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+            </IconStyle>
+        </Style>
+        <Style id="sh_ylw-pushpin">
+            <IconStyle>
+                <scale>1.30</scale>
+                <Icon>
+                    <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+                </Icon>
+                <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+            </IconStyle>
+        </Style>
+        <StyleMap id="msn_ylw-pushpin">
+            <Pair>
+                <key>normal</key>
+                <styleUrl>#sn_ylw-pushpin</styleUrl>
+            </Pair>
+            <Pair>
+                <key>highlight</key>
+                <styleUrl>#sh_ylw-pushpin</styleUrl>
+            </Pair>
+        </StyleMap>
+        <Style id="sn_white-path">
+            <LineStyle>
+                <color>ffffffff</color>
+                <width>2.0</width>
+            </LineStyle>
+        </Style>
+        <Style id="sh_white-path">
+            <LineStyle>
+                <color>ffffffff</color>
+                <width>2.0</width>
+            </LineStyle>
+        </Style>
+        <StyleMap id="msn_white-path">
+            <Pair>
+                <key>normal</key>
+                <styleUrl>#sn_white-path</styleUrl>
+            </Pair>
+            <Pair>
+                <key>highlight</key>
+                <styleUrl>#sh_white-path</styleUrl>
+            </Pair>
+        </StyleMap>
+        <Folder>
+            <name>chat.kml</name>
+            <open>1</open>
+            <Folder>
+                <name>KML-TOWN  --PINS-PATH-SEGMENTS</name>
+                <open>1</open>
+                <Placemark>
+                    <name>Path 1</name>
+                    <description>10/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.765833,-6.267500,0 106.782500,-6.284167,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 2</name>
+                    <description>11/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.782500,-6.284167,0 106.799167,-6.300833,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 3</name>
+                    <description>12/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.799167,-6.300833,0 106.815833,-6.317500,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 4</name>
+                    <description>13/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.815833,-6.317500,0 106.832500,-6.334167,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 5</name>
+                    <description>14/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.832500,-6.334167,0 106.849167,-6.350833,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 6</name>
+                    <description>15/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.849167,-6.350833,0 106.865833,-6.367500,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 7</name>
+                    <description>16/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.865833,-6.367500,0 106.882500,-6.384167,0</coordinates>
+                    </LineString>
+                </Placemark>
+                <Placemark>
+                    <name>Path 8</name>
+                    <description>17/10/2020
+2613m</description>
+                    <styleUrl>#msn_white-path</styleUrl>
+                    <LineString>
+                        <tessellate>1</tessellate>
+                        <coordinates>106.882500,-6.384167,0 106.899167,-6.400833,0</coordinates>
+                    </LineString>
+                </Placemark>
+            </Folder>
+            <Placemark>
+                <name></name>
+                <description>11/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.782500,-6.284167,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>12/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.799167,-6.300833,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>13/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.815833,-6.317500,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>18/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.899167,-6.400833,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>15/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.849167,-6.350833,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>16/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.865833,-6.367500,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>17/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.882500,-6.384167,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>14/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.832500,-6.334167,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name></name>
+                <description>10/10/2020</description>
+                <styleUrl>#msn_ylw-pushpin</styleUrl>
+                <Point>
+                    <coordinates>106.765833,-6.267500,0</coordinates>
+                </Point>
+            </Placemark>
+            <name>chat.kml</name>
+            <name>measured.kml</name>
+        </Folder>
+        <name>chat.kml</name>
+        <name>measured.kml</name>
+    </Document>
+</kml>

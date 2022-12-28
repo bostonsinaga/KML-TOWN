@@ -72,6 +72,12 @@ Menu::Menu() {
         << "****** checking placemark twins with given radius (0-100 meters)\n"
         << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n\n"
 
+        << "--kml --measure-paths [FILE_NAME] --out [FILE_NAME]\n"
+        << "****** measure paths distance (whole input document)\n\n"
+
+        << "--kml --measure-paths [FILE_NAME] --info\n"
+        << "****** only get paths distance information without write file (whole input document)\n\n"
+
         << "--kml --classify [FILE_NAME] --out [FILE_NAME]\n"
         << "****** classify placemarks based on their type or style\n"
         << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "'\n"

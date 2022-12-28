@@ -113,8 +113,6 @@ int main(int argc, char *argv[]) {
                             kmlNode_baby,
                             sortedPinNodes
                         );
-                        
-                        call_briefer::writeFileFunc(kmlNode_baby, inputStrings.at(4));
                     }
                 }
 
@@ -122,8 +120,13 @@ int main(int argc, char *argv[]) {
             }
         );
 
-        if (kmlNode) delete kmlNode;
-        else std::cerr << "\n**FAILED**\n";
+        if (kmlNode) {
+            call_briefer::writeFileFunc(kmlNode, inputStrings.at(4));
+        }
+        else {
+            std::cerr << "\n**FAILED**\n";
+            delete kmlNode;
+        }
     }
 
     //////////////////////////
@@ -304,6 +307,50 @@ int main(int argc, char *argv[]) {
 
             if (twinsCheckedFolder) {
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+            else {
+                delete kmlNode;
+                std::cerr << "\n**FAILED**\n";
+            }
+        }
+    }
+
+    ///////////////////
+    // MEASURE PATHS //
+    ///////////////////
+
+    else if (
+        SELECTED_FLAG == KML_MEASURE_PATHS_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_MEASURE_PATHS_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_MEASURE_PATHS_INFO_FLAG
+    ) {
+        std::string fileDir_check = "";
+
+        if (SELECTED_FLAG != KML_MEASURE_PATHS_INFO_FLAG) {
+            fileDir_check = call_briefer::checkOverwrite(
+                menu,
+                SELECTED_FLAG,
+                KML_MEASURE_PATHS_OVERWRITE_FLAG,
+                inputStrings.at(2),
+                inputStrings.at(4)
+            );
+        }
+        
+        if (fileDir_check != "" || SELECTED_FLAG == KML_MEASURE_PATHS_INFO_FLAG) {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+            if (kml::Placemark().setPathDistance(
+                kmlNode,
+                SELECTED_FLAG == KML_MEASURE_PATHS_INFO_FLAG ? true : false
+            )) {
+                if (SELECTED_FLAG != KML_MEASURE_PATHS_INFO_FLAG) {
+                    call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                }
+                else {
+                    delete kmlNode;
+                    std::cerr << "\n**SUCCEEDED**\n";
+                }
             }
             else {
                 delete kmlNode;

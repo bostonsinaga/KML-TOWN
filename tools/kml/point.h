@@ -3,6 +3,7 @@
 
 class Point {
     public:
+        Point() {};
         Point(double x_in, double y_in);
 
         // from string coordinate
@@ -15,6 +16,8 @@ class Point {
         Point operator-(Point subtPt);
         Point operator*(Point multPt);
         Point operator/(Point divPt);
+
+        std::vector<Point> getPathPointsFromString(std::string coorStr);
         std::string stringify();
 
         double x = 0, y = 0;

@@ -9,6 +9,7 @@ Point::Point(double x_in, double y_in) {
 }
 
 // from string coordinate
+/* ('lng-lat' decimal 'coorString' will be swapped) */
 Point::Point(std::string coorString) {
 
     // overload space removement (only as separator allowed) //
@@ -82,7 +83,7 @@ Point::Point(std::string coorString) {
     }
     // one axis error (1D)
     else if (coorStringCommaCount == 0 && coorStringSpaceCount == 0) {
-        std::cerr << "KML-> Warning. Coordinate has only one axis. Default set to zero point\n";
+        std::cerr << "KML-> Point warning. Coordinate has only one axis. Default set to zero point\n";
         isInvalidAxis = true;
     }
 
@@ -176,6 +177,33 @@ Point Point::operator/(Point divPt) {
     }
 
     return Point(x / divPt.x, y / divPt.y);
+}
+
+// expected input: '180,-90,0 -180,90,0'
+std::vector<Point> Point::getPathPointsFromString(std::string coorStr) {
+    std::vector<Point> retPoints;
+    std::string coorStrBuff = "";
+    int commaCount = 0;
+
+    int ctr = 0;
+    for (auto &ch : coorStr) {
+        if (ch == ',') {
+            commaCount++;
+            coorStrBuff += ch;
+        }
+        else if (ch == ' ' && commaCount >= 2) {
+            retPoints.push_back(Point(coorStrBuff));
+            commaCount = 0;
+            coorStrBuff = "";
+        }
+        else if (ctr == coorStr.size() - 1) {
+            retPoints.push_back(Point(coorStrBuff));
+        }
+        else coorStrBuff += ch;
+        ctr++;
+    }
+
+    return retPoints;
 }
 
 std::string Point::stringify() {
