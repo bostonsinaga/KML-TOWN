@@ -95,10 +95,12 @@ std::string StyleStrings::getPathColorCode(std::string pathColorNamed) {
 
 // get style string data (pin with 'hrev', path with 'color-code')
 std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
+    xml::Node *kmlNode, *styleUrlNode;
 
-    xml::Node
-        *kmlNode = placemark->getRoot(),
-        *styleUrlNode = placemark->getFirstDescendantByName("styleUrl");
+    if (placemark) {
+        kmlNode = placemark->getRoot();
+        styleUrlNode = placemark->getFirstDescendantByName("styleUrl");
+    }
 
     if (styleUrlNode) {
         std::string styleName = styleUrlNode->getInnerText();
@@ -140,7 +142,9 @@ std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
                                 }
                                 //path 
                                 else if (placemark->getFirstDescendantByName("LineString")) {
-                                    return styleNode->getFirstDescendantByName("color")->getInnerText();
+                                    xml::Node *colorNode =  styleNode->getFirstDescendantByName("color");
+                                    if (colorNode) return colorNode->getInnerText();
+                                    return "ffffffff";
                                 }
                             }
                         }

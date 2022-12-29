@@ -14,8 +14,18 @@ class Placemark {
             xml::Node *kmlNode,
             std::vector<xml::Node*> &sortedPinNodes
         );
+
+        int getPathDistance(std::vector<Point> &points);
         
-        bool setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo);
+        bool setPathDistance(
+            xml::Node *kmlNode,
+            bool isOnlyGetInfo
+        );
+
+        void removePathsByDistance(
+            xml::Node *kmlNode,
+            double maxDistance
+        );
 };
 
 #endif // __KML_PLACEMARK_H__

@@ -94,6 +94,41 @@ void Placemark::pinsPathSegments(
     );
 }
 
+int Placemark::getPathDistance(std::vector<Point> &points) {
+
+    double accumulateDistance = 0;
+    Point prevPoint = points.front();
+
+    for (int i = 1; i < points.size(); i++) {
+
+        /* USING ‘HAVERSINE’ FORMULA */
+        
+        double
+            lat1 = prevPoint.x,
+            lat2 = points.at(i).x,
+            lon1 = prevPoint.y,
+            lon2 = points.at(i).y;
+
+        double R = 6371000.00; // metres
+        double φ1 = lat1 * M_PI/180; // φ, λ in radians
+        double φ2 = lat2 * M_PI/180;
+        double Δφ = (lat2-lat1) * M_PI/180;
+        double Δλ = (lon2-lon1) * M_PI/180;
+
+        double a = std::sin(Δφ/2) * std::sin(Δφ/2) +
+                std::cos(φ1) * std::cos(φ2) *
+                std::sin(Δλ/2) * std::sin(Δλ/2);
+        double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
+
+        double d = R * c; // in metres
+
+        accumulateDistance += d;
+        prevPoint = points.at(i);
+    }
+
+    return int(std::round(accumulateDistance));
+}
+
 bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
     if (kmlNode) {
         int totalDistance = 0;
@@ -107,35 +142,7 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
                     lineStringNode->getFirstDescendantByName("coordinates")->getInnerText()
                 );
 
-                int accumulateDistance = 0;
-                Point prevPoint = points.front();
-
-                for (int i = 1; i < points.size(); i++) {
-
-                    /* USING ‘HAVERSINE’ FORMULA */
-                    
-                    double
-                        lat1 = prevPoint.x,
-                        lat2 = points.at(i).x,
-                        lon1 = prevPoint.y,
-                        lon2 = points.at(i).y;
-
-                    double R = 6371000.00; // metres
-                    double φ1 = lat1 * M_PI/180; // φ, λ in radians
-                    double φ2 = lat2 * M_PI/180;
-                    double Δφ = (lat2-lat1) * M_PI/180;
-                    double Δλ = (lon2-lon1) * M_PI/180;
-
-                    double a = std::sin(Δφ/2) * std::sin(Δφ/2) +
-                            std::cos(φ1) * std::cos(φ2) *
-                            std::sin(Δλ/2) * std::sin(Δλ/2);
-                    double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
-
-                    double d = R * c; // in metres
-
-                    accumulateDistance += std::round(d);
-                    prevPoint = points.at(i);
-                }
+                int accumulateDistance = getPathDistance(points);
 
                 if (!isOnlyGetInfo) {
                     xml::Node *descriptionNode = node->getFirstDescendantByName("description");
@@ -170,14 +177,50 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
         }
 
         std::cout
-            << "-----------------------------\n"
-            << "Total distance in document:  " << totalDistance << "m\n"
-            << "-----------------------------\n";
+            << "-----------------------\n"
+            << "Total paths distance:  " << totalDistance << "m\n"
+            << "-----------------------\n";
 
         return true;
     }
 
     return false;
+}
+
+void Placemark::removePathsByDistance(
+    xml::Node *kmlNode,
+    double maxDistance
+) {
+    if (kmlNode) {
+        int totalRemoved = 0;
+        
+        for (auto &node : kmlNode->getDescendantsByName("Placemark", true)) {
+            xml::Node *lineStringNode = node->getFirstDescendantByName("LineString");
+
+            if (lineStringNode) {
+                xml::Node *coordinatesNode = (
+                    lineStringNode->getFirstDescendantByName("coordinates")
+                );
+
+                if (coordinatesNode) {
+                    std::vector<Point> points = Point().getPathPointsFromString(
+                        coordinatesNode->getInnerText()
+                    );
+
+                    if (getPathDistance(points) <= maxDistance) {
+                        node->removeFromParent();
+                        delete node;
+                        totalRemoved++;
+                    }
+                }
+            }
+        }
+
+        std::cout
+            << "----------------------\n"
+            << "Total removed paths:  " << totalRemoved << "\n"
+            << "----------------------\n";
+    }
 }
 
 #endif // __KML_PLACEMARK_CPP__

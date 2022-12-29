@@ -196,10 +196,10 @@ std::vector<Point> Point::getPathPointsFromString(std::string coorStr) {
             commaCount = 0;
             coorStrBuff = "";
         }
-        else if (ctr == coorStr.size() - 1) {
+        else if (ctr == coorStr.size() - 1 && commaCount >= 2) {
             retPoints.push_back(Point(coorStrBuff));
         }
-        else coorStrBuff += ch;
+        else if (mini_tool::isANumber(ch) || ch == '.') coorStrBuff += ch;
         ctr++;
     }
 

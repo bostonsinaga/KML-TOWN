@@ -9,11 +9,12 @@ namespace call_briefer {
         Menu &menu,
         int selectedFlag,
         int overwriteFlags,
-        bool isFileNamesEqual,
         std::string &fileDir_in,
         std::string &fileDir_out
     ) {
-        if (selectedFlag == overwriteFlags || isFileNamesEqual) {
+        if (selectedFlag == overwriteFlags ||
+            fileDir_in == fileDir_out
+        ) {
             if (menu.setAlert(
                 std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
                 + fileDir_in + std::string("'?\n")

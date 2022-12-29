@@ -69,7 +69,7 @@ Menu::Menu() {
         << "    -below commands cannot use area selection (but on styling it will prompt)\n\n"
 
         << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME]\n"
-        << "****** checking placemark twins with given radius (0-100 meters)\n"
+        << "****** checking placemark twins with given radius (0-100 metres)\n"
         << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "--kml --measure-paths [FILE_NAME] --out [FILE_NAME]\n"
@@ -77,6 +77,10 @@ Menu::Menu() {
 
         << "--kml --measure-paths [FILE_NAME] --info\n"
         << "****** only get paths distance information without write file (whole input document)\n\n"
+
+        << "--kml --remove-paths [FILE_NAME] --under-distance [MAX_DISTANCE] --out [FILE_NAME]\n"
+        << "****** remove paths those have distance equal or less than given distance\n"
+        << "       (input distance in metres) \n\n"
 
         << "--kml --classify [FILE_NAME] --out [FILE_NAME]\n"
         << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"

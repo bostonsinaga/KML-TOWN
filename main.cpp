@@ -380,6 +380,35 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    //////////////////////////////////
+    // KML REMOVE PATHS BY DISTANCE //
+    //////////////////////////////////
+
+    else if (
+        SELECTED_FLAG == KML_REMOVE_PATH_BY_DISTANCE_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_REMOVE_PATH_BY_DISTANCE_OVERWRITE_FLAG
+    ) {
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            KML_REMOVE_PATH_BY_DISTANCE_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(6)
+        );
+        
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+
+            kml::Placemark().removePathsByDistance(
+                kmlNode,
+                mini_tool::filterStringDecimal(inputStrings.at(4))
+            );
+
+            call_briefer::writeFileFunc(kmlNode, fileDir_check);
+        }
+    }
+
     //////////////////////////
     // CSV CHANGE SEPARATOR //
     //////////////////////////

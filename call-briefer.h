@@ -7,7 +7,6 @@ namespace call_briefer {
         Menu &menu,
         int selectedFlag,
         int overwriteFlags,
-        bool isFileNamesEqual,
         std::string &fileDir_in,
         std::string &fileDir_out
     );

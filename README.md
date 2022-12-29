@@ -8,17 +8,17 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
 -- **scan** and **convert** into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their date</br>
 -- **manipulate** *'.kml'* such as:</br>
------- *collapse* paths into pins **[under developmenet]**</br>
+------ *collapse* paths into pins **[under development]**</br>
 ------ *unite* pins into path</br>
------- *merge* paths into one path **[under developmenet]**</br>
------- *slice* paths into path fractions **[under developmenet]**</br>
------- *split* points of paths **[under developmenet]**</br>
+------ *merge* paths into one path **[under development]**</br>
+------ *slice* paths into path fractions **[under development]**</br>
+------ *split* points of paths **[under development]**</br>
 ------ *crop* pins and paths</br>
 ------ *sort* pins and paths inside selected rectangular area (you can number them as well)</br>
------- *change* pins icon and paths color with a bunch of predefined styles (you can select desired area) **[under developmenet]**</br>
+------ *change* pins icon and paths color with a bunch of predefined styles (you can select desired area) **[under development]**</br>
 ------ *check* twin of pins and paths (you can perform some after process commands)</br>
 ------ *measure* paths distance</br>
------- *filter* types of data: **[under developmenet]** </br>
+------ *filter* types of data: **[under development]** </br>
 ---------- classify pins</br>
 ---------- classify paths</br>
 ---------- classify similar name or descriptions</br>
