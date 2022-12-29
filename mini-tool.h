@@ -37,6 +37,16 @@ namespace mini_tool {
     );
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr);
+
+    int isInsideVectorString(
+        std::vector<std::string> &strVec,
+        std::string strTest
+    );
+
+    int isInsideVectorInteger(
+        std::vector<int> &dataVec,
+        int dataTest
+    );
 }
 
 #endif // __MINI_TOOL__H__

@@ -184,6 +184,34 @@ namespace mini_tool {
         if (!isHasNumber) return 0.000;
         return std::stod(strVal);
     }
+
+    int isInsideVectorString(
+        std::vector<std::string> &dataVec,
+        std::string dataTest
+    ) {
+        int ctr = 0;
+        for (auto &data : dataVec) {
+            if (data == dataTest) {
+                return ctr;
+            }
+            ctr++;
+        }
+        return -1;
+    }
+
+    int isInsideVectorInteger(
+        std::vector<int> &dataVec,
+        int dataTest
+    ) {
+        int ctr = 0;
+        for (auto &data : dataVec) {
+            if (data == dataTest) {
+                return ctr;
+            }
+            ctr++;
+        }
+        return -1;
+    }
 }
 
 #endif // __MINI_TOOL_CPP__

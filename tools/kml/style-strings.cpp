@@ -93,4 +93,71 @@ std::string StyleStrings::getPathColorCode(std::string pathColorNamed) {
     return "";
 }
 
+// get style string data (pin with 'hrev', path with 'color-code')
+std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
+
+    xml::Node
+        *kmlNode = placemark->getRoot(),
+        *styleUrlNode = placemark->getFirstDescendantByName("styleUrl");
+
+    if (styleUrlNode) {
+        std::string styleName = styleUrlNode->getInnerText();
+        styleName = styleName.substr(1);
+
+        for (auto &styleMapNode : kmlNode->getDescendantsByName("StyleMap", true)) {
+            for (auto &att1 : *styleMapNode->getAttributes()) {
+                if (att1.getName() == "id" && att1.getValue() == styleName) {
+
+                    /* search only for normal style */
+
+                    std::string normalPairStyleName = (
+                        styleMapNode
+                            ->getFirstDescendantByName("Pair")
+                            ->getFirstDescendantByName("styleUrl")->getInnerText()
+                    );
+
+                    normalPairStyleName = normalPairStyleName.substr(1);
+
+                    for (auto &styleNode : kmlNode->getDescendantsByName("Style", true)) {
+                        for (auto &att2 : *styleNode->getAttributes()) {
+                            if (att2.getName() == "id" && att2.getValue() == normalPairStyleName) {
+                                
+                                // pin
+                                if (placemark->getFirstDescendantByName("Point")) {
+
+                                    std::string pinUrlStr = (
+                                        styleNode->getFirstDescendantByName("href")->getInnerText()
+                                    );
+
+                                    std::string urlStr = mini_tool::cutFileDirName(pinUrlStr);
+
+                                    size_t found = urlStr.find(".png");
+                                    if (found != std::string::npos) {
+                                        urlStr = urlStr.substr(0, found);
+                                    }
+
+                                    return urlStr;
+                                }
+                                //path 
+                                else if (placemark->getFirstDescendantByName("LineString")) {
+                                    return styleNode->getFirstDescendantByName("color")->getInnerText();
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+    // no 'styleUrl', set to default
+    else if (placemark->getFirstDescendantByName("Point")) {
+        // pin
+        return "ylw-pushpin";
+    }
+    //path 
+    return "ffffffff";
+}
+
 #endif // __KML_STYLE_STRINGS_CPP__

@@ -6,6 +6,8 @@ class StyleStrings {
         static const int pinIconUrlArray_count = 170;
 
     public:
+        StyleStrings() {}
+
         enum {
             PUSHPIN_PIN_TYPE_FLAG,
             PADDLE_PIN_TYPE_FLAG,
@@ -219,6 +221,9 @@ class StyleStrings {
 
         // path's color codes from name
         std::string getPathColorCode(std::string pathColorNamed);
+
+        // get style string data (pin with 'hrev', path with 'color-code')
+        std::string getPlacemarkStyleData(xml::Node *placemark);
 };
 
 #endif // __KML_STYLE_STRINGS_H__

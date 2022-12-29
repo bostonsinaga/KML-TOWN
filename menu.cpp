@@ -79,9 +79,8 @@ Menu::Menu() {
         << "****** only get paths distance information without write file (whole input document)\n\n"
 
         << "--kml --classify [FILE_NAME] --out [FILE_NAME]\n"
-        << "****** classify placemarks based on their type or style\n"
-        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "'\n"
-        << "       (their type or style being sub folder name)\n\n"
+        << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
+        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "~~NOTE:\n"
         << "    -style and text editor will prompt after\n"

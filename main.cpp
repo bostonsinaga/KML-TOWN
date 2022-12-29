@@ -120,13 +120,7 @@ int main(int argc, char *argv[]) {
             }
         );
 
-        if (kmlNode) {
-            call_briefer::writeFileFunc(kmlNode, inputStrings.at(4));
-        }
-        else {
-            std::cerr << "\n**FAILED**\n";
-            delete kmlNode;
-        }
+        call_briefer::writeFileFunc(kmlNode, inputStrings.at(4));
     }
 
     //////////////////////////
@@ -315,9 +309,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    ///////////////////
-    // MEASURE PATHS //
-    ///////////////////
+    ///////////////////////
+    // KML MEASURE PATHS //
+    ///////////////////////
 
     else if (
         SELECTED_FLAG == KML_MEASURE_PATHS_NEWFILE_FLAG ||
@@ -340,22 +334,49 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            if (kml::Placemark().setPathDistance(
-                kmlNode,
-                SELECTED_FLAG == KML_MEASURE_PATHS_INFO_FLAG ? true : false
-            )) {
-                if (SELECTED_FLAG != KML_MEASURE_PATHS_INFO_FLAG) {
-                    call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            if (kmlNode) {
+                if (kml::Placemark().setPathDistance(
+                    kmlNode,
+                    SELECTED_FLAG == KML_MEASURE_PATHS_INFO_FLAG ? true : false
+                )) {
+                    if (SELECTED_FLAG != KML_MEASURE_PATHS_INFO_FLAG) {
+                        call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                    }
+                    else {
+                        delete kmlNode;
+                        std::cerr << "\n**SUCCEEDED**\n";
+                    }
                 }
                 else {
                     delete kmlNode;
-                    std::cerr << "\n**SUCCEEDED**\n";
+                    std::cerr << "\n**FAILED**\n";
                 }
             }
-            else {
-                delete kmlNode;
-                std::cerr << "\n**FAILED**\n";
-            }
+            else std::cerr << "\n**FAILED**\n";
+        }
+    }
+
+    ////////////////////
+    // KML CLASSIFIER //
+    ////////////////////
+
+    else if (
+        SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG
+    ) {
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            KML_CLASSIFY_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(4)
+        );
+        
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+            kml::Classifier().rearrange(kmlNode);
+            call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }
 

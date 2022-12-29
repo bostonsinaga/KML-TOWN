@@ -9,10 +9,11 @@ namespace call_briefer {
         Menu &menu,
         int selectedFlag,
         int overwriteFlags,
+        bool isFileNamesEqual,
         std::string &fileDir_in,
         std::string &fileDir_out
     ) {
-        if (selectedFlag == overwriteFlags) {
+        if (selectedFlag == overwriteFlags || isFileNamesEqual) {
             if (menu.setAlert(
                 std::string("KML-TOWN-> No '--out [FILE_NAME]'. Are you sure to overwrite the '")
                 + fileDir_in + std::string("'?\n")
@@ -181,6 +182,7 @@ namespace call_briefer {
 
             delete kmlNode;
         }
+        else std::cerr << "\n**FAILED**\n";
     }
 
     // return command working folder
