@@ -18,7 +18,7 @@ class Point {
         Point operator/(Point divPt);
 
         std::vector<Point> getPathPointsFromString(std::string coorStr);
-        std::string stringify();
+        std::string stringify(bool isAddZeroAltitude = true);
 
         double x = 0, y = 0;
 };

@@ -181,6 +181,7 @@ Point Point::operator/(Point divPt) {
 
 // expected input: '180,-90,0 -180,90,0'
 std::vector<Point> Point::getPathPointsFromString(std::string coorStr) {
+    
     std::vector<Point> retPoints;
     std::string coorStrBuff = "";
     int commaCount = 0;
@@ -206,9 +207,9 @@ std::vector<Point> Point::getPathPointsFromString(std::string coorStr) {
     return retPoints;
 }
 
-std::string Point::stringify() {
+std::string Point::stringify(bool isAddZeroAltitude) {
     return std::string(
-        std::to_string(x) + "," + std::to_string(y) + ",0"
+        std::to_string(x) + "," + std::to_string(y) + (isAddZeroAltitude ? ",0" : "")
     );
 }
 
