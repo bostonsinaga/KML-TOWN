@@ -1,4 +1,4 @@
-# KML-TOWN v.0.7.1 2022-12-28 ALPHA
+# KML-TOWN v.0.7.2 ALPHA 2022-12-30
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -27,7 +27,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **HOW TO INSTALL:**</br>
 -- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
----- (or instead download the pre-compiled *'kml-town'* program in *'bin'* folder)</br>
+---- or download released alpha version for windows and linux (*kml-town.zip*)</br>
 -- then add compiled program folder (the folder where *'kml-town'* program located)</br>
 ---- to 'path' in your 'Environment Variable'</br>
 ---- (if you don't want to do so, you have to always *'cd'* into the program folder every time you using it)</br>
