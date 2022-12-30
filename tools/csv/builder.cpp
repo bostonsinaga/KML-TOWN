@@ -133,7 +133,7 @@ bool Builder::compose(
             mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "PATHS") ||
             mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "JALUR")
         ) {
-            subColumnsCounts.push_back(4);
+            subColumnsCounts.push_back(5);
         }
         // using pins column
         else subColumnsCounts.push_back(3);        
@@ -157,10 +157,12 @@ bool Builder::compose(
     CTR = 0;
     for (auto &subCt : subColumnsCounts) {
 
-        if (subCt == 4) { // path
+        if (subCt == 5) { // path
             writeFile << "Name";
             writeFile << separatorSign;
             writeFile << "Description";
+            writeFile << separatorSign;
+            writeFile << "Distance";
             writeFile << separatorSign;
             writeFile << "Start Coordinate";
             writeFile << separatorSign;
@@ -337,16 +339,24 @@ bool Builder::compose(
                 // WRITE THE ROWS //
 
                 // PATHS
-                if (subColumnsCounts.at(CTR) == 4) {
+                if (subColumnsCounts.at(CTR) == 5) {
                     std::string frontCoorStr = getFrontCoordinate(coorStr);
                     std::string backCoorStr = getBackCoordinate(coorStr);
 
                     convertIntoDegreeCoordinate(frontCoorStr);
                     convertIntoDegreeCoordinate(backCoorStr);
 
+                    std::vector<kml::Point> points = kml::Point().getPathPointsFromString(coorStr);
+
+                    std::string distanceStr = (
+                        std::to_string(kml::Placemark().getPathDistance(points))
+                    );
+
                     writeFile << rowNameStr;
                     writeFile << separatorSign;
                     writeFile << rowDescStr;
+                    writeFile << separatorSign;
+                    writeFile << distanceStr;
                     writeFile << separatorSign;
                     writeFile << frontCoorStr;
                     writeFile << separatorSign;
@@ -367,8 +377,8 @@ bool Builder::compose(
             else { // keep the blanks
                 int blankSeparatorCount;
                 
-                if (subColumnsCounts.at(CTR) == 4) {
-                    blankSeparatorCount = 3;
+                if (subColumnsCounts.at(CTR) == 5) {
+                    blankSeparatorCount = 4;
                 }
                 else blankSeparatorCount = 2;
 
