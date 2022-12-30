@@ -42,8 +42,11 @@ namespace csv {
     void singleCharacterInputNotify(Menu &menu, bool isNeedEnterKey) {
         menu.setNotification(
             std::string("KML-TOWN-> Please input single character like '|', '&', etc. to be inside double quotes (\"x\")\n") +
-            std::string("           Also don't input '*' (asterisk) wildcard character\n") +
-            std::string("           because this will attach current directory file names\n"),
+            std::string("           Warnings:\n") +
+            std::string("           -don't input '*' (asterisk) wildcard character\n") +
+            std::string("            because this will attach all current directory file names\n") +
+            std::string("           -avoid input '\"' (double quotes) sign, it may cause unintended multi lines row\n") +
+            std::string("            that supposed to be new row (if contains new line sign)\n"),
             isNeedEnterKey
         );
     }

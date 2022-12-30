@@ -115,21 +115,28 @@ bool Builder::compose(
 
     CTR = 0;
     for (auto &node : columnNodes) {
-        if (mini_tool::isMatchButIgnoreCase(node->getName(), "PATH")  ||
-            mini_tool::isMatchButIgnoreCase(node->getName(), "PATHS") ||
-            mini_tool::isMatchButIgnoreCase(node->getName(), "JALUR")
-        ) {
-            subColumnsCounts.push_back(4);
-        }
-        else subColumnsCounts.push_back(3);
 
+        // get folder name
         xml::Node *nameNode = node->getFirstChildByName("name");
         if (nameNode) {
             colNodeNames.push_back(nameNode->getInnerText());
         }
         else colNodeNames.push_back("PLACEMARKS");
 
+        // write column title
         writeFile << colNodeNames.back();
+
+        // classify column type //
+
+        // using paths column
+        if (mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "PATH")  ||
+            mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "PATHS") ||
+            mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "JALUR")
+        ) {
+            subColumnsCounts.push_back(4);
+        }
+        // using pins column
+        else subColumnsCounts.push_back(3);        
 
         // space from sub columns
         for (int i = 0; i < subColumnsCounts.back() - 1; i++) {
@@ -194,11 +201,15 @@ bool Builder::compose(
 
     /* compose all the data (name, description and coordinate) */
 
-    auto getFrontCoordinate = [=](std::string coorStr)->std::string {
+    /**************/
+    /* MINI FUNCS */
+    /**************/
+
+    auto getFrontCoordinate = [=](std::string coorStr_lmd)->std::string {
         int commaCount = 0;
         std::string retStr;
 
-        for (auto &ch : coorStr) {
+        for (auto &ch : coorStr_lmd) {
             if (ch == ',') {
                 commaCount++;
             }
@@ -213,32 +224,62 @@ bool Builder::compose(
         return "";
     };
 
-    auto getBackCoordinate = [=](std::string coorStr)->std::string {
+    auto getBackCoordinate = [=](std::string coorStr_lmd)->std::string {
         int commaCount = 0;
         std::string retStr;
 
-        for (int i = coorStr.size() - 1; i >= 0; i--) {
-            if (coorStr.at(i) == ',') {
+        for (int i = coorStr_lmd.size() - 1; i >= 0; i--) {
+            if (coorStr_lmd.at(i) == ',') {
                 commaCount++;
             }
 
-            retStr.push_back(coorStr.at(i));
+            retStr.push_back(coorStr_lmd.at(i));
 
             if (i == 0 ||
-                (commaCount == 2 && coorStr.at(i-1) == ' ')
+                (commaCount == 2 && coorStr_lmd.at(i-1) == ' ')
             ) {
-                return retStr;
+                // reverse the string against the loop direction
+                return mini_tool::reverseString(retStr);
             }
         }
 
         return "";
     };
 
+    std::function<void(std::string&)> convertIntoDegreeCoordinate = [=](std::string &coorStr_lmd) {
+        kml::Converter kmlConverter;
+
+        for (int i = coorStr_lmd.size() - 1; i >= 0; i--) {
+            if (coorStr_lmd.at(i) == ',') {
+                coorStr_lmd = coorStr_lmd.substr(0, i);
+                break;
+            }
+        }
+
+        // separate decimal string coordinate
+        std::vector<std::string> decimalAxisStrVec = (
+            kmlConverter.separateCoordinate(coorStr_lmd)
+        );
+
+        // convert decimal (in string form) to degree coordinate
+        std::vector<std::string> axisDegreeStrVec = kmlConverter.convertCoor_decimalDegree(
+            decimalAxisStrVec,
+            kmlConverter.LNG_LAT_SEPARATE_FLAG_IN,
+            kmlConverter.LAT_LNG_SEPARATE_FLAG_OUT
+        );
+
+        // stringify degree coordinate vector
+        coorStr_lmd = axisDegreeStrVec.at(0);
+        coorStr_lmd += " " + axisDegreeStrVec.at(1);
+    };
+
+    /* MINI FUNCS END -------------------- */
+
     CTR = 0;
     for (int i = 0; i < maxRowsCount; i++) {
-        for (auto &rowNodes : rowNodesVector) {
+        for (auto &rowNodes : rowNodesVector) { // follows the column count
 
-            if (i <= rowNodes.size() - 1) {
+            if (rowNodes.size() > 0 && i <= rowNodes.size() - 1) {
 
                 std::function<void()> printNoCoorWarningMessage = [=]() {
                     std::cerr << "CSV-> Builder warning. No coordinate value found in 'Placemarks'\n";
@@ -279,14 +320,29 @@ bool Builder::compose(
                     rowDescStr = rowDescNode->getInnerText();
                 }
 
-                // WRITE THE ROWS //
+                // handle multi lines row covered with double quotes sign ("") //
 
-                kml::Converter kmlConverter;
+                // name
+                if (rowNameStr.find('\n') != std::string::npos) {
+                    rowNameStr.insert(rowNameStr.begin(), '"');
+                    rowNameStr.push_back('"');
+                }
+
+                // description
+                if (rowDescStr.find('\n') != std::string::npos) {
+                    rowDescStr.insert(rowDescStr.begin(), '"');
+                    rowDescStr.push_back('"');
+                }
+
+                // WRITE THE ROWS //
 
                 // PATHS
                 if (subColumnsCounts.at(CTR) == 4) {
                     std::string frontCoorStr = getFrontCoordinate(coorStr);
                     std::string backCoorStr = getBackCoordinate(coorStr);
+
+                    convertIntoDegreeCoordinate(frontCoorStr);
+                    convertIntoDegreeCoordinate(backCoorStr);
 
                     writeFile << rowNameStr;
                     writeFile << separatorSign;
@@ -299,29 +355,7 @@ bool Builder::compose(
                 // 3 sub folder as PINS
                 else {
                     std::string frontCoorStr = getFrontCoordinate(coorStr);
-
-                    for (int i = frontCoorStr.size() - 1; i >= 0; i--) {
-                        if (frontCoorStr.at(i) == ',') {
-                            frontCoorStr = frontCoorStr.substr(0, i);
-                            break;
-                        }
-                    }
-
-                    // separate decimal string coordinate
-                    std::vector<std::string> decimalAxisStrVec = (
-                        kmlConverter.separateCoordinate(frontCoorStr)
-                    );
-
-                    // convert decimal (in string form) to degree coordinate
-                    std::vector<std::string> axisDegreeStrVec = kmlConverter.convertCoor_decimalDegree(
-                        decimalAxisStrVec,
-                        kmlConverter.LNG_LAT_SEPARATE_FLAG_IN,
-                        kmlConverter.LAT_LNG_SEPARATE_FLAG_OUT
-                    );
-
-                    // stringify degree coordinate vector
-                    frontCoorStr = axisDegreeStrVec.at(0);
-                    frontCoorStr += " " + axisDegreeStrVec.at(1);
+                    convertIntoDegreeCoordinate(frontCoorStr);
 
                     writeFile << rowNameStr;
                     writeFile << separatorSign;
@@ -331,8 +365,16 @@ bool Builder::compose(
                 }
             }
             else { // keep the blanks
-                writeFile << separatorSign;
-                writeFile << separatorSign;
+                int blankSeparatorCount;
+                
+                if (subColumnsCounts.at(CTR) == 4) {
+                    blankSeparatorCount = 3;
+                }
+                else blankSeparatorCount = 2;
+
+                for (int j = 0; j < blankSeparatorCount; j++) {
+                    writeFile << separatorSign;
+                }
             }
 
             if (CTR != rowNodesVector.size() - 1) {
