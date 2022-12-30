@@ -1,1 +1,1 @@
-kml-town --kml --classify ../measured.kml --out ../classified.kml
+kml-town --kml --classify ../measured.kml --out ../classified.kml --clean

@@ -52,24 +52,30 @@ namespace mini_tool {
         return str_out;
     }
 
-    bool isMatchButIgnoreCase(std::string strA, std::string strB) {
-        if (strA.size() == strB.size()) {
-
+    bool isStringContains(
+        std::string strA,
+        std::string strB,
+        bool isIgnoreCaseSensitive
+    ) {
+        if (isIgnoreCaseSensitive) {
             int aToADifference = CH_A_LOWER_CODE - CH_A_UPPER_CODE; // positive
-            int ctrB = 0, equalCount = 0;
 
-            for (auto &chA : strA) {
-                if (chA == strB.at(ctrB) ||
-                    std::abs(int(chA) - int(strB.at(ctrB))) == aToADifference
-                ) {
-                    equalCount++;
+            // set to capital letter //
+
+            auto setToCapital = [&](std::string &str) {
+                for (auto &ch : str) {
+                    if (int(ch) >= CH_A_LOWER_CODE) { // smaller (lower)
+                        ch = char(int(ch) - aToADifference);
+                    }
                 }
-                ctrB++;
-            }
+            };
 
-            if (equalCount == strA.size()) {
-                return true;
-            }
+            setToCapital(strA);
+            setToCapital(strB);
+        }
+
+        if (strA.find(strB) != std::string::npos) {
+            return true;
         }
         
         return false;

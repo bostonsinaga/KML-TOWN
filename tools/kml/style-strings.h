@@ -3,7 +3,9 @@
 
 class StyleStrings {
     private:
-        static const int pinIconUrlArray_count = 170;
+        static const int
+            pinIconUrlArray_count = 170,
+            colorCodeArray_count = 12;
 
     public:
         StyleStrings() {}
@@ -208,6 +210,21 @@ class StyleStrings {
             mapLinkShapes + "webcam.png"
         };
 
+        std::string colorCodeArray[colorCodeArray_count] {
+            "ff0000ff",
+            "ff00ffff",
+            "ffff00ff",
+            "ff385294",
+            "ff00ff00",
+            "ff007fff",
+            "ffbf007f",
+            "ffffffff",
+            "ffff0000",
+            "ffffff00",
+            "ff000000",
+            "ff7f7f7f"
+        };
+
         /////////////
         // METHODS //
         /////////////
@@ -216,8 +233,9 @@ class StyleStrings {
         std::string getPinIconNamedUrl(std::string &pinIconNamed);
         int getPinTyleFlag(std::string &pinIconNamed);
 
-        // identify if an icon
-        bool isAnIconName(std::string &pinIconNamed);
+        // identifiers
+        bool isAnIconUrl(std::string &testStr);
+        bool isAColorCode(std::string &testStr);
 
         // path's color codes from name
         std::string getPathColorCode(std::string pathColorNamed);

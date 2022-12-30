@@ -129,9 +129,9 @@ bool Builder::compose(
         // classify column type //
 
         // using paths column
-        if (mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "PATH")  ||
-            mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "PATHS") ||
-            mini_tool::isMatchButIgnoreCase(colNodeNames.back(), "JALUR")
+        if (mini_tool::isStringContains(colNodeNames.back(), "PATH", true)  ||
+            mini_tool::isStringContains(colNodeNames.back(), "PATHS", true) ||
+            mini_tool::isStringContains(colNodeNames.back(), "JALUR", true)
         ) {
             subColumnsCounts.push_back(5);
         }

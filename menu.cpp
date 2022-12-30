@@ -26,6 +26,9 @@ Menu::Menu() {
         << "****** read '.txt' and write location keywords as '.kml' placemarks\n\n"
         << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] : \n"
         << "****** read '.kml' and write placemarks information as formated '.csv' sheet\n"
+        << "       Notes:\n"
+        << "       -the first multiple folders will be the columns\n"
+        << "       -set column/folder name as 'PATH', 'PATHS' or 'JALUR' to generate path column format\n"
 
         << "\n~KML EDITOR COMMANDS:\n\n"
         << "~~NOTE:\n"
@@ -82,9 +85,10 @@ Menu::Menu() {
         << "****** remove paths those have distance equal or less than given distance\n"
         << "       (input distance in metres) \n\n"
 
-        << "--kml --classify [FILE_NAME] --out [FILE_NAME]\n"
+        << "--kml --classify [FILE_NAME] --out [FILE_NAME] --clean <optional>\n"
         << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
-        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "'\n\n"
+        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "' if not using '--clean'\n"
+        << "       otherwise it will delete empty folders and keep the classified folders\n\n"
 
         << "~~NOTE:\n"
         << "    -style and text editor will prompt after\n"

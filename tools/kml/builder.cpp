@@ -40,7 +40,7 @@ xml::Node *Builder::getPinStyleMap(
 
     // using default 'ylw-pushpin'
     if (pinIconNamed == "" ||
-        !styleStrings.isAnIconName(pinIconNamed)
+        !styleStrings.isAnIconUrl(pinIconNamed)
     ) {
         pinIconUrl = styleStrings.pinIconUrlArray[0];
         pinIconNamed = mini_tool::cutFileDirName(pinIconUrl);

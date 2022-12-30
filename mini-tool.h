@@ -21,9 +21,14 @@ namespace mini_tool {
     bool isANumber(char ch);
     bool isALetter(char ch);
     std::string reverseString(std::string &str_in);
-    bool isMatchButIgnoreCase(std::string strA, std::string strB);
     int getInStringCharCount(std::string str, char ch);
     double filterStringDecimal(std::string strIn);
+
+    bool isStringContains(
+        std::string strA,
+        std::string strB,
+        bool isIgnoreCaseSensitive = false
+    );
 
     enum {
         LOWER_CASE_FLAG,

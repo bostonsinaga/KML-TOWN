@@ -134,13 +134,18 @@ int main(int argc, char *argv[]) {
         if (kmlNode) {
             std::string separatorSign = "|";
 
+            menu.setNotification(
+                std::string("\nCSV-> Consider to set column/folder name as 'PATH', 'PATHS' or 'JALUR'\n") +
+                std::string("      to generate path column format\n")
+            );
+
             if (menu.setAlert(
-                "KML-TOWN-> Do you want to change columns separator? (default is '|')\n",
+                "CSV-> Do you want to change columns separator? (default is '|')\n",
                 false
             )) {
                 csv::singleCharacterInputNotify(menu, false);
                 std::string additionalInput = menu.setAdditionalInput(
-                    "KML-TOWN-> Set columns separator sign:  "
+                    "CSV-> Set columns separator sign:  "
                 );
                 separatorSign = additionalInput;
             }
@@ -362,7 +367,9 @@ int main(int argc, char *argv[]) {
 
     else if (
         SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG
+        SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_CLEAN_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_CLEAN_OVERWRITE_FLAG
     ) {
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
@@ -375,7 +382,15 @@ int main(int argc, char *argv[]) {
         if (fileDir_check != "") {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
-            kml::Classifier().rearrange(kmlNode);
+
+            bool isClean = true;
+            if (SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
+                SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG
+            ) {
+                isClean = false;
+            }
+            
+            kml::Classifier().rearrange(kmlNode, isClean);
             call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }

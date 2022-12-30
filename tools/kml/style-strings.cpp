@@ -42,9 +42,18 @@ int StyleStrings::getPinTyleFlag(std::string &pinIconNamed) {
 }
 
 // identify if an icon
-bool StyleStrings::isAnIconName(std::string &pinIconNamed) {
+bool StyleStrings::isAnIconUrl(std::string &testStr) {
     for (int i = 0; i < pinIconUrlArray_count; i++) {
-        if (pinIconNamed == pinIconUrlArray[i]) {
+        if (mini_tool::cutFileDirName(pinIconUrlArray[i]) == testStr) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool StyleStrings::isAColorCode(std::string &testStr) {
+    for (int i = 0; i < colorCodeArray_count; i++) {
+        if (testStr == colorCodeArray[i]) {
             return true;
         }
     }
@@ -54,42 +63,42 @@ bool StyleStrings::isAnIconName(std::string &pinIconNamed) {
 // path's color codes from name
 std::string StyleStrings::getPathColorCode(std::string pathColorNamed) {
     if (pathColorNamed == "red") {
-        return "ff0000ff";
+        return colorCodeArray[0];
     }
     else if (pathColorNamed == "yellow") {
-        return "ff00ffff";
+        return colorCodeArray[1];
     }
     else if (pathColorNamed == "magenta") {
-        return "ffff00ff";
+        return colorCodeArray[2];
     }
     else if (pathColorNamed == "chocolate") {
-        return "ff385294";
+        return colorCodeArray[3];
     }
     else if (pathColorNamed == "green") {
-        return "ff00ff00";
+        return colorCodeArray[4];
     }
     else if (pathColorNamed == "orange") {
-        return "ff007fff";
+        return colorCodeArray[5];
     }
     else if (pathColorNamed == "purple") {
-        return "ffbf007f";
+        return colorCodeArray[6];
     }
     else if (pathColorNamed == "white") {
-        return "ffffffff";
+        return colorCodeArray[7];
     }
     else if (pathColorNamed == "blue") {
-        return "ffff0000";
+        return colorCodeArray[8];
     }
     else if (pathColorNamed == "cyan") {
-        return "ffffff00";
+        return colorCodeArray[9];
     }
     else if (pathColorNamed == "black") {
-        return "ff000000";
+        return colorCodeArray[10];
     }
     else if (pathColorNamed == "gray") {
-        return "ff7f7f7f";
+        return colorCodeArray[11];
     }
-    else return "ffffffff";
+    else return colorCodeArray[7];
     return "";
 }
 

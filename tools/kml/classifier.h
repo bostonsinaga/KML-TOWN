@@ -4,7 +4,7 @@
 class Classifier {
     public:
         Classifier() {}
-        void rearrange(xml::Node *kmlNode);
+        void rearrange(xml::Node *kmlNode, bool isClean);
 };
 
 #endif // __CLASSIFIER_H__

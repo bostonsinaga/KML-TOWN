@@ -3,7 +3,7 @@
 
 #include "classifier.h"
 
-void Classifier::rearrange(xml::Node *kmlNode) {
+void Classifier::rearrange(xml::Node *kmlNode, bool isClean) {
     if (kmlNode) {
 
         std::vector<std::string> styleDataStrVec;
@@ -11,18 +11,29 @@ void Classifier::rearrange(xml::Node *kmlNode) {
 
         for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
 
-            std::string styleDataStr = StyleStrings().getPlacemarkStyleData(placemark);
+            StyleStrings kmlStyleStrings;
+            std::string styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark);
             int foundDex = mini_tool::isInsideVectorString(styleDataStrVec, styleDataStr);
 
             placemark->removeFromParent();
 
-            if (foundDex == -1) {
+            if (foundDex == -1) { // there isn't any yet
                 styleDataStrVec.push_back(styleDataStr);
+                std::string folderName;
+                
+                if (kmlStyleStrings.isAColorCode(styleDataStr)) {
+                    folderName = "PATHS " + styleDataStr;
+                }
+                else {
+                    folderName = "PINS " + styleDataStr;
+                }
+
                 newFolderNodes.push_back(
-                    Builder().getFolder(styleDataStr)
+                    Builder().getFolder(folderName)
                 );
                 newFolderNodes.back()->addChild(placemark);
             }
+            // already available
             else newFolderNodes.at(foundDex)->addChild(placemark);
         }
 
@@ -30,15 +41,47 @@ void Classifier::rearrange(xml::Node *kmlNode) {
 
         xml::Node
             *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode),
-            *classifyFolder = Builder().getFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+            *classifyFolder;
 
-        kmlGeneral.insertEditedPlacemarksIntoFolder(
-            mainFolderNode,
-            classifyFolder,
-            newFolderNodes,
-            {"Classifying placemarks", "Classify placemarks"},
-            ""
-        );
+        if (isClean) {
+            std::vector<xml::Node*>
+                *mainFolderChildrenPtr = mainFolderNode->getChildren(),
+                savedNodes;
+
+            for (auto &node : *mainFolderChildrenPtr) {
+                std::string nodeName = node->getName();
+
+                if (nodeName != "StyleMap" &&
+                    nodeName != "Style" &&
+                    nodeName != "name" &&
+                    nodeName != "description" &&
+                    nodeName != "open"
+                ) {
+                    delete node;
+                    node = nullptr;
+                }
+                else savedNodes.push_back(node);
+            }
+
+            // alternative for 'removeFromParent()'
+            mainFolderChildrenPtr->clear();
+            *mainFolderChildrenPtr = savedNodes;
+
+            for (auto &folderNode : newFolderNodes) {
+                mainFolderNode->addChild(folderNode);
+            }
+        }
+        else {
+            classifyFolder = Builder().getFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+
+            kmlGeneral.insertEditedPlacemarksIntoFolder(
+                mainFolderNode,
+                classifyFolder,
+                newFolderNodes,
+                {"Classifying placemarks", "Classify placemarks"},
+                ""
+            );
+        }
     }
 }
 
