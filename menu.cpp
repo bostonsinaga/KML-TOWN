@@ -11,6 +11,13 @@ Menu::Menu() {
         << "********************\n\n"
         << "MAIN MENU:\n"
 
+        << "\n`````````\n"
+        << "BIG NOTES:\n"
+        << "`````````\n"
+        << "-some of commands are not working because still in development\n"
+        << "-'sorting' and 'cropping' for '.kml' only available for pins\n"
+        << "-there may still be bugs that appear\n"
+
         << "\n~HELP COMMANDS:\n\n"
         << ">>> --help or --menu\n"
         << "****** show available commands\n\n"
@@ -22,6 +29,7 @@ Menu::Menu() {
         << "\n~CONVERTING COMMANDS:\n\n"
         << "~~NOTE:\n"
         << "    -[PLACEMARK_TYPE] value is 'pins' or 'paths'\n\n"
+        
         << ">>> --convert --txt-in [FILE_NAME] --kml-out [FILE_NAME] --type [PLACEMARK_TYPE]\n"
         << "****** read '.txt' and write location keywords as '.kml' placemarks\n\n"
         << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] : \n"
@@ -31,7 +39,7 @@ Menu::Menu() {
         << "       -set column/folder name as 'PATH', 'PATHS' or 'JALUR' to generate path column format\n"
 
         << "\n~KML EDITOR COMMANDS:\n\n"
-        << "~~NOTE:\n"
+        << "~~NOTES:\n"
         << "    -DMS stands for Degrees Minutes Seconds\n"
         << "    -not using '--out' means overwrite the file\n"
         << "    -use '--start-point' and '--end-point' to select desired area in one '.kml'\n"
@@ -52,7 +60,7 @@ Menu::Menu() {
         << "****** draw path from pins in certain area selection\n"
         <<"        and insert the path into new folder named '" << PINS_PATH_COMMAND_WORKING_FOLDER << "'\n\n"
 
-        << "~~NOTE:\n"
+        << "~~NOTES:\n"
         << "    -selecting area still possible here\n"
         << "    -not using area selection means process all entire '.kml' placemarks\n\n"
 
@@ -90,7 +98,7 @@ Menu::Menu() {
         << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "' if not using '--clean'\n"
         << "       otherwise it will delete empty folders and keep the classified folders\n\n"
 
-        << "~~NOTE:\n"
+        << "~~NOTES:\n"
         << "    -style and text editor will prompt after\n"
         << "     first parameters set (enter pressed)\n"
         << "    -[STRING] can be any words\n\n"
@@ -115,7 +123,7 @@ Menu::Menu() {
         << "****** filter placemarks based on their name or description string\n"
         << "       and insert them into new folder named '" << FILTER_TEXT_COMMAND_WORKING_FOLDER << "'\n\n"
 
-        << "~~NOTE:\n"
+        << "~~NOTES:\n"
         << "    -no need to inserting into new folder\n"
         << "     the placemarks will stay in their directory (parent element)\n"
         << "    -please look at '--style-names' for available style names\n"

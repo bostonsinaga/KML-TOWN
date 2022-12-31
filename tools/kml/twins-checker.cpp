@@ -3,7 +3,10 @@
 
 #include "twins-checker.h"
 
-/* after process commands COMING SOON!*/
+/* NOTES:
+*   -after process commands COMING SOON!
+*   -the radius measurement is deprecated (not using 'haversine' formula)
+*/
 
 // return working folder node
 xml::Node *TwinsChecker::findPins(
@@ -120,17 +123,22 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         );
         folder->addChild(folderDupl);
 
+        int matchedCtr = 0;
         for (int i = 0; i < 2; i++) {
             for (auto &index : matchedIndexes[i]) {
                 placemarkNodes.at(index)->removeFromParent();
                 if (i == 0) {
                     folderOri->addChild(placemarkNodes.at(index));
+                    matchedCtr++;
                 }
                 else folderDupl->addChild(placemarkNodes.at(index)); 
             }
         }
 
         std::cout
+            << "----------------\n"
+            << "Total matched:  " << matchedCtr << "\n"
+            << "----------------\n"
             << "KML-> Twins check for '" << placemarksType
             << "' inside '"<< kmlNameString << "' document completed!\n";
         return folder;

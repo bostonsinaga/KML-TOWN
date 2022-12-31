@@ -108,52 +108,15 @@ std::string General::getRootDocumentName(xml::Node *kmlNode) {
     return "noname";
 }
 
-void General::fillWithPlacemarks(
+void General::fillWithPins(
     xml::Node *containerNode,
-    std::vector<xml::Node*> &placemarkVec,           // should be empty
-    std::vector<xml::Node*> &placemarksCoorNodeVec,  // should be empty
-    bool isProcessingPin
+    std::vector<xml::Node*> &pinVec,          // should be empty
+    std::vector<xml::Node*> &pinsCoorNodeVec  // should be empty
 ) {
-    // collect pins
-    placemarkVec = containerNode->getDescendantsByName("Placemark", true);
-
-    // collect pins coordinate //
-
-    std::vector<int> noCoorIndexes;
-
-    int ctr = 0;
-    for (auto &pin : placemarkVec) {
-        xml::Node *pinCoor;
-        pinCoor = pin->getFirstDescendantByName("coordinates");
-
-        if (pinCoor) {
-            if ((isProcessingPin && pinCoor->getParent()->getName() == "Point") || // pins
-                (!isProcessingPin && pinCoor->getParent()->getName() != "Point")   // paths
-            ) {
-                if (isProcessingPin) {
-                    if (mini_tool::getInStringCharCount(pinCoor->getInnerText(), ',') == 2) {
-                        placemarksCoorNodeVec.push_back(pinCoor);
-                    }
-                    else noCoorIndexes.push_back(ctr);
-                }
-                else {
-                    placemarksCoorNodeVec.push_back(pinCoor);
-                }
-            }
-        }
-        else noCoorIndexes.push_back(ctr);
-
-        ctr++;
-    }
-
-    // remove no coordinate nodes
-    int idxShrinkRate = 0;
-    for (auto &idx : noCoorIndexes) {
-        placemarkVec.erase(
-            placemarkVec.begin() + idx + idxShrinkRate,
-            placemarkVec.begin() + idx + idxShrinkRate + 1
-        );
-        idxShrinkRate--;
+    pinVec = containerNode->getDescendantsByName("Point", true);
+    for (auto &pin : pinVec) {
+        pinsCoorNodeVec.push_back(pin->getFirstDescendantByName("coordinates"));
+        pin = pin->getParent(); // to be node named 'Placemark'
     }
 }
 

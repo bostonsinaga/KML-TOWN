@@ -5,6 +5,8 @@
 
 // CROPPING BY RECTANGULAR AREA FROM START TO END POINT //
 
+/* ONLY AVAILABLE FOR PINS YET */
+
 void Cropper::printNotification(Menu &menu) {
     menu.setNotification(
         std::string("KML-TOWN-> Make sure to enter only 2D coordinate\n") +
@@ -24,11 +26,10 @@ std::vector<xml::Node*> Cropper::cutPins(
 
     General kmlGeneral;
 
-    kmlGeneral.fillWithPlacemarks(
+    kmlGeneral.fillWithPins(
         pinsContainerNode,
         pinNodes,
-        pinCoorNodes,
-        true
+        pinCoorNodes
     );
 
     // new pins from cropped (inside rectangular)

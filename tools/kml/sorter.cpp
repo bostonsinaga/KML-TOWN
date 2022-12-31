@@ -9,6 +9,8 @@
 *   (this using cropper)
 */
 
+/* ONLY AVAILABLE FOR PINS YET */
+
 void Sorter::printNotification(Menu &menu) {
     menu.setNotification(
         std::string("KML-TOWN-> Make sure to put a start point\n") +
@@ -36,11 +38,10 @@ std::vector<xml::Node*> Sorter::orderPins(
     if (dualismVector.size() == 1) {
         pinsContainerNode = dualismVector.front();
         
-        kmlGeneral.fillWithPlacemarks(
+        kmlGeneral.fillWithPins(
             pinsContainerNode,
             pinNodes,
-            pinCoorNodes,
-            true
+            pinCoorNodes
         );
     }
     else {
