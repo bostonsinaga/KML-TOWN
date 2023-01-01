@@ -109,18 +109,18 @@ int Placemark::getPathDistance(std::vector<Point> &points) {
             lon1 = prevPoint.y,
             lon2 = points.at(i).y;
 
-        double R = 6371000.00; // metres
-        double φ1 = lat1 * M_PI/180; // φ, λ in radians
-        double φ2 = lat2 * M_PI/180;
-        double Δφ = (lat2-lat1) * M_PI/180;
-        double Δλ = (lon2-lon1) * M_PI/180;
+        double RADIUS = 6371000.00; // metres
+        double radian1 = lat1 * M_PI/180;
+        double radian2 = lat2 * M_PI/180;
+        double deltaRadian1 = (lat2-lat1) * M_PI/180;
+        double deltaRadian2 = (lon2-lon1) * M_PI/180;
 
-        double a = std::sin(Δφ/2) * std::sin(Δφ/2) +
-                std::cos(φ1) * std::cos(φ2) *
-                std::sin(Δλ/2) * std::sin(Δλ/2);
+        double a = std::sin(deltaRadian1/2) * std::sin(deltaRadian1/2) +
+                std::cos(radian1) * std::cos(radian2) *
+                std::sin(deltaRadian2/2) * std::sin(deltaRadian2/2);
         double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
 
-        double d = R * c; // in metres
+        double d = RADIUS * c; // in metres
 
         accumulateDistance += d;
         prevPoint = points.at(i);

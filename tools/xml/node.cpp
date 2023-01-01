@@ -1,7 +1,7 @@
 #ifndef __XML_NODE_CPP__
 #define __XML_NODE_CPP__
 
-#include "Node.h"
+#include "node.h"
 
 Node::Node(std::string name_in, Node *parent_in) {
     name = name_in;

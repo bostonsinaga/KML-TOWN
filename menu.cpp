@@ -11,9 +11,9 @@ Menu::Menu() {
         << "********************\n\n"
         << "MAIN MENU:\n"
 
-        << "\n`````````\n"
+        << "\n----------\n"
         << "BIG NOTES:\n"
-        << "`````````\n"
+        << "----------\n"
         << "-some of commands are not working because still in development\n"
         << "-'sorting' and 'cropping' for '.kml' only available for pins\n"
         << "-there may still be bugs that appear\n"
