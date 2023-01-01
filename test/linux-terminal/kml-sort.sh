@@ -1,0 +1,1 @@
+kml-town --kml --sort ../test-in.kml --start-point "  6°13'34.23S 106°48'51.19T" --end-point "  6°14'0.55S 106°49'35.19T" --out ../test-out.kml
