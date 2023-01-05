@@ -446,13 +446,24 @@ int main(int argc, char *argv[]) {
     //////////////////////////////////
 
     else if (
-        SELECTED_FLAG == KML_REMOVE_PATH_BY_DISTANCE_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_REMOVE_PATH_BY_DISTANCE_OVERWRITE_FLAG
+        SELECTED_FLAG == KML_REMOVE_PATH_UNDER_DISTANCE_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_REMOVE_PATH_UNDER_DISTANCE_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_REMOVE_PATH_OVER_DISTANCE_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_REMOVE_PATH_OVER_DISTANCE_OVERWRITE_FLAG
     ) {
+        bool isAbove = false;
+        if (SELECTED_FLAG == KML_REMOVE_PATH_OVER_DISTANCE_NEWFILE_FLAG ||
+            SELECTED_FLAG == KML_REMOVE_PATH_OVER_DISTANCE_OVERWRITE_FLAG
+        ) {
+            isAbove = true;
+        }
+
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            KML_REMOVE_PATH_BY_DISTANCE_OVERWRITE_FLAG,
+            isAbove ?
+                KML_REMOVE_PATH_OVER_DISTANCE_OVERWRITE_FLAG :
+                KML_REMOVE_PATH_UNDER_DISTANCE_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(6)
         );
@@ -463,7 +474,8 @@ int main(int argc, char *argv[]) {
 
             kml::Placemark().removePathsByDistance(
                 kmlNode,
-                mini_tool::filterStringDecimal(inputStrings.at(4))
+                mini_tool::filterStringDecimal(inputStrings.at(4)),
+                isAbove
             );
 
             call_briefer::writeFileFunc(kmlNode, fileDir_check);

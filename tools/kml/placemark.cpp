@@ -190,7 +190,8 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
 
 void Placemark::removePathsByDistance(
     xml::Node *kmlNode,
-    double maxDistance
+    double limitDistance,
+    bool isAbove
 ) {
     if (kmlNode) {
         int totalRemoved = 0;
@@ -208,7 +209,9 @@ void Placemark::removePathsByDistance(
                         coordinatesNode->getInnerText()
                     );
 
-                    if (getPathDistance(points) <= maxDistance) {
+                    if ((!isAbove && getPathDistance(points) <= limitDistance) ||
+                        (isAbove && getPathDistance(points) >= limitDistance)
+                    ) {
                         node->removeFromParent();
                         delete node;
                         totalRemoved++;

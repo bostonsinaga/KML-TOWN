@@ -25,7 +25,8 @@ class Placemark {
 
         void removePathsByDistance(
             xml::Node *kmlNode,
-            double maxDistance
+            double limitDistance,
+            bool isAbove
         );
 };
 
