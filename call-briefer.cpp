@@ -192,7 +192,9 @@ namespace call_briefer {
         const std::function<xml::Node*()> &funcPins,
         const std::function<xml::Node*()> &funcPaths
     ) {
-        if (placemarksType == "path" || placemarksType == "paths") {
+        if (mini_tool::isStringContains(placemarksType, "path", true) &&
+            mini_tool::isStringContains(placemarksType, "paths", true)
+        ) {
             return funcPaths();
         }
         else {

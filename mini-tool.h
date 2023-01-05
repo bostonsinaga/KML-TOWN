@@ -25,8 +25,8 @@ namespace mini_tool {
     double filterStringDecimal(std::string strIn);
 
     bool isStringContains(
-        std::string strA,
-        std::string strB,
+        std::string containerStr,
+        std::string testStr,
         bool isIgnoreCaseSensitive = false
     );
 
@@ -43,11 +43,13 @@ namespace mini_tool {
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr);
 
+    // return counter (-1 not found)
     int isInsideVectorString(
         std::vector<std::string> &strVec,
         std::string strTest
     );
 
+    // return counter (-1 not found)
     int isInsideVectorInteger(
         std::vector<int> &dataVec,
         int dataTest

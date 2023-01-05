@@ -1,0 +1,1 @@
+kml-town --kml --folder-by-date ../measured.kml

@@ -43,7 +43,8 @@ void Placemark::pinsPath(
 
 void Placemark::pinsPathSegments(
     xml::Node *kmlNode,
-    std::vector<xml::Node*> &sortedPinNodes
+    std::vector<xml::Node*> &sortedPinNodes,
+    bool isFolderize
 ) {
     Builder kmlBuilder;
 

@@ -12,7 +12,8 @@ class Placemark {
 
         void pinsPathSegments(
             xml::Node *kmlNode,
-            std::vector<xml::Node*> &sortedPinNodes
+            std::vector<xml::Node*> &sortedPinNodes,
+            bool isFolderize
         );
 
         int getPathDistance(std::vector<Point> &points);

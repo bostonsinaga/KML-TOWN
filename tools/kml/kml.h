@@ -16,8 +16,8 @@ namespace kml {
     #include "sorter.cpp"
     #include "placemark.cpp"
     #include "twins-checker.cpp"
-    #include "date-folder.cpp" // unusable (still in developent)
     #include "classifier.cpp"
+    #include "date-folder.cpp"
 }
 
 #endif // __KML_H__

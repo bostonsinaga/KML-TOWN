@@ -88,30 +88,40 @@ int main(int argc, char *argv[]) {
                 );
 
                 if (kmlNode_baby) {
-
-                    // USING PINS SORTER //
-                    /* before directly sorting in '.txt' coordinates available */
-
                     // from south west - north east
                     std::string selectCoorStr[2] = {
                         "90°0'0.0S 180°0'0.0W", "90°0'0.0N 180°0'0.0E"
                     };
 
-                    std::cout << "KML-TOWN-> Sorting 'pins'..\n";
+                    std::vector<xml::Node*> selectedPinNodes;
 
-                    std::vector<xml::Node*> sortedPinNodes = call_briefer::sortPinsFunc(
-                        menu,
-                        kmlNode_baby,
-                        {&selectCoorStr[0], &selectCoorStr[1]},
-                        false
-                    );
+                    if (mini_tool::isStringContains(inputStrings.at(6), "sort", true)) {
 
-                    if (sortedPinNodes.size() > 0) {
+                        // using sorter
+                        std::cout << "KML-TOWN-> Sorting 'pins'..\n";
+
+                        selectedPinNodes = call_briefer::sortPinsFunc(
+                            menu,
+                            kmlNode_baby,
+                            {&selectCoorStr[0], &selectCoorStr[1]},
+                            false
+                        );
+                    }
+                    else {
+                        selectedPinNodes = call_briefer::cropPinsFunc(
+                            kmlNode_baby,
+                            {&selectCoorStr[0], &selectCoorStr[1]},
+                            false
+                        );
+                    }
+
+                    if (selectedPinNodes.size() > 0) {
                         std::cout << "KML-TOWN-> Create 'path' segments..\n";
 
                         kml::Placemark().pinsPathSegments(
                             kmlNode_baby,
-                            sortedPinNodes
+                            selectedPinNodes,
+                            true
                         );
                     }
                 }
@@ -383,14 +393,50 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            bool isClean = true;
+            bool isClean = true,
+                 isProceeed = false;
+
             if (SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
                 SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG
             ) {
                 isClean = false;
+                isProceeed = true;
+            }
+            else if (menu.setAlert(
+                std::string("KML-> Classify warning. This will remove empty or previous folders.\n") +
+                std::string("      Keep proceeding?\n")
+            )) {
+                isProceeed = true;
             }
             
-            kml::Classifier().rearrange(kmlNode, isClean);
+            if (isProceeed) {
+                kml::Classifier().rearrange(kmlNode, isClean);
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+        }
+    }
+
+    ////////////////////////
+    // KML FOLDER BY DATE //
+    ////////////////////////
+
+    else if (
+        SELECTED_FLAG == KML_FOLDERBYDATE_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_FOLDERBYDATE_OVERWRITE_FLAG
+    ) {
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            KML_FOLDERBYDATE_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(4)
+        );
+        
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+            
+            kml::DateFolder().packNumeral(kmlNode);
             call_briefer::writeFileFunc(kmlNode, fileDir_check);
         }
     }

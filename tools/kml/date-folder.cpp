@@ -5,107 +5,175 @@
 
 /* called as 'folder-by-date' */
 
-xml::Node *DateFolder::pack(xml::Node *kmlNode) {
-    /* placemarks separated by type */
+/* for now the pattern is 'dd/mm/yyyy' */
 
-    std::vector<xml::Node*> pinNodes, pathNodes;
+void DateFolder::packNumeral(xml::Node *kmlNode) {
 
-    for (int i = 0; i < 2; i++) {
-        std::string typeIdentifierStr;
-        if (i == 0) typeIdentifierStr = "Point";
-        else typeIdentifierStr = "LineString";
+    int CTR = 0;
+    General kmlGeneral;
+    std::vector<std::vector<int>> dateVector;
+    xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
 
-        for (auto &node : kmlNode->getDescendantsByName("Placemark", true)) {
-            xml::Node *typeIdentifierNode = (
-                node->getFirstDescendantByName(typeIdentifierStr)
-            );
+    std::vector<xml::Node*> placemarkNodes = (
+        mainFolderNode->getDescendantsByName("Placemark", true)
+    );
 
-            if (typeIdentifierNode) {
-                if (i == 0) pinNodes.push_back(node);
-                else pathNodes.push_back(node);
-            }
-        }
-    }
+    // search dates //
 
-    for (auto &node : pinNodes) {
-        bool isContinue = false;
-        std::string dateStr = "";
+    for (auto &node : placemarkNodes) {
 
-        xml::Node *nameNode = node->getFirstChildByName("name");        
+        xml::Node
+            *nameNode = node->getFirstDescendantByName("name"),
+            *descNode = node->getFirstDescendantByName("description");
+
+        bool isContinue = true;
+        std::string testStr;
+        std::vector<int> dmyInt;
+
+        // in name
         if (nameNode) {
-            dateStr = testDateTemplate(nameNode->getInnerText());
-            if (dateStr == "") isContinue = true;
-        }
-        else isContinue = true;
+            testStr = nameNode->getInnerText();
+            dmyInt = testNumeralDate(testStr);
 
-        if (isContinue) {
-            xml::Node *descNode = node->getFirstChildByName("description");
-            if (descNode) {
-                dateStr = testDateTemplate(descNode->getInnerText());
+            if (dmyInt.size() > 0) {
+                dateVector.push_back(dmyInt);
+                isContinue = false;
+            }
+        }
+        
+        // in description
+        if (isContinue && descNode) {
+            testStr = descNode->getInnerText();
+            dmyInt = testNumeralDate(testStr);
+
+            if (dmyInt.size() > 0) {
+                dateVector.push_back(dmyInt);
+                isContinue = false;
             }
         }
 
-        /* select forward or reverse numeral date format*/
-        if (dateStr != "") {
-            if (mini_tool::getInStringCharCount(dateStr, '/') == 2) {
-                int dateInTrio[3];
-                size_t found[2];
-
-                found[0] = dateStr.find('/');
-                dateInTrio[0] = std::stoi(dateStr.substr(0, found[0]));
-                found[1] = dateStr.find('/', found[0] + 1);
-                dateInTrio[1] = std::stoi(dateStr.substr(found[0] + 1, found[1]));
-                dateInTrio[2] = std::stoi(dateStr.substr(found[1] + 1));
-
-                if (dateInTrio[0] > 366) { // (yyyy/mm/dd)
-                    // coming soon!!
-                }
-                else if (dateInTrio[0] <= 366) { // (dd/mm/yyyy)
-                    // coming soon!!
-                }
-            }
+        if (isContinue) { // set to latest time
+            dateVector.push_back(std::vector<int>{31, 12, 9999});
         }
-
-        /* EXPECTED RESULT:
-        *   -2022
-        *       -November
-        *           -14th               --> has more than one
-        *               -[placemarks] 
-        *           -15th-21st          --> only has one each interval days
-        *               -[placemarks]
-        */
     }
 
-    return nullptr;
+    // sort dates //
+
+    std::vector<int> dateRates;
+
+    for (auto &dmyInt : dateVector) {
+        dateRates.push_back(dmyInt.at(0) + dmyInt.at(1) + dmyInt.at(2));
+    }
+
+    // smaller-bigger (descending) bubble sort
+    CTR = 0;
+    for (int i = 0; i < dateRates.size(); i++) {
+        for (int j = 1; j < dateRates.size(); j++) {
+            if (dateRates.at(CTR) <= dateRates.at(j)) {
+                CTR = j;
+            }
+            else { // swapping
+                int bufferRate = dateRates.at(CTR);
+                dateRates.at(CTR) = dateRates.at(j);
+                dateRates.at(j) = bufferRate;
+
+                std::vector<int> bufferDmyInt = dateVector.at(CTR);
+                dateVector.at(CTR) = dateVector.at(j);
+                dateVector.at(j) = bufferDmyInt;
+
+                xml::Node *bufferNode = placemarkNodes.at(CTR);
+                placemarkNodes.at(CTR) = placemarkNodes.at(j);
+                placemarkNodes.at(j) = bufferNode;
+            }
+        }
+        CTR = 0;
+    }
+
+    // create date folders //
+
+    std::vector<xml::Node*> newFolderNodes;
+    std::vector<std::string> dateStrVec;
+
+    CTR = 0;
+    for (auto &dmyInt : dateVector) {
+
+        std::string dateStr = (
+            std::to_string(dmyInt.at(0)) + std::string("/") +
+            std::to_string(dmyInt.at(1)) + std::string("/") +
+            std::to_string(dmyInt.at(2))
+        );
+
+        if (dateStr == "31/12/9999") {
+            dateStr = "NO DATE";
+        }
+
+        int insideDex = mini_tool::isInsideVectorString(dateStrVec, dateStr);
+
+        if (insideDex == -1) {
+            dateStrVec.push_back(dateStr);
+            newFolderNodes.push_back(Builder().getFolder(dateStr, false));
+            insideDex = dateStrVec.size() - 1;
+        }
+
+        placemarkNodes.at(CTR)->removeFromParent();
+        newFolderNodes.at(insideDex)->addChild(placemarkNodes.at(CTR));
+        CTR++;
+    }
+
+    // finishing //
+
+    kmlGeneral.insertEditedPlacemarksIntoFolder(
+        mainFolderNode,
+        Builder().getFolder(FOLDERBYDATE_COMMAND_WORKING_FOLDER),
+        newFolderNodes,
+        {"Date foldering", "Folder by date"},
+        "placemark"
+    );
 }
 
-/* only numeral template available yet! */
-std::string DateFolder::testDateTemplate(std::string strIn) {
-    std::string retStr = "";
+std::vector<int> DateFolder::testNumeralDate(std::string testStr) {
 
-    // numeral template (2022/11/14) //
+    std::vector<std::string> dmyStr(3, "");
+    int slashCount = 0;
 
-    int slashCtr = 0;
-    for (auto &ch : strIn) {
+    for (auto &ch : testStr) {
         if (mini_tool::isANumber(ch)) {
-            retStr += ch;
+            dmyStr.at(slashCount).push_back(ch);
         }
         else if (ch == '/') {
-            retStr += ch;
-            slashCtr++;
+            slashCount++;
         }
-        else if (slashCtr == 2) {
+        else if (slashCount == 2 && !mini_tool::isANumber(ch)) {
             break;
         }
         else {
-            retStr = "";
-            slashCtr = 0;
+            dmyStr = std::vector<std::string>(3, "");
+            slashCount = 0;
         }
     }
 
-    // name template coming soon!! //
+    std::vector<int> retDmyInt;
+    int blankCount = 0;
 
-    return retStr;
+    for (auto &str : dmyStr) {
+        if (str == "") blankCount++;
+        else {
+            retDmyInt.push_back(
+                int(mini_tool::filterStringDecimal(str))
+            );
+        }
+    }
+
+    if (blankCount > 0) {
+        return std::vector<int>{};
+    }
+
+    // handle year
+    if (int(std::log10(retDmyInt.back())) == 1) {
+        retDmyInt.back() += 2000;
+    }
+
+    return retDmyInt;
 }
 
 #endif // __KML_DATE_FOLDER_CPP__

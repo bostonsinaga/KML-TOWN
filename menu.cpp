@@ -31,7 +31,9 @@ Menu::Menu() {
         << "    -[PLACEMARK_TYPE] value is 'pins' or 'paths'\n\n"
         
         << ">>> --convert --txt-in [FILE_NAME] --kml-out [FILE_NAME] --type [PLACEMARK_TYPE]\n"
-        << "****** read '.txt' and write location keywords as '.kml' placemarks\n\n"
+        << "****** read '.txt' and write location keywords as '.kml' placemarks.\n"
+        << "       available types: 'pins', 'paths', 'paths-sort'\n\n"
+        
         << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] : \n"
         << "****** read '.kml' and write placemarks information as formated '.csv' sheet\n"
         << "       Notes:\n"
@@ -97,6 +99,9 @@ Menu::Menu() {
         << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
         << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "' if not using '--clean'\n"
         << "       otherwise it will delete empty folders and keep the classified folders\n\n"
+
+        << "--kml --folder-by-date [FILE_NAME] --out [FILE_NAME]\n"
+        << "****** pack placemarks by their date into new folder named '"<< FOLDERBYDATE_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "~~NOTES:\n"
         << "    -style and text editor will prompt after\n"

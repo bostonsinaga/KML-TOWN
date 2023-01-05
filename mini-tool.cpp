@@ -53,8 +53,8 @@ namespace mini_tool {
     }
 
     bool isStringContains(
-        std::string strA,
-        std::string strB,
+        std::string containerStr,
+        std::string testStr,
         bool isIgnoreCaseSensitive
     ) {
         if (isIgnoreCaseSensitive) {
@@ -70,11 +70,11 @@ namespace mini_tool {
                 }
             };
 
-            setToCapital(strA);
-            setToCapital(strB);
+            setToCapital(containerStr);
+            setToCapital(testStr);
         }
 
-        if (strA.find(strB) != std::string::npos) {
+        if (containerStr.find(testStr) != std::string::npos) {
             return true;
         }
         
