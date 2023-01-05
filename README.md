@@ -1,4 +1,4 @@
-# KML-TOWN v.0.7.4 ALPHA 2023-01-01
+# KML-TOWN v.0.8.0 ALPHA 2023-01-05
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -18,11 +18,11 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 ------ *change* pins icon and paths color with a bunch of predefined styles (you can select desired area) **[under development]**</br>
 ------ *check* twin of pins and paths (you can perform some after process commands)</br>
 ------ *measure* paths distance</br>
------- *filter* types of data: **[under development]** </br>
----------- classify pins</br>
----------- classify paths</br>
----------- classify similar name or descriptions</br>
----------- classify similar pin styles or path colors</br>
+------ *filter* types of data: **[partially under development]** </br>
+---------- classify by type</br>
+---------- classify by date</br>
+---------- classify similar name or description</br>
+---------- classify similar pin style or path color</br>
 -- **convert** *'.kml'* into *'.csv'* with folders as *columns* and data as *rows* (you can specify the separator)
 
 **HOW TO INSTALL:**</br>
