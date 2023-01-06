@@ -12,6 +12,7 @@ class DateFolder {
 
     private:
         std::vector<int> testNumeralDate(std::string testStr);
+        int convertMonthInDaysCount(int month);
 };
 
 #endif // __KML_DATE_FOLDER_H__

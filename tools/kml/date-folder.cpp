@@ -61,8 +61,13 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
 
     std::vector<int> dateRates;
 
-    for (auto &dmyInt : dateVector) {
-        dateRates.push_back(dmyInt.at(0) + dmyInt.at(1) + dmyInt.at(2));
+    // assumed the format is 'dd/mm/yyyy'
+    for (auto &dmyInt : dateVector) { // convert to total days count
+        dateRates.push_back(
+            dmyInt.at(0) +
+            convertMonthInDaysCount(dmyInt.at(1)) +
+            dmyInt.at(2) * 365 + dmyInt.at(2) / 4 // regard to leap years
+        );
     }
 
     // smaller-bigger (descending) bubble sort
@@ -174,6 +179,20 @@ std::vector<int> DateFolder::testNumeralDate(std::string testStr) {
     }
 
     return retDmyInt;
+}
+
+int DateFolder::convertMonthInDaysCount(int month) {
+    int retCount = 0;
+    
+    int daysCountArr[12] = {
+        31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    };
+
+    for (int i = 0; i < month; i++) {
+        retCount += daysCountArr[i];
+    }
+
+    return retCount;
 }
 
 #endif // __KML_DATE_FOLDER_CPP__
