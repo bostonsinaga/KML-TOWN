@@ -38,3 +38,24 @@ I use this software in my previous job, as a coordinate data entry using **Googl
 This really help me. And I hope this can help you too. Thank you.</br>
 
 **Boston Sinaga**
+
+
+
+# SCREENSHOTS
+
+**CROP PINS**
+
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-wide-pins.png" alt="crop pins" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-crop-pins.png" alt="crop pins" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-selected-pins.png" alt="crop pins" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-cropped-pins.png" alt="crop pins" width="800"/>
+
+**PINS TO PATH**
+
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-pins-path.png" alt="crop pins" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-path-of-pins.png" alt="crop pins" width="800"/>
+
+**KML TO SHEET**
+
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-kml-csv.png" alt="crop pins" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-sheet.png" alt="crop pins" width="800"/>
