@@ -3,7 +3,7 @@
 
 #include "reader.h"
 
-Node *Reader::fileParse(std::string fileName) {
+Node *Reader::fileParse(std::string fileName, bool isNotify) {
 
     std::ifstream readFile(fileName);
     std::string text, stringBuffer;
@@ -17,7 +17,7 @@ Node *Reader::fileParse(std::string fileName) {
 
     if (foundTopper != std::string::npos) {
         text = text.substr(foundTopper + XML_TOPPER_COUNT);
-        return parse(text, fileName);
+        return parse(text, fileName, isNotify);
     }
 
     std::cerr
@@ -29,9 +29,15 @@ Node *Reader::fileParse(std::string fileName) {
 }
 
 // input must only has one root in text form
-Node *Reader::parse(std::string text, std::string fileName) {
+Node *Reader::parse(
+    std::string text,
+    std::string fileName,
+    bool isNotify
+) {
 
-    std::cout << "XML-> Reading '" << fileName << "'...\n";
+    if (isNotify) {
+        std::cout << "XML-> Reading '" << fileName << "'...\n";
+    }
 
     // multi root error message
     std::function<void(std::string)> multiRootErrorMessage = [=](std::string name) {
@@ -285,7 +291,10 @@ Node *Reader::parse(std::string text, std::string fileName) {
         if (fileName == ".xml") {
             fileName = retNode->getName() + " [in runtime element]";
         }
-        std::cout << "XML-> Parse from '" << fileName << "' completed!\n";
+
+        if (isNotify) {
+            std::cout << "XML-> Parse from '" << fileName << "' completed!\n";
+        }
     }
 
     return retNode;
