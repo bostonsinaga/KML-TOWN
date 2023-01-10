@@ -99,6 +99,20 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
     std::vector<xml::Node*> newFolderNodes;
     std::vector<std::string> dateStrVec;
 
+    int bufferItemsCount = 0;
+
+    auto setFolderNameWithCount = [=](xml::Node *node, int count) {
+        xml::Node *nameNode = node->getFirstDescendantByName("name");
+        if (nameNode) {
+            nameNode->setInnerText(
+                nameNode->getInnerText() +
+                std::string(" (") +
+                std::to_string(count) +
+                std::string(" pcs)")
+            );
+        }
+    };
+
     CTR = 0;
     for (auto &dmyInt : dateVector) {
 
@@ -115,15 +129,23 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
         int insideDex = mini_tool::isInsideVectorString(dateStrVec, dateStr);
 
         if (insideDex == -1) {
+            if (newFolderNodes.size() > 0) {
+                setFolderNameWithCount(newFolderNodes.back(), bufferItemsCount);
+            }
+
             dateStrVec.push_back(dateStr);
             newFolderNodes.push_back(Builder().getFolder(dateStr, false));
             insideDex = dateStrVec.size() - 1;
+            bufferItemsCount = 0;
         }
 
         placemarkNodes.at(CTR)->removeFromParent();
         newFolderNodes.at(insideDex)->addChild(placemarkNodes.at(CTR));
+        bufferItemsCount++;
         CTR++;
     }
+
+    setFolderNameWithCount(newFolderNodes.back(), bufferItemsCount);
 
     // finishing //
 
