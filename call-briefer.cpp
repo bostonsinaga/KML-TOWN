@@ -192,13 +192,15 @@ namespace call_briefer {
         const std::function<xml::Node*()> &funcPins,
         const std::function<xml::Node*()> &funcPaths
     ) {
-        if (mini_tool::isStringContains(placemarksType, "path", true) &&
+        if (mini_tool::isStringContains(placemarksType, "path", true) ||
             mini_tool::isStringContains(placemarksType, "paths", true)
         ) {
             return funcPaths();
         }
         else {
-            if (placemarksType != "pin" && placemarksType != "pins") {
+            if (!mini_tool::isStringContains(placemarksType, "pin", true) &&
+                !mini_tool::isStringContains(placemarksType, "pins", true)
+            ) {
                 std::cerr
                     << "KML-TOWN-> Placemarks type input warning. Unknown type of '"
                     << placemarksType << "'. Default set to 'pins'\n";

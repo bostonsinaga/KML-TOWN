@@ -34,7 +34,7 @@ Menu::Menu() {
         << "****** read '.txt' and write location keywords as '.kml' placemarks.\n"
         << "       available types: 'pins', 'paths', 'paths-sort'\n\n"
         
-        << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] : \n"
+        << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] :\n"
         << "****** read '.kml' and write placemarks information as formated '.csv' sheet\n"
         << "       Notes:\n"
         << "       -the first multiple folders will be the columns\n"
@@ -46,7 +46,7 @@ Menu::Menu() {
         << "    -not using '--out' means overwrite the file\n"
         << "    -use '--start-point' and '--end-point' to select desired area in one '.kml'\n"
         << "     (if degree coordinate as the input, please remove the double quote signs (\") [usually in DMS coordinate]\n"
-        << "      to prevent unexpected or overload command parameters)\n"
+        << "     to prevent unexpected or overload command parameters)\n"
         << "    -selecting area is mandatory in 'crop', 'sort' and 'pins-path'\n\n"
 
         << "--kml --crop [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
@@ -60,7 +60,7 @@ Menu::Menu() {
 
         << "--kml --pins-path [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
         << "****** draw path from pins in certain area selection\n"
-        <<"        and insert the path into new folder named '" << PINS_PATH_COMMAND_WORKING_FOLDER << "'\n\n"
+        << "       and insert the path into new folder named '" << PINS_PATH_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "~~NOTES:\n"
         << "    -selecting area still possible here\n"
@@ -68,10 +68,10 @@ Menu::Menu() {
 
         << "--kml --paths-pins [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
         << "****** set points of paths as coordinate of new pins\n"
-        <<"        and insert the pins into new folder named '" << PATHS_PINS_COMMAND_WORKING_FOLDER << "'\n\n"
+        << "       and insert the pins into new folder named '" << PATHS_PINS_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "--kml --join-paths [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** join paths as one path \n"
+        << "****** join paths as one path\n"
         << "       and insert them into new folder named '" << JOIN_PATHS_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "--kml --split-paths [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
@@ -93,11 +93,11 @@ Menu::Menu() {
 
         << "--kml --remove-paths [FILE_NAME] --under-distance [MAX_DISTANCE] --out [FILE_NAME]\n"
         << "****** remove paths those have distance equal or less than given distance\n"
-        << "       (input distance in metres) \n\n"
+        << "       (input distance in metres)\n\n"
 
         << "--kml --remove-paths [FILE_NAME] --over-distance [MIN_DISTANCE] --out [FILE_NAME]\n"
         << "****** remove paths those have distance equal or more than given distance\n"
-        << "       (input distance in metres) \n\n"
+        << "       (input distance in metres)\n\n"
 
         << "--kml --classify [FILE_NAME] --out [FILE_NAME] --clean <optional>\n"
         << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
