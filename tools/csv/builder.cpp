@@ -218,7 +218,14 @@ bool Builder::compose(
 
             retStr.push_back(ch);
 
-            if (commaCount == 2 && ch == '0') {
+            if (commaCount == 2 && mini_tool::isANumber(ch)) {
+
+                // set default altitude to '0' (conservation)
+                if (ch != '0') {
+                    retStr.pop_back();
+                    retStr.push_back('0');
+                }
+
                 return retStr;
             }
         }
