@@ -1,2 +1,3 @@
-bin/
-bin/*
+bin/linux
+bin/linux/kml-town
+bin/windows/kml-town.exe
