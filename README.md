@@ -27,7 +27,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 **HOW TO INSTALL:**</br>
 -- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
 ---- or <a href="https://github.com/bostonsinaga/KML-TOWN/releases/">download</a> released alpha version instead</br>
--- then add compiled program folder (the 'bin/' folder where *'kml-town'* program located)</br>
+-- then add compiled program folder path (the 'bin/' folder where *'kml-town'* program located)</br>
 ---- to 'path' in your 'Environment Variable'</br>
 ---- (if you don't want to do so, you have to always *'cd'* into the program folder every time you using it)</br>
 -- and finally run *'kml-town'* in your CLI</br>
