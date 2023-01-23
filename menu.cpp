@@ -107,30 +107,12 @@ Menu::Menu() {
         << "--kml --folder-by-date [FILE_NAME] --out [FILE_NAME]\n"
         << "****** pack placemarks by their date into new folder named '"<< FOLDERBYDATE_COMMAND_WORKING_FOLDER << "'\n\n"
 
-        << "~~NOTES:\n"
-        << "    -style and text editor will prompt after\n"
-        << "     first parameters set (enter pressed)\n"
+        << "~~NOTE:\n"
         << "    -[STRING] can be any words\n\n"
 
-        << "--kml --filter [FILE_NAME] --pin-icon [PIN_ICON_NAME] --out [FILE_NAME]\n"
-        << "****** filter placemarks based on their pin icon style\n"
-        << "       and insert them into new folder named '" << FILTER_PINICON_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "--kml --filter [FILE_NAME] --path-color [PATH_COLOR_NAME] --out [FILE_NAME]\n"
-        << "****** filter placemarks based on their path color style\n"
-        << "       and insert them into new folder named '" << FILTER_PATHCOLOR_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "--kml --filter [FILE_NAME] --name [STRING] --out [FILE_NAME]\n"
-        << "****** filter placemarks based on their name string\n"
-        << "       and insert them into new folder named '" << FILTER_NAME_COMMAND_WORKING_FOLDER << "'\n\n"
-        
-        << "--kml --filter [FILE_NAME] --description [STRING] --out [FILE_NAME]\n"
-        << "****** filter placemarks based on their description string\n"
-        << "       and insert them into new folder named '" << FILTER_DESCRIPTION_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "--kml --filter [FILE_NAME] --text [STRING] --out [FILE_NAME]\n"
-        << "****** filter placemarks based on their name or description string\n"
-        << "       and insert them into new folder named '" << FILTER_TEXT_COMMAND_WORKING_FOLDER << "'\n\n"
+        << "--kml --folder-by-text [FILE_NAME] --string [STRING] --out [FILE_NAME]\n"
+        << "****** pack placemarks by search string inside their name or description\n"
+        << "       and insert them into new folder named '" << FOLDERBYTEXT_COMMAND_WORKING_FOLDER << "'\n\n"
 
         << "~~NOTES:\n"
         << "    -no need to inserting into new folder\n"

@@ -441,6 +441,33 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    ////////////////////////
+    // KML FILTER BY TEXT //
+    ////////////////////////
+
+    else if (
+        SELECTED_FLAG == KML_FILTER_TEXT_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_FILTER_TEXT_OVERWRITE_FLAG
+    ) {
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            SELECTED_FLAG,
+            KML_FILTER_TEXT_OVERWRITE_FLAG,
+            inputStrings.at(2),
+            inputStrings.at(6)
+        );
+        
+        if (fileDir_check != "") {
+            xml::Reader kmlReader;
+            xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
+            
+            if (kml::Classifier().folderByText(kmlNode, inputStrings.at(4))) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+            else std::cerr << "\n**FAILED**\n";
+        }
+    }
+
     //////////////////////////////////
     // KML REMOVE PATHS BY DISTANCE //
     //////////////////////////////////

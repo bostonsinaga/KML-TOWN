@@ -28,6 +28,7 @@ class General {
 
         bool logEditedPlacemarks(
             std::string typeStr,
+            // (BELOW! set empty string to disable / using custom notification)
             std::vector<std::string> noticeFuncName,
             std::vector<xml::Node*> &placemarks,
             xml::Node *containerNode

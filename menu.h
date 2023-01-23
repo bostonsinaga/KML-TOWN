@@ -1,7 +1,7 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#define TOTAL_COMMANDS_COUNT 61
+#define TOTAL_COMMANDS_COUNT 53
 #define MAX_INPUT_STRINGS_COUNT 9
 
 #define MAIN_MENU_FLAG 0
@@ -43,28 +43,20 @@
 #define KML_CLASSIFY_CLEAN_OVERWRITE_FLAG 36
 #define KML_FOLDERBYDATE_NEWFILE_FLAG 37
 #define KML_FOLDERBYDATE_OVERWRITE_FLAG 38
-#define KML_FILTER_PINICON_NEWFILE_FLAG 39
-#define KML_FILTER_PINICON_OVERWRITE_FLAG 40
-#define KML_FILTER_PATHCOLOR_NEWFILE_FLAG 41
-#define KML_FILTER_PATHCOLOR_OVERWRITE_FLAG 42
-#define KML_FILTER_NAME_NEWFILE_FLAG 43
-#define KML_FILTER_NAME_OVERWRITE_FLAG 44
-#define KML_FILTER_DESCRIPTION_NEWFILE_FLAG 45
-#define KML_FILTER_DESCRIPTION_OVERWRITE_FLAG 46
-#define KML_FILTER_TEXT_NEWFILE_FLAG 47
-#define KML_FILTER_TEXT_OVERWRITE_FLAG 48
-#define KML_STYLEPINS_ICON_NEWFILE_FLAG 49
-#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 50
-#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 51
-#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 52
-#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 53
-#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 54
-#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 55
-#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 56
-#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 57
-#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 58
-#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 59
-#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 60
+#define KML_FILTER_TEXT_NEWFILE_FLAG 39
+#define KML_FILTER_TEXT_OVERWRITE_FLAG 40
+#define KML_STYLEPINS_ICON_NEWFILE_FLAG 41
+#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 42
+#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 43
+#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 44
+#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 45
+#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 46
+#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 47
+#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 48
+#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 49
+#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 50
+#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 51
+#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 52
 
 #define COMMAND_WORKING_FOLDER "KML-TOWN  --"
 #define CROP_COMMAND_WORKING_FOLDER "KML-TOWN  --CROP"
@@ -77,11 +69,7 @@
 #define TWINS_CHECK_COMMAND_WORKING_FOLDER "KML-TOWN  --TWINS-CHECK"
 #define CLASSIFY_COMMAND_WORKING_FOLDER "KML-TOWN  --CLASSIFY"
 #define FOLDERBYDATE_COMMAND_WORKING_FOLDER "KML-TOWN --FOLDER-BY-DATE"
-#define FILTER_PINICON_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-PINICON"
-#define FILTER_PATHCOLOR_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-PATHCOLOR"
-#define FILTER_NAME_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-NAME"
-#define FILTER_DESCRIPTION_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-DESCRIPTION"
-#define FILTER_TEXT_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-TEXT"
+#define FOLDERBYTEXT_COMMAND_WORKING_FOLDER "KML-TOWN  --FOLDER-BY-TEXT"
 
 class Menu {
     public:
@@ -159,20 +147,8 @@ class Menu {
             {"--kml", "--folder-by-date", "DATA_STRING", "--out", "DATA_STRING", "", "", "", ""},
             {"--kml", "--folder-by-date", "DATA_STRING", "", "", "", "", "", ""},
 
-            {"--kml", "--filter", "DATA_STRING", "--pin-icon", "DATA_STRING", "--out", "DATA_STRING", "", ""},
-            {"--kml", "--filter", "DATA_STRING", "--pin-icon", "DATA_STRING", "", "", "", ""},
-
-            {"--kml", "--filter", "DATA_STRING", "--path-color", "DATA_STRING", "--out", "DATA_STRING", "", ""},
-            {"--kml", "--filter", "DATA_STRING", "--path-color", "DATA_STRING", "", "", "", ""},
-
-            {"--kml", "--filter", "DATA_STRING", "--name", "DATA_STRING", "--out", "DATA_STRING", "", ""},
-            {"--kml", "--filter", "DATA_STRING", "--name", "DATA_STRING", "", "", "", ""},
-
-            {"--kml", "--filter", "DATA_STRING", "--description", "DATA_STRING", "--out", "DATA_STRING", "", ""},
-            {"--kml", "--filter", "DATA_STRING", "--description", "DATA_STRING", "", "", "", ""},
-
-            {"--kml", "--filter", "DATA_STRING", "--text", "DATA_STRING", "--out", "DATA_STRING", "", ""},
-            {"--kml", "--filter", "DATA_STRING", "--text", "DATA_STRING", "", "", "", ""},
+            {"--kml", "--folder-by-text", "DATA_STRING", "--string", "DATA_STRING", "--out", "DATA_STRING", "", ""},
+            {"--kml", "--folder-by-text", "DATA_STRING", "--string", "DATA_STRING", "", "", "", ""},
 
             // >>>> STYLE
             {"--kml", "--style-pins", "DATA_STRING", "--icon", "DATA_STRING", "--out", "DATA_STRING", "", ""},

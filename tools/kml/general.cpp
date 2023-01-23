@@ -143,19 +143,19 @@ void General::insertEditedPlacemarksIntoFolder(
 
         // move up the folder //
 
-        int priorityFolderDataNode = 0;
+        int priorityFolderCount = 0;
         if (prevContainerNode->getFirstChildByName("name")) {
-            priorityFolderDataNode++;
+            priorityFolderCount++;
         }
         if (prevContainerNode->getFirstChildByName("visibility")) {
-            priorityFolderDataNode++;
+            priorityFolderCount++;
         }
         if (prevContainerNode->getFirstChildByName("open")) {
-            priorityFolderDataNode++;
+            priorityFolderCount++;
         }
 
         prevContainerNode->swapChildren(
-            prevContainerNode->getChildren()->at(priorityFolderDataNode),
+            prevContainerNode->getChildren()->at(priorityFolderCount),
             newContainerNode
         );
 
@@ -167,20 +167,23 @@ void General::insertEditedPlacemarksIntoFolder(
     }
 
     // logging
-    logEditedPlacemarks(
-        typeStr,
-        noticeFuncName,
-        placemarks,
-        prevContainerNode
-    );
+    if (!(noticeFuncName[0] == "" && noticeFuncName[1] == "")) {
+        logEditedPlacemarks(
+            typeStr,
+            noticeFuncName,
+            placemarks,
+            prevContainerNode
+        );
+    }
 }
 
 bool General::logEditedPlacemarks(
     std::string typeStr,
+    // (BELOW! set empty string to disable / using custom notification)
     std::vector<std::string> noticeFuncName, // [error, correct]
     std::vector<xml::Node*> &placemarks,
     xml::Node *containerNode
-) {
+) {     
     // set folder name //
     std::string folderName = "noname";
     bool isFolderNaming = true;

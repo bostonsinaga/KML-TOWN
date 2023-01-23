@@ -85,4 +85,62 @@ void Classifier::rearrange(xml::Node *kmlNode, bool isClean) {
     }
 }
 
+bool Classifier::folderByText(xml::Node *kmlNode, std::string searchStr) {
+    if (kmlNode) {
+
+        std::vector<xml::Node*> placemarks;
+        General kmlGeneral = General();
+
+        for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
+
+            xml::Node *plmk_stringNode;
+            bool isAble = false;
+
+            plmk_stringNode = placemark->getFirstDescendantByName("name");
+            if (plmk_stringNode) {
+                if (plmk_stringNode->getInnerText().find(searchStr) != std::string::npos) {
+                    placemark->removeFromParent();
+                    placemarks.push_back(placemark);
+                    isAble = true;
+                }
+            }
+
+            if (!isAble) {
+                plmk_stringNode = placemark->getFirstDescendantByName("description");
+                if (plmk_stringNode) {
+                    if (plmk_stringNode->getInnerText().find(searchStr) != std::string::npos) {
+                        placemark->removeFromParent();
+                        placemarks.push_back(placemark);
+                    }
+                }
+            }
+        }
+
+        if (placemarks.size() > 0) {
+            std::string folderName = FOLDERBYTEXT_COMMAND_WORKING_FOLDER + std::string("  ") + searchStr;
+
+            xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
+            std::cout << "KML-> Found: " << placemarks.size() << "\n"
+                      << "      Placed to folder named '" << folderName << "'\n"
+                      << "      Folder by text completed!\n";
+
+            kmlGeneral.insertEditedPlacemarksIntoFolder(
+                mainFolderNode,
+                Builder().getFolder(folderName),
+                placemarks,
+                {"", ""},
+                ""
+            );
+            return true;
+        }
+        else {
+            std::cerr << "KML-> Folder by text error. "
+                      << "No placemark's name or description contains '" << searchStr << "'\n";
+            return false;
+        }
+    }
+
+    return false;
+}
+
 #endif // __CLASSIFIER_CPP__
