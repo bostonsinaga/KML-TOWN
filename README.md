@@ -1,4 +1,4 @@
-# KML-TOWN v0.8.4 ALPHA 2023-01-18
+# KML-TOWN v0.8.5 ALPHA 2023-01-23
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -21,8 +21,7 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 ------ *filter* types of data:</br>
 ---------- classify by type</br>
 ---------- classify by date</br>
----------- classify similar name or description **[under development]**</br>
----------- classify similar pin style or path color **[under development]**</br>
+---------- classify by text from name or description</br>
 -- **convert** *'.kml'* into *'.csv'* with folders as *columns* and data as *rows* (you can specify the separator)
 
 **HOW TO INSTALL:**</br>
