@@ -1,0 +1,1 @@
+kml-town --kml --folder-by-text ../measured.kml --string "10/10/2020" --out ../foldered-by-text.kml
