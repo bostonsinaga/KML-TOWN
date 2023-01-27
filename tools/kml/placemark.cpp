@@ -102,7 +102,9 @@ int Placemark::getPathDistance(std::vector<Point> &points) {
 
     for (int i = 1; i < points.size(); i++) {
 
-        /* USING ‘HAVERSINE’ FORMULA */
+        ///////////////////////////////
+        // USING ‘HAVERSINE’ FORMULA //
+        ///////////////////////////////
         
         double
             lat1 = prevPoint.x,
@@ -110,7 +112,7 @@ int Placemark::getPathDistance(std::vector<Point> &points) {
             lon1 = prevPoint.y,
             lon2 = points.at(i).y;
 
-        double RADIUS = 6371000.00; // metres
+        double RADIUS = 6371000.00; // in meter
         double radian1 = lat1 * M_PI/180;
         double radian2 = lat2 * M_PI/180;
         double deltaRadian1 = (lat2-lat1) * M_PI/180;
@@ -121,7 +123,7 @@ int Placemark::getPathDistance(std::vector<Point> &points) {
                 std::sin(deltaRadian2/2) * std::sin(deltaRadian2/2);
         double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
 
-        double d = RADIUS * c; // in metres
+        double d = RADIUS * c; // in meter
 
         accumulateDistance += d;
         prevPoint = points.at(i);

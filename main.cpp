@@ -21,10 +21,6 @@
 #define ANM_DEG_INT_CHAR_PT1 45 // anomaly degree sign
 #define ANM_DEG_INT_CHAR_PT2 166
 
-// value in kilo meters
-#define EQUATOR_DISTANCE  40075.00 // longitude (-180° to 180°)
-#define MERIDIAN_DISTANCE 20003.93 // latitude  (-90° to 90°)
-
 #include "mini-tool.cpp"
 #include "menu.cpp"
 #include "tools/xml/xml.h"

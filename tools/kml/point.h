@@ -1,6 +1,11 @@
 #ifndef __KML_POINT_H__
 #define __KML_POINT_H__
 
+/*
+*   POINT IN DEGREE (°)
+*   -but not limited for distance as meter
+*/
+
 class Point {
     public:
         Point() {};

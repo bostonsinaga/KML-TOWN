@@ -17,14 +17,14 @@ xml::Node *TwinsChecker::findPins(
 
     /* limited from 0 to 100 meters */
     meterRadius = mini_tool::filterStringDecimal(meterRadiusRateString);
-    if (meterRadius < 0.0) meterRadius = 0.0;
-    else if (meterRadius > 100.0) meterRadius = 100.0;
+    meterRadius = std::abs(meterRadius);
 
     std::vector<xml::Node*> pinNodes;
     std::vector<Point> pinPoints;
 
     for (auto &node : kmlNode->getDescendantsByName("Placemark", true)) {
         xml::Node *pointNode = node->getFirstDescendantByName("Point");
+        
         if (pointNode) {
             pinNodes.push_back(node);
 
@@ -33,15 +33,23 @@ xml::Node *TwinsChecker::findPins(
                 pointNode->getFirstDescendantByName("coordinates")->getInnerText()
             ));
 
-            // convert points to meters distance
-            /*
-            *   'pinPoints' should not exceed degree limit
-            *   ~EQUATOR_DISTANCE is -180° to 180°
-            *   ~MERIDIAN_DISTANCE is -90° to 90°
-            */
+            Placemark kmlPlacemark;
+
+            // SPECIAL! Convert point as 'degree' to point as 'meter' //
+
+            std::vector<Point>
+                ptHor_vec = { // X
+                    Point(pinPoints.back().x, 0),
+                    Point(0, 0)
+                },
+                ptVer_vec = { // Y
+                    Point(0, pinPoints.back().y),
+                    Point(0, 0)
+                };
+
             pinPoints.back() = Point(
-                pinPoints.back().x / 360 * EQUATOR_DISTANCE * 1000,
-                pinPoints.back().y / 180 * MERIDIAN_DISTANCE * 1000
+                kmlPlacemark.getPathDistance(ptHor_vec),
+                kmlPlacemark.getPathDistance(ptVer_vec)
             );
         }
     }
@@ -53,36 +61,23 @@ xml::Node *TwinsChecker::findPins(
     std::vector<Point> pinPointsBuffer = pinPoints;
 
     for (auto &pointA : pinPoints) {
+        bool isMatched = false;
+        
         for (auto &pointB : pinPointsBuffer) {
             if (ctrA != ctrB &&
-                pointA.x >= pointB.x - meterRadius / 2 &&
-                pointA.x <= pointB.x + meterRadius / 2 &&
-                pointA.y >= pointB.y - meterRadius / 2 &&
-                pointA.y <= pointB.y + meterRadius / 2
+                pointA.x >= pointB.x - meterRadius &&
+                pointA.x <= pointB.x + meterRadius &&
+                pointA.y >= pointB.y - meterRadius &&
+                pointA.y <= pointB.y + meterRadius
             ) {
-                matchedIndexes[0].push_back(ctrA);
-
-                for (int i = 0; i < matchedIndexes[1].size(); i++) {
-                    if (matchedIndexes[1].at(i) == ctrA) {
-                        matchedIndexes[1].erase(
-                            matchedIndexes[1].begin() + i,
-                            matchedIndexes[1].begin() + i + 1
-                        );
-                        break;
-                    }
-                }                    
-
+                isMatched = true;
                 matchedIndexes[1].push_back(ctrB);
-
-                pointB = Point(
-                    2000 * EQUATOR_DISTANCE,
-                    2000 * MERIDIAN_DISTANCE
-                );
-
-                break;
             }
             ctrB++;
         }
+
+        if (isMatched) matchedIndexes[0].push_back(ctrA);
+        pinPointsBuffer.at(ctrA) = Point(999999999, 999999999);
         ctrA++;
         ctrB = 0;
     }
@@ -127,10 +122,11 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         for (int i = 0; i < 2; i++) {
             for (auto &index : matchedIndexes[i]) {
                 placemarkNodes.at(index)->removeFromParent();
-                if (i == 0) {
+                if (i == 0) { // originals
                     folderOri->addChild(placemarkNodes.at(index));
                     matchedCtr++;
                 }
+                // duplicates
                 else folderDupl->addChild(placemarkNodes.at(index)); 
             }
         }
