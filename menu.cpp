@@ -247,7 +247,7 @@ Menu::Menu() {
     menuResponseStrings[0] = mainMenuText_stream.str();
     menuResponseStrings[1] = mainMenuText_stream.str();
     menuResponseStrings[2] = styleNamesMenuText_stream.str();
-    menuResponseStrings[3] = "KML-TOWN v0.8.6 ALPHA 2023-01-27\n";
+    menuResponseStrings[3] = "KML-TOWN v0.8.7 ALPHA 2023-03-06\n";
 }
 
 int Menu::select(std::vector<std::string> inputStrings) {
