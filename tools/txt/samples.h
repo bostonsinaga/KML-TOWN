@@ -11,6 +11,9 @@ class Samples {
 
         // sample: [ -10°20'30.4,40°30'20.1 ]
         std::string testDegreeTemplateWithSign(std::string &textLine);
+
+        // sample: [ -1.234,5.678 ]
+        std::string testDecimalTemplate(std::string &textLine);
 };
 
 #endif // __TXT_SAMPLES_H__

@@ -328,4 +328,100 @@ std::string Samples::testDegreeTemplateWithSign(std::string &textLine) {
     return retCoor;
 }
 
+// sample: [ -1.234,5.678 ]
+std::string Samples::testDecimalTemplate(std::string &textLine) {
+    std::string retCoor;
+
+    int stateCount = 9,
+        expectedCount = 4,
+        enumAxisLeapRate = 0; // will be 5 after divider detected
+
+    enum {
+        neg_det,
+        val_det,
+        pt_det,
+        ptval_det,
+        div_det
+    };
+
+    int expectedDetectionState[expectedCount][stateCount] = {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 0, 1, 1, 1},
+        {0, 1, 1, 1, 1, 0, 1, 1, 1}
+    };
+
+    std::vector<bool> isDetected(stateCount, false);
+    
+    for (auto &CH : textLine) {
+        bool isAddChar = true;
+
+        if (CH == '-') {
+            if (!isDetected.at(neg_det + enumAxisLeapRate) && !isDetected.at(val_det + enumAxisLeapRate)) {
+                isDetected.at(neg_det + enumAxisLeapRate) = true;
+            }
+            else if (!isDetected.at(neg_det + enumAxisLeapRate)) {
+                isDetected.at(neg_det + enumAxisLeapRate) = true;
+            }
+        }
+        else if (
+            mini_tool::isANumber(CH) &&
+            !isDetected.at(val_det + enumAxisLeapRate)
+        ) {
+            isDetected.at(val_det + enumAxisLeapRate) = true;
+        }
+        else if (
+            CH == '.' &&
+            isDetected.at(val_det + enumAxisLeapRate) &&
+            !isDetected.at(pt_det + enumAxisLeapRate)
+        ) {
+            isDetected.at(pt_det + enumAxisLeapRate) = true;
+        }
+        else if (mini_tool::isANumber(CH)) {
+            if (isDetected.at(pt_det + enumAxisLeapRate) &&
+                !isDetected.at(ptval_det + enumAxisLeapRate)
+            ) {
+                isDetected.at(ptval_det + enumAxisLeapRate) = true;
+            }
+        }
+        else if (
+            (CH == ' ' || CH == ',') &&
+            isDetected.at(ptval_det) &&
+            !isDetected.at(div_det) &&
+            enumAxisLeapRate == 0
+        ) {
+            isDetected.at(div_det) = true;
+            enumAxisLeapRate = 5;
+        }
+        else {
+            // test the expected detection state
+            bool isPass = false;
+
+            for (int i = 0; i < expectedCount; i++) {
+                for (int j = 0; j < stateCount; j++) {
+
+                    if (expectedDetectionState[i][j] != isDetected.at(j)) {
+                        isPass = false;
+                        break;
+                    }
+                    else isPass = true;
+                }
+
+                if (isPass) break;
+            }
+
+            if (isPass) break;
+
+            isDetected = std::vector<bool>(stateCount, false);
+            isAddChar = false;
+            retCoor = "";
+            enumAxisLeapRate = 0;
+        }
+
+        if (isAddChar) retCoor.push_back(CH);
+    }
+
+    return retCoor;
+}
+
 #endif // __TXT_SAMPLES_CPP__

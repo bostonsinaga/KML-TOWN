@@ -169,6 +169,34 @@ std::vector<std::vector<std::string>> Scanner::parse(
             continue;
         }
 
+        ////////////////////////
+        // DECIMAL COORDINATE //
+        ////////////////////////
+        
+        rawCoor = txtSamples.testDecimalTemplate(textVector.at(i));
+
+        if (rawCoor != "") {
+
+            // seperate coordinates
+            std::vector<std::string>
+                rawCoorCouple = kmlConverter.separateCoordinate(
+                    rawCoor,
+                    kmlConverter.LAT_LNG_SEPARATE_FLAG_IN,
+                    kmlConverter.LNG_LAT_SEPARATE_FLAG_OUT
+                );
+
+            coorStrVector.push_back(
+                rawCoorCouple.at(0) + "," +
+                rawCoorCouple.at(1)
+            );
+
+            continue;
+        }
+
+        //////////
+        // DATE //
+        //////////
+
         // when no coordinate detected in the line
         dateStrVector.pop_back();
     }
