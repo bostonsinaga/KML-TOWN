@@ -13,27 +13,33 @@ std::string Samples::testDateTemplate(std::string &textLine) {
     */
 
     // only number and slash sign
-    for (auto &CH : textLine) {
+    for (int i = 0; i < textLine.length(); i++) {
 
         // still searching
-        if (CH == '/') {
+        if (textLine.at(i) == '/') {
             slashCtr++;
             if (slashCtr == 1) timePtr = &month;
             else if (slashCtr == 2) timePtr = &year;
         }
         else {
             bool isNumDetected = false;
-            if (mini_tool::isANumber(CH)) {
+            if (mini_tool::isANumber(textLine.at(i))) {
                 isNumDetected = true;
-                timePtr->push_back(CH);
+                timePtr->push_back(textLine.at(i));
             }
 
-            // stop searching
-            if (year.size() == 2 && slashCtr == 2) {
-                return day + "/" + month + "/20" + year;
-            }
-            // reset
-            else if (!isNumDetected) {
+            // test pattern
+            if (!isNumDetected || i == textLine.length() - 1) {
+
+                // stop searching
+                if (year.size() == 4 && slashCtr == 2) { // 4 digits
+                    return day + "/" + month + "/" + year;
+                }
+                else if (year.size() == 2 && slashCtr == 2) { // 2 digits
+                    return day + "/" + month + "/20" + year;
+                }
+
+                // reset
                 slashCtr = 0;
                 day = "";
                 month = "";
@@ -352,16 +358,19 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
     };
 
     std::vector<bool> isDetected(stateCount, false);
+    int chCtr = 0;
+    bool isAddChar;
     
     for (auto &CH : textLine) {
-        bool isAddChar = true;
 
         if (CH == '-') {
             if (!isDetected.at(neg_det + enumAxisLeapRate) && !isDetected.at(val_det + enumAxisLeapRate)) {
                 isDetected.at(neg_det + enumAxisLeapRate) = true;
+                isAddChar = true;
             }
             else if (!isDetected.at(neg_det + enumAxisLeapRate)) {
                 isDetected.at(neg_det + enumAxisLeapRate) = true;
+                isAddChar = true;
             }
         }
         else if (
@@ -369,6 +378,7 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
             !isDetected.at(val_det + enumAxisLeapRate)
         ) {
             isDetected.at(val_det + enumAxisLeapRate) = true;
+            isAddChar = true;
         }
         else if (
             CH == '.' &&
@@ -376,12 +386,14 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
             !isDetected.at(pt_det + enumAxisLeapRate)
         ) {
             isDetected.at(pt_det + enumAxisLeapRate) = true;
+            isAddChar = true;
         }
         else if (mini_tool::isANumber(CH)) {
             if (isDetected.at(pt_det + enumAxisLeapRate) &&
                 !isDetected.at(ptval_det + enumAxisLeapRate)
             ) {
                 isDetected.at(ptval_det + enumAxisLeapRate) = true;
+                isAddChar = true;
             }
         }
         else if (
@@ -392,9 +404,13 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
         ) {
             isDetected.at(div_det) = true;
             enumAxisLeapRate = 5;
+            isAddChar = true;
         }
-        else {
-            // test the expected detection state
+        // may be other character
+        else isAddChar = false;
+
+        // test the expected detection state
+        if (!isAddChar || chCtr == textLine.length() - 1) {
             bool isPass = false;
 
             for (int i = 0; i < expectedCount; i++) {
@@ -410,8 +426,13 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
                 if (isPass) break;
             }
 
-            if (isPass) break;
+            // test passed
+            if (isPass) {
+                if (isAddChar) retCoor.push_back(CH);
+                break;
+            }
 
+            // test failed
             isDetected = std::vector<bool>(stateCount, false);
             isAddChar = false;
             retCoor = "";
@@ -419,6 +440,9 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
         }
 
         if (isAddChar) retCoor.push_back(CH);
+
+        chCtr++;
+        isAddChar = true;
     }
 
     return retCoor;
