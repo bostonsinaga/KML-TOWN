@@ -106,9 +106,17 @@ std::vector<std::vector<std::string>> Scanner::parse(
     for (int i = 0; i < textVector.size(); i++) {
         std::string rawCoor;
 
+        //////////
         // DATE //
+        //////////
+
         // will be an empty string if no date detected
-        dateStrVector.push_back(txtSamples.testDateTemplate(textVector.at(i)));
+        std::string dateStr = txtSamples.testDateTemplate(textVector.at(i));
+
+        if (dateStr == "" && dateStrVector.size() > 0) { // follows previous date
+            dateStrVector.push_back(dateStrVector.back());
+        }
+        else dateStrVector.push_back(dateStr);
 
         /////////////////////
         // GOOGLE MAP LINK //

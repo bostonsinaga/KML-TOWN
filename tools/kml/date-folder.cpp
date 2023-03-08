@@ -52,7 +52,8 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             }
         }
 
-        if (isContinue) { // set to latest time
+        // not found
+        if (isContinue) {
             dateVector.push_back(std::vector<int>{31, 12, 9999});
         }
     }
