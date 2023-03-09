@@ -102,21 +102,25 @@ std::string StyleStrings::getPathColorCode(std::string pathColorNamed) {
     return "";
 }
 
-// get style string data (pin with 'hrev', path with 'color-code')
+// get style string data (pin with 'href', path with 'color-code')
 std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
-    xml::Node *kmlNode, *styleUrlNode;
+
+    xml::Node
+        *kmlNode = nullptr,
+        *styleUrlNode = nullptr;
 
     if (placemark) {
         kmlNode = placemark->getRoot();
         styleUrlNode = placemark->getFirstDescendantByName("styleUrl");
     }
 
-    if (styleUrlNode) {
+    if (kmlNode && styleUrlNode) {
         std::string styleName = styleUrlNode->getInnerText();
         styleName = styleName.substr(1);
 
         for (auto &styleMapNode : kmlNode->getDescendantsByName("StyleMap", true)) {
             for (auto &att1 : *styleMapNode->getAttributes()) {
+                
                 if (att1.getName() == "id" && att1.getValue() == styleName) {
 
                     /* search only for normal style */
@@ -136,8 +140,9 @@ std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
                                 // pin
                                 if (placemark->getFirstDescendantByName("Point")) {
 
+                                    xml::Node *hrefNode = styleNode->getFirstDescendantByName("href");
                                     std::string pinUrlStr = (
-                                        styleNode->getFirstDescendantByName("href")->getInnerText()
+                                        hrefNode ? hrefNode->getInnerText() : pinIconUrlArray[0]
                                     );
 
                                     std::string urlStr = mini_tool::cutFileDirName(pinUrlStr);

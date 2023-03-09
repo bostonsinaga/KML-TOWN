@@ -9,6 +9,8 @@ void Classifier::rearrange(xml::Node *kmlNode, bool isClean) {
         std::vector<std::string> styleDataStrVec;
         std::vector<xml::Node*> newFolderNodes;
 
+        int testCtr = 1;
+
         for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
 
             StyleStrings kmlStyleStrings;
@@ -35,6 +37,8 @@ void Classifier::rearrange(xml::Node *kmlNode, bool isClean) {
             }
             // already available
             else newFolderNodes.at(foundDex)->addChild(placemark);
+
+            testCtr++;
         }
 
         General kmlGeneral = General();
