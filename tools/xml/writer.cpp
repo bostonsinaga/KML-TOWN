@@ -41,9 +41,11 @@ void Writer::stringify(
 
 std::string Writer::stringifyAttributes(std::vector<Attribute> *attributes) {
     std::string retTxt = "";
+
     for (auto &att : *attributes) {
         retTxt += " " + att.getName() + "=\"" + att.getValue() + "\"";
     }
+    
     return retTxt;
 }
 

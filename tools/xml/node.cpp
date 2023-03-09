@@ -51,6 +51,7 @@ Node *Node::getFirstChildByName(
     if (isPrintMessage) {
         printChildNotFoundMessage(searchName);
     }
+    
     return nullptr;
 }
 
@@ -91,6 +92,7 @@ Node *Node::getFirstDescendantByName(
     if (isPrintMessage) {
         printChildNotFoundMessage(searchName);
     }
+
     return nullptr;
 }
 

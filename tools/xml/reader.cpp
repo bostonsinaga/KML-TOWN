@@ -34,7 +34,6 @@ Node *Reader::parse(
     std::string fileName,
     bool isNotify
 ) {
-
     if (isNotify) {
         std::cout << "XML-> Reading '" << fileName << "'...\n";
     }
