@@ -229,4 +229,25 @@ void Placemark::removePathsByDistance(
     }
 }
 
+void Placemark::logName(xml::Node *placemark) {
+    if (placemark) {
+
+        xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
+
+        if (placemarkName) {
+            std::cout << "Placemark name ---> " << placemarkName->getInnerText() << std::endl;
+        }
+        else {
+            xml::Node *folderNode = placemark->getParent();
+            if (folderNode) {
+                placemarkName = folderNode->getFirstDescendantByName("name");
+                if (placemarkName) {
+                    std::cout << "Folder name ---> " << placemarkName->getInnerText() << std::endl;
+                }
+                else std::cout << "NONAME.." << std::endl;
+            }
+        }
+    }
+}
+
 #endif // __KML_PLACEMARK_CPP__

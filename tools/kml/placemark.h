@@ -28,6 +28,9 @@ class Placemark {
             double limitDistance,
             bool isAbove
         );
+
+        // log placemark name or its folder name
+        static void logName(xml::Node *placemark);
 };
 
 #endif // __KML_PLACEMARK_H__
