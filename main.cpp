@@ -71,58 +71,61 @@ int main(int argc, char *argv[]) {
 
     if (SELECTED_FLAG == CONVERT_TXT_KML_FLAG) {
 
-        xml::Node *kmlNode = call_briefer::selectFunctionByPlacemarkType(
+        xml::Node *kmlNode = call_briefer::selectFunctionByType(
             inputStrings.at(6),
-            [&]()->xml::Node* {return txt::Scanner().parsePins(
-                inputStrings.at(2), inputStrings.at(4)
-            );},
-            [&]()->xml::Node* {
-                std::cout << "KML-TOWN-> Parsing 'pins'..\n";
-
-                xml::Node *kmlNode_baby = txt::Scanner().parsePins(
+            {"pin", "path"}
+            {
+                [&]()->xml::Node* {return txt::Scanner().parsePins(
                     inputStrings.at(2), inputStrings.at(4)
-                );
+                );},
+                [&]()->xml::Node* {
+                    std::cout << "KML-TOWN-> Parsing 'pins'..\n";
 
-                if (kmlNode_baby) {
-                    // from south west - north east
-                    std::string selectCoorStr[2] = {
-                        "90°0'0.0S 180°0'0.0W", "90°0'0.0N 180°0'0.0E"
-                    };
+                    xml::Node *kmlNode_baby = txt::Scanner().parsePins(
+                        inputStrings.at(2), inputStrings.at(4)
+                    );
 
-                    std::vector<xml::Node*> selectedPinNodes;
+                    if (kmlNode_baby) {
+                        // from south west - north east
+                        std::string selectCoorStr[2] = {
+                            "90°0'0.0S 180°0'0.0W", "90°0'0.0N 180°0'0.0E"
+                        };
 
-                    if (mini_tool::isStringContains(inputStrings.at(6), "sort", true)) {
+                        std::vector<xml::Node*> selectedPinNodes;
 
-                        // using sorter
-                        std::cout << "KML-TOWN-> Sorting 'pins'..\n";
+                        if (mini_tool::isStringContains(inputStrings.at(6), "sort", true)) {
 
-                        selectedPinNodes = call_briefer::sortPinsFunc(
-                            menu,
-                            kmlNode_baby,
-                            {&selectCoorStr[0], &selectCoorStr[1]},
-                            false
-                        );
+                            // using sorter
+                            std::cout << "KML-TOWN-> Sorting 'pins'..\n";
+
+                            selectedPinNodes = call_briefer::sortPinsFunc(
+                                menu,
+                                kmlNode_baby,
+                                {&selectCoorStr[0], &selectCoorStr[1]},
+                                false
+                            );
+                        }
+                        else {
+                            selectedPinNodes = call_briefer::cropPinsFunc(
+                                kmlNode_baby,
+                                {&selectCoorStr[0], &selectCoorStr[1]},
+                                false
+                            );
+                        }
+
+                        if (selectedPinNodes.size() > 0) {
+                            std::cout << "KML-TOWN-> Create 'path' segments..\n";
+
+                            kml::Placemark().pinsPathSegments(
+                                kmlNode_baby,
+                                selectedPinNodes,
+                                true
+                            );
+                        }
                     }
-                    else {
-                        selectedPinNodes = call_briefer::cropPinsFunc(
-                            kmlNode_baby,
-                            {&selectCoorStr[0], &selectCoorStr[1]},
-                            false
-                        );
-                    }
 
-                    if (selectedPinNodes.size() > 0) {
-                        std::cout << "KML-TOWN-> Create 'path' segments..\n";
-
-                        kml::Placemark().pinsPathSegments(
-                            kmlNode_baby,
-                            selectedPinNodes,
-                            true
-                        );
-                    }
+                    return kmlNode_baby;
                 }
-
-                return kmlNode_baby;
             }
         );
 
@@ -304,10 +307,13 @@ int main(int argc, char *argv[]) {
                 *kmlNode = kmlReader.fileParse(inputStrings.at(2)),
                 *twinsCheckedFolder;
 
-            twinsCheckedFolder = call_briefer::selectFunctionByPlacemarkType(
+            twinsCheckedFolder = call_briefer::selectFunctionByType(
                 inputStrings.at(4),
-                [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6));},
-                [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));}
+                {"pin", "path", "all"},
+                {
+                    [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6));},
+                    [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));}
+                }
             );
 
             if (twinsCheckedFolder) {
