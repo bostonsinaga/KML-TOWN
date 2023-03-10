@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
         xml::Node *kmlNode = call_briefer::selectFunctionByType(
             inputStrings.at(6),
-            {"pin", "path"}
+            {"pin", "path"},
             {
                 [&]()->xml::Node* {return txt::Scanner().parsePins(
                     inputStrings.at(2), inputStrings.at(4)
