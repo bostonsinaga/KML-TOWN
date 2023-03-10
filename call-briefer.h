@@ -31,7 +31,7 @@ namespace call_briefer {
     );
 
     // return command working folder
-    xml::Node *selectFunctionByPlacemarkType(
+    xml::Node *selectFunctionByType(
         std::string placemarksType,
         const std::function<xml::Node*()> &funcPins,
         const std::function<xml::Node*()> &funcPaths

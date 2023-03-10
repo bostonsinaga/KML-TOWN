@@ -187,26 +187,23 @@ namespace call_briefer {
     }
 
     // return command working folder
-    xml::Node *selectFunctionByPlacemarkType(
-        std::string placemarksType,
-        const std::function<xml::Node*()> &funcPins,
-        const std::function<xml::Node*()> &funcPaths
+    xml::Node *selectFunctionByType(
+        std::string inputType,
+        const std::vector<std::string> &seqTypeStrVec,
+        const std::vector<std::function<xml::Node*()>> &seqFuncVec
     ) {
-        if (mini_tool::isStringContains(placemarksType, "path", true) ||
-            mini_tool::isStringContains(placemarksType, "paths", true)
-        ) {
-            return funcPaths();
-        }
-        else {
-            if (!mini_tool::isStringContains(placemarksType, "pin", true) &&
-                !mini_tool::isStringContains(placemarksType, "pins", true)
-            ) {
-                std::cerr
-                    << "KML-TOWN-> Placemarks type input warning. Unknown type of '"
-                    << placemarksType << "'. Default set to 'pins'\n";
+        // 'seqTypeStrVec' and 'seqFuncVec' must equal in size
+        for (int i = 0; i < seqTypeStrVec.size(); i++) {
+            if (mini_tool::isStringContains(inputType, seqTypeStrVec.at(i), true)) {
+                return seqFuncVec.at(i)();
             }
-            return funcPins();
         }
+
+        // set default call to first function
+        std::cerr
+            << "KML-TOWN-> Placemarks type input warning. Unknown type of '"
+            << inputType << "'. Default set to '" << seqTypeStrVec.at(0) << "'\n";
+        return seqFuncVec.at(0)();
     }
 }
 
