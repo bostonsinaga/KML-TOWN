@@ -22,7 +22,7 @@ class Point {
         Point operator*(Point multPt);
         Point operator/(Point divPt);
 
-        std::vector<Point> getPathPointsFromString(std::string coorStr);
+        static std::vector<Point> getPathPointsFromString(std::string coorString);
         std::string stringify(bool isAddZeroAltitude = true);
 
         double x = 0, y = 0;

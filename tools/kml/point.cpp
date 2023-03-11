@@ -185,27 +185,27 @@ Point Point::operator/(Point divPt) {
 }
 
 // expected input: '180,-90,0 -180,90,0'
-std::vector<Point> Point::getPathPointsFromString(std::string coorStr) {
+std::vector<Point> Point::getPathPointsFromString(std::string coorString) {
     
     std::vector<Point> retPoints;
-    std::string coorStrBuff = "";
+    std::string coorStringBuffer = "";
     int commaCount = 0;
 
     int ctr = 0;
-    for (auto &ch : coorStr) {
+    for (auto &ch : coorString) {
         if (ch == ',') {
             commaCount++;
-            coorStrBuff += ch;
+            coorStringBuffer += ch;
         }
         else if (ch == ' ' && commaCount >= 2) {
-            retPoints.push_back(Point(coorStrBuff));
+            retPoints.push_back(Point(coorStringBuffer));
             commaCount = 0;
-            coorStrBuff = "";
+            coorStringBuffer = "";
         }
-        else if (ctr == coorStr.size() - 1 && commaCount >= 2) {
-            retPoints.push_back(Point(coorStrBuff));
+        else if (ctr == coorString.size() - 1 && commaCount >= 2) {
+            retPoints.push_back(Point(coorStringBuffer));
         }
-        else if (mini_tool::isANumber(ch) || ch == '.') coorStrBuff += ch;
+        else if (mini_tool::isANumber(ch) || ch == '.') coorStringBuffer += ch;
         ctr++;
     }
 
