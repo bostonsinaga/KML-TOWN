@@ -18,6 +18,11 @@ class General {
             std::vector<xml::Node*> &placemarksCoorNodeVec  // should be empty
         );
 
+        void putOnTopFolder(
+            xml::Node *containerFolder,
+            std::vector<xml::Node*> nodeVec
+        );
+
         void insertEditedPlacemarksIntoFolder(
             xml::Node *prevContainerNode,
             xml::Node *newContainerNode,

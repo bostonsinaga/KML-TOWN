@@ -120,6 +120,39 @@ void General::fillWithPins(
     }
 }
 
+void General::putOnTopFolder(
+    xml::Node *containerFolder,
+    std::vector<xml::Node*> nodeVec
+) {
+    /* 'priorityFolderCount' index as a limit to top placement */
+
+    int priorityFolderCount = 0;
+    if (containerFolder->getFirstChildByName("name")) {
+        priorityFolderCount++;
+    }
+    if (containerFolder->getFirstChildByName("visibility")) {
+        priorityFolderCount++;
+    }
+    if (containerFolder->getFirstChildByName("open")) {
+        priorityFolderCount++;
+    }
+
+    std::vector<xml::Node*> *containerExistChildren = containerFolder->getChildren();
+
+    for (auto &node : nodeVec) {
+
+        // firstly append new folder
+        containerFolder->addChild(node);
+
+        containerFolder->swapChildren(
+            containerExistChildren->at(priorityFolderCount),
+            node
+        );
+
+        priorityFolderCount++;
+    }
+}
+
 void General::insertEditedPlacemarksIntoFolder(
     xml::Node *prevContainerNode,
     xml::Node *newContainerNode,
@@ -138,27 +171,8 @@ void General::insertEditedPlacemarksIntoFolder(
 
     // succeeded
     if (placemarks.size() > 0) {
-        // firstly append new folder
-        prevContainerNode->addChild(newContainerNode);
-
-        // move up the folder //
-
-        int priorityFolderCount = 0;
-        if (prevContainerNode->getFirstChildByName("name")) {
-            priorityFolderCount++;
-        }
-        if (prevContainerNode->getFirstChildByName("visibility")) {
-            priorityFolderCount++;
-        }
-        if (prevContainerNode->getFirstChildByName("open")) {
-            priorityFolderCount++;
-        }
-
-        prevContainerNode->swapChildren(
-            prevContainerNode->getChildren()->at(priorityFolderCount),
-            newContainerNode
-        );
-
+        putOnTopFolder(prevContainerNode, {newContainerNode});
+        
         // insert pins into the folder
         for (auto &plmrk : placemarks) {
             plmrk->removeFromParent();
@@ -212,8 +226,8 @@ bool General::logEditedPlacemarks(
         std::string taskName = noticeFuncName.at(1);
 
         // task name lower case
-        mini_tool::changeStringCase(
-            &taskName,
+        taskName = mini_tool::changeStringCase(
+            taskName,
             mini_tool::LOWER_CASE_FLAG,
             0
         );
