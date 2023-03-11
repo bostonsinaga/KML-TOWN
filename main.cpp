@@ -312,7 +312,8 @@ int main(int argc, char *argv[]) {
                 {"pin", "path", "all"},
                 {
                     [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6));},
-                    [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));}
+                    [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));},
+                    [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6));}
                 }
             );
 
