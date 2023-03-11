@@ -97,17 +97,17 @@ namespace mini_tool {
         return count;
     }
 
-    void changeStringCase(
-        std::string *string_in,
+    std::string changeStringCase(
+        std::string string_in,
         int caseFlag,
-        int onlyCharDex
+        int onlyCharDex // index of single character change
     ) {
         int aToADifference = CH_A_LOWER_CODE - CH_A_UPPER_CODE, // positive
             startDex, borderDex;
 
         if (onlyCharDex != -1) {
-            if (onlyCharDex <= string_in->size() - 1 &&
-                isALetter(string_in->at(onlyCharDex))
+            if (onlyCharDex <= string_in.size() - 1 &&
+                isALetter(string_in.at(onlyCharDex))
             ) {
                 startDex = onlyCharDex;
                 borderDex = onlyCharDex + 1;
@@ -115,12 +115,12 @@ namespace mini_tool {
         }
         else {
             startDex = 0;
-            borderDex = string_in->size();
+            borderDex = string_in.size();
         }
 
         for (int i = startDex; i < borderDex; i++) {
             
-            int chCode = int(string_in->at(startDex)),
+            int chCode = std::abs(int(string_in.at(i))),
                 diffSign = 0;
             
             // upper detected
@@ -138,9 +138,11 @@ namespace mini_tool {
             }
 
             if (diffSign != 0) {
-                string_in->at(startDex) = char(chCode + diffSign * aToADifference);
+                string_in.at(i) = char(chCode + diffSign * aToADifference);
             }
         }
+
+        return string_in;
     }
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr) {

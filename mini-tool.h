@@ -35,10 +35,10 @@ namespace mini_tool {
         UPPER_CASE_FLAG
     };
 
-    void changeStringCase(
-        std::string *string_in,
+    std::string changeStringCase(
+        std::string string_in,
         int caseFlag,
-        int onlyCharDex = -1
+        int onlyCharDex = -1 // index of single character change
     );
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr);
