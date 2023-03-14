@@ -127,14 +127,26 @@ void General::putOnTopFolder(
     /* 'priorityFolderCount' index as a limit to top placement */
 
     int priorityFolderCount = 0;
-    if (containerFolder->getFirstChildByName("name")) {
-        priorityFolderCount++;
+    std::string priorityNameList[5] = {
+        // single appearance
+        "name", "visibility", "open",
+        // multiple appearance
+        "Style", "StyleMap" // if parent a document
+    };
+
+    // single appearance
+    for (int i = 0; i < 3; i++) {
+        if (containerFolder->getFirstChildByName(priorityNameList[i])) {
+            priorityFolderCount++;
+        }
     }
-    if (containerFolder->getFirstChildByName("visibility")) {
-        priorityFolderCount++;
-    }
-    if (containerFolder->getFirstChildByName("open")) {
-        priorityFolderCount++;
+
+    // multiple appearance
+    if (containerFolder->getName() == "Document") {
+        for (int i = 3; i < 5; i++) {
+            std::vector<xml::Node*> multiAppearanceVec = containerFolder->getChildrenByName(priorityNameList[i]);
+            priorityFolderCount += multiAppearanceVec.size();
+        }
     }
 
     std::vector<xml::Node*> *containerExistChildren = containerFolder->getChildren();
@@ -269,9 +281,10 @@ void General::setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out) {
 
     while (mainFolderNode) {
 
-        xml::Node *nameNode = kmlNode->getFirstChildByName("name");
+        xml::Node *nameNode = mainFolderNode->getFirstChildByName("name");
         if (!nameNode) {
             nameNode = new xml::Node("name", mainFolderNode);
+            putOnTopFolder(mainFolderNode, {nameNode});
         }
         nameNode->setInnerText(mini_tool::cutFileDirName(fileDir_out));
 
