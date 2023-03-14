@@ -29,7 +29,8 @@ class Placemark {
             bool isAbove
         );
 
-        // log placemark name or its folder name
+        // read placemark name or its folder name (closest parent)
+        static std::string getName(xml::Node *placemark);
         static void logName(xml::Node *placemark);
 };
 
