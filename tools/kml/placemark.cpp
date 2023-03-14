@@ -229,6 +229,33 @@ void Placemark::removePathsByDistance(
     }
 }
 
+// read placemark name or its folder name (closest parent)
+std::string Placemark::getName(xml::Node *placemark) {
+    std::string name = "";
+
+    if (placemark) {
+
+        xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
+
+        if (placemarkName) {
+            name = placemarkName->getInnerText();
+        }
+        else {
+            xml::Node *folderNode = placemark->getParent();
+            if (folderNode) {
+                placemarkName = folderNode->getFirstDescendantByName("name");
+                if (placemarkName) {
+                    name = placemarkName->getInnerText();
+                }
+                else name = "noname";
+            }
+        }
+    }
+
+    return name;
+}
+
+// read placemark name or its folder name (closest parent)
 void Placemark::logName(xml::Node *placemark) {
     if (placemark) {
 
