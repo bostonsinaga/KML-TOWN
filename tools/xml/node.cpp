@@ -11,11 +11,16 @@ Node::Node(std::string name_in, Node *parent_in) {
     }
 }
 
-Node::~Node() {
+Node::~Node() {    
+    if (parent) {
+        parent->removeChild(this);
+        parent = nullptr;
+    }
+
     for (auto &child : children) {
         delete child;
     }
-    parent = nullptr;
+
     children.clear();
     attributes.clear();
 }
@@ -231,14 +236,20 @@ void Node::swapChildren(Node *childA, Node *childB) {
     }
 }
 
-void Node::removeChild(Node *notChild) {
-    int ctr = 0;
-    for (auto &child : children) {
-        if (child == notChild) {
-            children.erase(children.begin() + ctr, children.begin() + ctr + 1);
+/*  WARNING!
+*   use 'isClean' if only the child has not been deleted
+*   (don't use 'isClean' from node destructor)
+*/
+void Node::removeChild(Node *exChild, bool isClean) {
+    
+    for (int i = 0; i < children.size(); i++) {
+        if (children.at(i) == exChild) {
+
+            if (isClean) delete children.at(i);
+
+            children.erase(children.begin() + i, children.begin() + i + 1);
             break;
         }
-        ctr++;
     }
 }
 

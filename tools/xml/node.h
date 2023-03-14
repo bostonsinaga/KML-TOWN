@@ -80,7 +80,7 @@ class Node {
         std::vector<Node*> replaceChildren(std::vector<Node*> newChildren);
         void swapChildren(int aDex, int bDex);
         void swapChildren(Node *childA, Node *childB);
-        void removeChild(Node *notChild);
+        void removeChild(Node *exChild, bool isClean = false);
         void removeChildren();
         std::vector<Node*> releaseChildren();
 
