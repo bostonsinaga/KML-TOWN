@@ -92,6 +92,10 @@ xml::Node *TwinsChecker::findPaths(
     std::string meterRadiusRateString,
     bool isParentFolderNamedAType
 ) {
+    std::cerr
+        << "KML-> Twins checking attention. This will sanitize/remove\n"
+        << "      zero path (single coordinate) or empty path\n";
+
     double meterRadius = getLimitedMeterRadius(meterRadiusRateString);
     std::vector<xml::Node*> nodes;
 
@@ -111,6 +115,17 @@ xml::Node *TwinsChecker::findPaths(
             pointVecVec.push_back(Point::getPathPointsFromString(
                 coorNode ? coorNode->getInnerText() : ""
             ));
+
+            /*  ATTENTION SANITIZE!
+            *   this will remove zero length path
+            *   (single coordinate) or empty path
+            */
+            if (pointVecVec.back().size() <= 1) {
+                delete placemark;
+                nodes.pop_back();
+                pointVecVec.pop_back();
+                continue;
+            }
 
             Placemark kmlPlacemark;
             std::vector<Point> pointVec_buffer;
@@ -226,7 +241,7 @@ xml::Node *TwinsChecker::findAll(
     if (pathsFolder) workingFolder->addChild(pathsFolder);
 
     // connect to 'kmlNode'
-    if (workingFolder->getChildren()->size() > 0) {
+    if (pinsFolder || pathsFolder) {
         General kmlGeneral;
         kmlGeneral.putOnTopFolder(
             kmlGeneral.getRootDocument(kmlNode),
