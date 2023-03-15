@@ -11,18 +11,23 @@ Node::Node(std::string name_in, Node *parent_in) {
     }
 }
 
-Node::~Node() {    
-    if (parent) {
-        parent->removeChild(this);
-        parent = nullptr;
-    }
-
+/*  ATTENTION!
+*   Deletion of object is expected
+*   using:
+*
+*   parent->removeChild(child, true);
+*
+*   But this is not mandatory for a root node.
+*   Which is have no parent.
+*/
+Node::~Node() {
     for (auto &child : children) {
         delete child;
     }
 
     children.clear();
     attributes.clear();
+    parent = nullptr;
 }
 
 std::string Node::getName() {return name;}
