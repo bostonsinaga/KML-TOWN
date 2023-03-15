@@ -53,9 +53,10 @@ std::string Writer::pullChildrenStrings(std::vector<Node*> *children) {
 
     std::string
         retTxt = "",
+        tabSpaces = "    ",
         indentSpaces[2] = {"", ""};
 
-    for (auto &child: *children) {
+    for (auto &child : *children) {
 
         // produce indent spaces
         int indentCtr = -1;
@@ -67,7 +68,7 @@ std::string Writer::pullChildrenStrings(std::vector<Node*> *children) {
         }
 
         for (int i = 0; i < indentCtr; i++) {
-            indentSpaces[0] += "    ";
+            indentSpaces[0] += tabSpaces;
         }
 
         // never has children (MALE)
@@ -80,13 +81,32 @@ std::string Writer::pullChildrenStrings(std::vector<Node*> *children) {
         else { // FEMALE element
             std::string pulledStrings = pullChildrenStrings(child->getChildren());
 
-            if (pulledStrings != "") { // has children
+            // no children conditions
+            std::string noChild_extraIndent = "";
+
+            // has children
+            if (pulledStrings != "") {
                 pulledStrings = "\n" + pulledStrings;
                 indentSpaces[1] = indentSpaces[0];
             }
-            else { // no children
+            else {
+                /*  NOTE:
+                *   The pulled strings is keep its state.
+                *   So tag indentation may look not suit because
+                *   white space appearance. But white space is
+                *   just a string that get kept as state.
+                *
+                *   example:
+                *
+                *    input:
+                *       <Node>          --> contains '\n'
+                *       </Node>             and white space
+                *    
+                *    output:
+                *           <Node>      --> indentation increased
+                *       </Node>         --> keep the state
+                */
                 pulledStrings = child->getInnerText();
-                indentSpaces[1] = "";
             }
 
             retTxt += (
@@ -98,7 +118,7 @@ std::string Writer::pullChildrenStrings(std::vector<Node*> *children) {
         }
 
         indentSpaces[0] = "";
-        indentSpaces[0] = "";
+        indentSpaces[1] = "";
     }
 
     return retTxt;
