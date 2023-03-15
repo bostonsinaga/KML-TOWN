@@ -7,7 +7,7 @@ class Builder {
         
         xml::Node *getFolder(
             std::string name = "",
-            bool isOpen = true
+            bool isOpen = false
         );
 
         // return one style map set of pins
