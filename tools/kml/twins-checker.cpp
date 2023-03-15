@@ -121,7 +121,11 @@ xml::Node *TwinsChecker::findPaths(
             *   (single coordinate) or empty path
             */
             if (pointVecVec.back().size() <= 1) {
-                delete placemark;
+                
+                if (placemark->getParent()) {
+                    placemark->getParent()->removeChild(placemark, true);
+                }
+
                 nodes.pop_back();
                 pointVecVec.pop_back();
                 continue;
@@ -135,14 +139,14 @@ xml::Node *TwinsChecker::findPaths(
                 /* '0,0' point in near central Africa */
 
                 std::vector<Point> 
-                ptHor_vec = std::vector<Point> { // X
-                    Point(point.x, 0),
-                    Point(0, 0)
-                },
-                ptVer_vec = std::vector<Point> { // Y
-                    Point(0, point.y),
-                    Point(0, 0)
-                };
+                    ptHor_vec = std::vector<Point> { // X
+                        Point(point.x, 0),
+                        Point(0, 0)
+                    },
+                    ptVer_vec = std::vector<Point> { // Y
+                        Point(0, point.y),
+                        Point(0, 0)
+                    };
 
                 // convert 'degree' point to 'meter' point
                 pointVec_buffer.push_back(Point(
