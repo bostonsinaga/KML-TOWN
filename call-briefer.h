@@ -6,7 +6,7 @@ namespace call_briefer {
     std::string checkOverwrite(
         Menu &menu,
         int selectedFlag,
-        int overwriteFlags,
+        int overwriteFlag,
         std::string &fileDir_in,
         std::string &fileDir_out
     );
