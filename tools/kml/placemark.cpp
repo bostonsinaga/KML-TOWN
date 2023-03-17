@@ -140,6 +140,7 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
             xml::Node *lineStringNode = node->getFirstDescendantByName("LineString");
 
             if (lineStringNode) {
+                
                 // certainly contains the coordinate string
                 std::vector<Point> points = Point().getPathPointsFromString(
                     lineStringNode->getFirstDescendantByName("coordinates")->getInnerText()
@@ -256,25 +257,31 @@ std::string Placemark::getName(xml::Node *placemark) {
 }
 
 // read placemark name or its folder name (closest parent)
-void Placemark::logName(xml::Node *placemark) {
+void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
+
+    static int ctr = 1;
+    if (isResetCtr) ctr = 1;
+
     if (placemark) {
 
         xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
 
         if (placemarkName) {
-            std::cout << "Placemark name ---> " << placemarkName->getInnerText() << std::endl;
+            std::cout << ctr << ") Placemark name ---> " << placemarkName->getInnerText() << std::endl;
         }
         else {
             xml::Node *folderNode = placemark->getParent();
             if (folderNode) {
                 placemarkName = folderNode->getFirstDescendantByName("name");
                 if (placemarkName) {
-                    std::cout << "Folder name ---> " << placemarkName->getInnerText() << std::endl;
+                    std::cout << ctr << ") Folder name ---> " << placemarkName->getInnerText() << std::endl;
                 }
-                else std::cout << "NONAME.." << std::endl;
+                else std::cout << ctr << ") NONAME.." << std::endl;
             }
         }
     }
+
+    ctr++;
 }
 
 #endif // __KML_PLACEMARK_CPP__

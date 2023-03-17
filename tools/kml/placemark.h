@@ -31,7 +31,7 @@ class Placemark {
 
         // read placemark name or its folder name (closest parent)
         static std::string getName(xml::Node *placemark);
-        static void logName(xml::Node *placemark);
+        static void logName(xml::Node *placemark, bool isResetCtr = false);
 };
 
 #endif // __KML_PLACEMARK_H__
