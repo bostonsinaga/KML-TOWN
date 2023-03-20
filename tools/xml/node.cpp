@@ -28,6 +28,8 @@ Node::~Node() {
     children.clear();
     attributes.clear();
     parent = nullptr;
+
+    /* parent still has this as member of children vector */
 }
 
 std::string Node::getName() {return name;}
