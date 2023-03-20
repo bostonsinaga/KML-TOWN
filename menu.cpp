@@ -81,10 +81,11 @@ Menu::Menu() {
         << "~~NOTE:\n"
         << "    -below commands cannot use area selection (but on styling it will prompt)\n\n"
 
-        << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME]\n"
+        << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME] --include-folder <optional>\n"
         << "****** checking placemark twins with given radius (0-100 meters)\n"
         << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n"
-        << "****** the 'PLACEMARK_TYPE' can be 'pin', 'path' or 'all'\n\n"
+        << "****** '[PLACEMARK_TYPE]' -> input can be a string of 'pin', 'path' or 'all'\n"
+        << "****** '--include-folder' -> include current placemarks folder/document into working folder\n\n"
 
         << "--kml --measure-paths [FILE_NAME] --out [FILE_NAME]\n"
         << "****** measure paths distance (whole input document)\n\n"
@@ -100,10 +101,12 @@ Menu::Menu() {
         << "****** remove paths those have distance equal or more than given distance\n"
         << "       (input distance in meters)\n\n"
 
-        << "--kml --classify [FILE_NAME] --out [FILE_NAME] --clean <optional>\n"
+        << "--kml --classify [FILE_NAME] --out [FILE_NAME] --clean-folder <optional, choose> --include-folder <optional, choose> --include-clean-folder <optional, choose>\n"
         << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
-        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "' if not using '--clean'\n"
-        << "       otherwise it will delete empty folders and keep the classified folders\n\n"
+        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "\n"
+        << "****** '--clean-folder' -> clean empty folders\n"
+        << "****** '--include-folder' -> include placemarks folder/document into working folder\n"
+        << "****** '--include-clean-folder' -> include placemarks folder and clean empty folders\n\n"
 
         << "--kml --folder-by-date [FILE_NAME] --out [FILE_NAME]\n"
         << "****** pack placemarks by their date into new folder named '"<< FOLDERBYDATE_COMMAND_WORKING_FOLDER << "'\n\n"

@@ -290,12 +290,24 @@ int main(int argc, char *argv[]) {
 
     else if (
         SELECTED_FLAG == KML_TWINS_CHECK_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_TWINS_CHECK_OVERWRITE_FLAG
+        SELECTED_FLAG == KML_TWINS_CHECK_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_TWINS_CHECK_INCLUDE_FOLDER_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_TWINS_CHECK_INCLUDE_FOLDER_OVERWRITE_FLAG
     ) {
+        bool isIncludeFolders = false;
+
+        if (SELECTED_FLAG == KML_TWINS_CHECK_INCLUDE_FOLDER_NEWFILE_FLAG ||
+            SELECTED_FLAG == KML_TWINS_CHECK_INCLUDE_FOLDER_OVERWRITE_FLAG
+        ) {
+            isIncludeFolders = true;
+        }
+
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
-            KML_TWINS_CHECK_OVERWRITE_FLAG,
+            isIncludeFolders ?
+                KML_TWINS_CHECK_INCLUDE_FOLDER_OVERWRITE_FLAG :
+                KML_TWINS_CHECK_OVERWRITE_FLAG,
             inputStrings.at(2),
             inputStrings.at(8)
         );
@@ -307,23 +319,27 @@ int main(int argc, char *argv[]) {
                 *kmlNode = kmlReader.fileParse(inputStrings.at(2)),
                 *twinsCheckedFolder;
 
-            twinsCheckedFolder = call_briefer::selectFunctionByType(
-                inputStrings.at(4),
-                {"pin", "path", "all"},
-                {
-                    [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6));},
-                    [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6));},
-                    [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6));}
-                }
-            );
+            if (kmlNode) {
 
-            if (twinsCheckedFolder) {
-                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                twinsCheckedFolder = call_briefer::selectFunctionByType(
+                    inputStrings.at(4),
+                    {"pin", "path", "all"},
+                    {
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6), false, isIncludeFolders);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6), false, isIncludeFolders);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6), isIncludeFolders);}
+                    }
+                );
+
+                if (twinsCheckedFolder) {
+                    call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                }
+                else {
+                    delete kmlNode;
+                    std::cerr << "\n**FAILED**\n";
+                }
             }
-            else {
-                delete kmlNode;
-                std::cerr << "\n**FAILED**\n";
-            }
+            else std::cerr << "\n**FAILED**\n";
         }
     }
 
@@ -381,9 +397,36 @@ int main(int argc, char *argv[]) {
     else if (
         SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
         SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG ||
-        SELECTED_FLAG == KML_CLASSIFY_CLEAN_NEWFILE_FLAG ||
-        SELECTED_FLAG == KML_CLASSIFY_CLEAN_OVERWRITE_FLAG
+        SELECTED_FLAG == KML_CLASSIFY_CLEAN_FOLDER_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_CLEAN_FOLDER_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_INCLUDE_FOLDER_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_INCLUDE_FOLDER_OVERWRITE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_NEWFILE_FLAG ||
+        SELECTED_FLAG == KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_OVERWRITE_FLAG
     ) {
+        bool isCleanFolders = false, isIncludeFolders = false;
+
+        // clean folders
+        if (SELECTED_FLAG == KML_CLASSIFY_CLEAN_FOLDER_NEWFILE_FLAG ||
+            SELECTED_FLAG == KML_CLASSIFY_CLEAN_FOLDER_OVERWRITE_FLAG
+        ) {
+            isCleanFolders = true;
+        }
+        // include folders
+        else if (
+            SELECTED_FLAG == KML_CLASSIFY_INCLUDE_FOLDER_NEWFILE_FLAG ||
+            SELECTED_FLAG == KML_CLASSIFY_INCLUDE_FOLDER_OVERWRITE_FLAG
+        ) {
+            isIncludeFolders = true;
+        }
+        else if (
+            SELECTED_FLAG == KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_NEWFILE_FLAG ||
+            SELECTED_FLAG == KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_OVERWRITE_FLAG
+        ) {
+            isCleanFolders = true;
+            isIncludeFolders = true;
+        }
+        
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
             SELECTED_FLAG,
@@ -396,26 +439,23 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(inputStrings.at(2));
 
-            bool isClean = true,
-                 isProceeed = false;
+            bool isProceed = false;
 
-            if (SELECTED_FLAG == KML_CLASSIFY_NEWFILE_FLAG ||
-                SELECTED_FLAG == KML_CLASSIFY_OVERWRITE_FLAG
+            if ((isCleanFolders &&
+                menu.setAlert(
+                    std::string("KML-> Classify warning. This will remove empty or previous folders.\n") +
+                    std::string("      Keep proceeding?\n")
+                )) ||
+                !isCleanFolders
             ) {
-                isClean = false;
-                isProceeed = true;
-            }
-            else if (menu.setAlert(
-                std::string("KML-> Classify warning. This will remove empty or previous folders.\n") +
-                std::string("      Keep proceeding?\n")
-            )) {
-                isProceeed = true;
+                isProceed = true;
             }
             
-            if (isProceeed) {
-                kml::Classifier().rearrange(kmlNode, isClean);
+            if (isProceed && kmlNode) {
+                kml::Classifier().rearrange(kmlNode, isCleanFolders, isIncludeFolders);
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
             }
+            else std::cerr << "\n**FAILED**\n";
         }
     }
 
