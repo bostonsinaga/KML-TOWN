@@ -23,7 +23,7 @@ Node *Reader::fileParse(std::string fileName, bool isNotify) {
     std::cerr
         << "XML-> Parsing error. '"
         << fileName
-        << "' is missing the version and encoding value at its top\n";
+        << "' is missing declaration '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'\n";
         
     return nullptr;
 }
