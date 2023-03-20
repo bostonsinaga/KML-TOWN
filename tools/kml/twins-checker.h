@@ -7,19 +7,22 @@ class TwinsChecker {
 
         xml::Node *findPins(
             xml::Node *kmlNode,
-            std::string meterRadiusRateString = "",
-            bool isParentFolderNamedAType = false
+            std::string meterRadiusRateString,
+            bool isParentFolderNamedAType,
+            bool isIncludeFolders
         );
 
         xml::Node *findPaths(
             xml::Node *kmlNode,
-            std::string meterRadiusRateString = "",
-            bool isParentFolderNamedAType = false
+            std::string meterRadiusRateString,
+            bool isParentFolderNamedAType,
+            bool isIncludeFolders
         );
 
         xml::Node *findAll(
             xml::Node *kmlNode,
-            std::string meterRadiusRateString
+            std::string meterRadiusRateString,
+            bool isIncludeFolders
         );
 
         xml::Node *insertFoundPlacemarks(
@@ -27,7 +30,8 @@ class TwinsChecker {
             std::vector<int> *matchedIndexes, // int vector array (has 2 members)
             std::vector<xml::Node*> &placemarkNodes,
             std::string placemarksType,
-            bool isParentFolderNamedAType
+            bool isParentFolderNamedAType,
+            bool isIncludeFolders
         );
 
     private:

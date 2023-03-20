@@ -4,7 +4,13 @@
 class Classifier {
     public:
         Classifier() {}
-        void rearrange(xml::Node *kmlNode, bool isClean);
+        
+        void rearrange(
+            xml::Node *kmlNode,
+            bool isCleanFolders,
+            bool isIncludeFolders
+        );
+
         bool folderByText(xml::Node *kmlNode, std::string searchStr);
 };
 
