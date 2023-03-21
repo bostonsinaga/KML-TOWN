@@ -279,7 +279,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
     General kmlGeneral;
     std::string kmlNameString = kmlGeneral.getRootDocumentName(kmlNode);
 
-    // INCLUDE FOLDERS STUFF
+    // include folders stuff
     std::vector<std::vector<std::string>> includedFolderNameVecVec;
 
     if (matchedIndexes[0].size() > 0) {
@@ -304,7 +304,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         for (int i = 0; i < 2; i++) {
             for (auto &index : matchedIndexes[i]) {
 
-                // INCLUDE FOLDERS STUFF
+                // INCLUDE FOLDERS STUFF //
 
                 xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
                 std::string includedExistFolder_name = "";     // !"" -> exist
@@ -333,7 +333,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                     }
                 }
 
-                // ********* INCLUDE FOLDERS STUFF
+                // ********* INCLUDE FOLDERS STUFF //
 
                 // remove from parent
                 placemarkNodes.at(index)->removeFromParent();
@@ -348,7 +348,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                 // duplicates
                 else twinsDivFolder = folderDupl;
 
-                // INCLUDE FOLDERS STUFF
+                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
                     if (includedNewFolder_node) {
                         includedNewFolder_node->addChild(placemarkNodes.at(index));
@@ -365,7 +365,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                         }
                     }
                 }
-                // ********* INCLUDE FOLDERS STUFF
+                // ********* INCLUDE FOLDERS STUFF //
                 else twinsDivFolder->addChild(placemarkNodes.at(index));
             }
         }

@@ -13,7 +13,7 @@ void Classifier::rearrange(
         std::vector<std::string> styleDataStrVec;
         std::vector<xml::Node*> newFolderNodes;
 
-        // INCLUDE FOLDERS STUFF
+        // include folders stuff
         std::vector<std::vector<std::string>> includedFolderNameVecVec;
 
         General kmlGeneral = General();
@@ -29,7 +29,7 @@ void Classifier::rearrange(
                 styleDataStrVec, styleDataStr
             );
 
-            // INCLUDE FOLDERS STUFF
+            // INCLUDE FOLDERS STUFF //
 
             xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
             std::string includedExistFolder_name = "";     // !"" -> exist
@@ -61,7 +61,7 @@ void Classifier::rearrange(
                 }
             }
 
-            // ********* INCLUDE FOLDERS STUFF
+            // ********* INCLUDE FOLDERS STUFF //
 
             // remove from parent
             placemark->removeFromParent();
@@ -83,11 +83,11 @@ void Classifier::rearrange(
                     kmlBuilder.getFolder(folderName)
                 );
 
-                // INCLUDE FOLDERS STUFF
+                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
                     includedNewFolder_node->addChild(placemark);
                     newFolderNodes.back()->addChild(includedNewFolder_node);
-                }   // ********* INCLUDE FOLDERS STUFF
+                }   // ********* INCLUDE FOLDERS STUFF //
                 else {
                     newFolderNodes.back()->addChild(placemark);
                 }
@@ -96,7 +96,7 @@ void Classifier::rearrange(
             else {
                 xml::Node *folderNode = newFolderNodes.at(styleDataStrVec_foundDex);
 
-                // INCLUDE FOLDERS STUFF
+                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
                     if (includedNewFolder_node) {
                         includedNewFolder_node->addChild(placemark);
@@ -113,7 +113,7 @@ void Classifier::rearrange(
                         }
                     }
                 }
-                // ********* INCLUDE FOLDERS STUFF
+                // ********* INCLUDE FOLDERS STUFF //
                 else folderNode->addChild(placemark);
             }
         }
