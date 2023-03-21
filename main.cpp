@@ -455,7 +455,12 @@ int main(int argc, char *argv[]) {
                 kml::Classifier().rearrange(kmlNode, isCleanFolders, isIncludeFolders);
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
             }
-            else std::cerr << "\n**FAILED**\n";
+            else if (
+                (!isCleanFolders && !kmlNode) ||
+                (isProceed && !kmlNode)
+            ) {
+                std::cerr << "\n**FAILED**\n";
+            }
         }
     }
 
