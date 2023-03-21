@@ -103,14 +103,26 @@ std::string StyleStrings::getPathColorCode(std::string pathColorNamed) {
 }
 
 // get style string data (pin with 'href', path with 'color-code')
-std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
+std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark, bool isRefreshStaticData) {
 
-    xml::Node
-        *kmlNode = nullptr,
-        *styleUrlNode = nullptr;
+    static xml::Node *kmlNode = nullptr;
+    static std::vector<xml::Node*> styleMapNodeVec, styleNodeVec;
+
+    if (isRefreshStaticData) {
+        if (placemark) {
+            kmlNode = placemark->getRoot();
+
+            if (kmlNode) {
+                styleMapNodeVec = kmlNode->getDescendantsByName("StyleMap", true);
+                styleNodeVec = kmlNode->getDescendantsByName("Style", true);
+            }
+        }
+        else kmlNode = nullptr;
+    }
+    
+    xml::Node *styleUrlNode = nullptr;
 
     if (placemark) {
-        kmlNode = placemark->getRoot();
         styleUrlNode = placemark->getFirstDescendantByName("styleUrl");
     }
 
@@ -118,7 +130,7 @@ std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
         std::string styleName = styleUrlNode->getInnerText();
         styleName = styleName.substr(1);
 
-        for (auto &styleMapNode : kmlNode->getDescendantsByName("StyleMap", true)) {
+        for (auto &styleMapNode : styleMapNodeVec) {
             for (auto &att1 : *styleMapNode->getAttributes()) {
                 
                 if (att1.getName() == "id" && att1.getValue() == styleName) {
@@ -133,7 +145,7 @@ std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
 
                     normalPairStyleName = normalPairStyleName.substr(1);
 
-                    for (auto &styleNode : kmlNode->getDescendantsByName("Style", true)) {
+                    for (auto &styleNode : styleNodeVec) {
                         for (auto &att2 : *styleNode->getAttributes()) {
                             if (att2.getName() == "id" && att2.getValue() == normalPairStyleName) {
                                 
@@ -170,7 +182,7 @@ std::string StyleStrings::getPlacemarkStyleData(xml::Node *placemark) {
         }
     }
     // no 'styleUrl', set to default
-    else if (placemark->getFirstDescendantByName("Point")) {
+    else if (placemark && placemark->getFirstDescendantByName("Point")) {
         // pin
         return "ylw-pushpin";
     }

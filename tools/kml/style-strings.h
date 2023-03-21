@@ -241,7 +241,10 @@ class StyleStrings {
         std::string getPathColorCode(std::string pathColorNamed);
 
         // get style string data (pin with 'hrev', path with 'color-code')
-        std::string getPlacemarkStyleData(xml::Node *placemark);
+        std::string getPlacemarkStyleData(
+            xml::Node *placemark,
+            bool isRefreshStaticData = false
+        );
 };
 
 #endif // __KML_STYLE_STRINGS_H__

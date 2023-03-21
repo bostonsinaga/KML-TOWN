@@ -16,14 +16,21 @@ void Classifier::rearrange(
         // include folders stuff
         std::vector<std::vector<std::string>> includedFolderNameVecVec;
 
-        General kmlGeneral = General();
-        Placemark kmlPlacemark = Placemark();
-        Builder kmlBuilder = Builder();
+        General kmlGeneral;
+        Placemark kmlPlacemark;
+        Builder kmlBuilder;
+        StyleStrings kmlStyleStrings;
+
+        bool isFirstPlcItr = true;
+        std::string styleDataStr;
 
         for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
 
-            StyleStrings kmlStyleStrings;
-            std::string styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark);
+            if (isFirstPlcItr) {
+                styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark, true);
+                isFirstPlcItr = false;
+            }
+            else styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark, false);
 
             int styleDataStrVec_foundDex = mini_tool::isInsideVectorString(
                 styleDataStrVec, styleDataStr
