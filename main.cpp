@@ -323,11 +323,14 @@ int main(int argc, char *argv[]) {
 
                 twinsCheckedFolder = call_briefer::selectFunctionByType(
                     inputStrings.at(4),
-                    {"pin", "path", "all"},
+                    {"pin-ignore", "path-ignore", "all-ignore", "pin-style", "path-style", "all-style"},
                     {
-                        [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6), false, isIncludeFolders);},
-                        [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6), false, isIncludeFolders);},
-                        [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6), isIncludeFolders);}
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6), false, isIncludeFolders, false);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6), false, isIncludeFolders, false);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6), isIncludeFolders, false);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPins(kmlNode, inputStrings.at(6), false, isIncludeFolders, true);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findPaths(kmlNode, inputStrings.at(6), false, isIncludeFolders, true);},
+                        [=]()->xml::Node* {return kml::TwinsChecker().findAll(kmlNode, inputStrings.at(6), isIncludeFolders, true);}
                     }
                 );
 

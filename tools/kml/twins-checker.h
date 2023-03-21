@@ -9,20 +9,23 @@ class TwinsChecker {
             xml::Node *kmlNode,
             std::string meterRadiusRateString,
             bool isParentFolderNamedAType,
-            bool isIncludeFolders
+            bool isIncludeFolders,
+            bool isOnlySimilarStyle
         );
 
         xml::Node *findPaths(
             xml::Node *kmlNode,
             std::string meterRadiusRateString,
             bool isParentFolderNamedAType,
-            bool isIncludeFolders
+            bool isIncludeFolders,
+            bool isOnlySimilarStyle
         );
 
         xml::Node *findAll(
             xml::Node *kmlNode,
             std::string meterRadiusRateString,
-            bool isIncludeFolders
+            bool isIncludeFolders,
+            bool isOnlySimilarStyle
         );
 
         xml::Node *insertFoundPlacemarks(
@@ -37,6 +40,13 @@ class TwinsChecker {
     private:
         /* limited from 0 to 100 meters */
         double getLimitedMeterRadius(std::string meterRadiusRateString);
+
+        // used when 'find' function's 'isOnlySimilarStyle' is true
+        bool checkIfStyleSimilar(
+            xml::Node *placemark_A,
+            xml::Node *placemark_B,
+            bool &isFirstPlcItr
+        );
 };
 
 #endif // __KML_TWINS_CHECKER_H__

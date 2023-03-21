@@ -84,7 +84,8 @@ Menu::Menu() {
         << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME] --include-folder <optional>\n"
         << "****** checking placemark twins with given radius (0-100 meters)\n"
         << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n"
-        << "****** '[PLACEMARK_TYPE]' -> input can be a string of 'pin', 'path' or 'all'\n"
+        << "****** '[PLACEMARK_TYPE]' -> input can be a string of 'pin-ignore', 'path-ignore', 'all-ignore'\n"
+        << "                             'pin-style', 'path-style' or 'all-style'\n"
         << "****** '--include-folder' -> include current placemarks folder/document into working folder\n\n"
 
         << "--kml --measure-paths [FILE_NAME] --out [FILE_NAME]\n"

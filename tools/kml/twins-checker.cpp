@@ -13,7 +13,8 @@ xml::Node *TwinsChecker::findPins(
     xml::Node *kmlNode,
     std::string meterRadiusRateString,
     bool isParentFolderNamedAType,
-    bool isIncludeFolders
+    bool isIncludeFolders,
+    bool isOnlySimilarStyle
 ) {
     double meterRadius = getLimitedMeterRadius(meterRadiusRateString);
 
@@ -58,6 +59,7 @@ xml::Node *TwinsChecker::findPins(
     int ctrA = 0, ctrB = 0;
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<Point> pointVec_buffer = pointVec;
+    bool isFirstPlcItr = true;
 
     for (auto &pointA : pointVec) {
         bool isMatched = false;
@@ -67,7 +69,11 @@ xml::Node *TwinsChecker::findPins(
                 pointA.x >= pointB.x - meterRadius &&
                 pointA.x <= pointB.x + meterRadius &&
                 pointA.y >= pointB.y - meterRadius &&
-                pointA.y <= pointB.y + meterRadius
+                pointA.y <= pointB.y + meterRadius &&
+                (!isOnlySimilarStyle ||
+                (
+                    isOnlySimilarStyle && checkIfStyleSimilar(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                ))
             ) {
                 isMatched = true;
                 matchedIndexes[1].push_back(ctrB);
@@ -95,7 +101,8 @@ xml::Node *TwinsChecker::findPaths(
     xml::Node *kmlNode,
     std::string meterRadiusRateString,
     bool isParentFolderNamedAType,
-    bool isIncludeFolders
+    bool isIncludeFolders,
+    bool isOnlySimilarStyle
 ) {
     std::cerr
         << "KML-> Twins checking attention. This will sanitize/remove\n"
@@ -171,10 +178,11 @@ xml::Node *TwinsChecker::findPaths(
     int ctrA = 0, ctrB = 0;
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<std::vector<Point>> pointVecVec_buffer = pointVecVec;
+    bool isFirstPlcItr = true;
     
     for (auto &pointVec_A : pointVecVec) {
         
-        bool isMatched = false;
+        bool isMatched = false, isStyleSimilar = false;
         int whoIsOriginal = 0; // 'ctrA' or 'ctrB'
 
         for (auto &pointVec_B : pointVecVec_buffer) {
@@ -210,13 +218,26 @@ xml::Node *TwinsChecker::findPaths(
                         break;
                     }
 
-                    if (pointVec_A.at(i).x >= pointVec_B.at(i).x - meterRadius &&
-                        pointVec_A.at(i).x <= pointVec_B.at(i).x + meterRadius &&
-                        pointVec_A.at(i).y >= pointVec_B.at(i).y - meterRadius &&
-                        pointVec_A.at(i).y <= pointVec_B.at(i).y + meterRadius
+                    if ((!isOnlySimilarStyle || isStyleSimilar ||
+                        (
+                            isOnlySimilarStyle &&
+                            checkIfStyleSimilar(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                        ))
                     ) {
-                        equalCount++;
+                        if (isOnlySimilarStyle && !isStyleSimilar) {
+                            isStyleSimilar = true;
+                        }
+
+                        if (pointVec_A.at(i).x >= pointVec_B.at(i).x - meterRadius &&
+                            pointVec_A.at(i).x <= pointVec_B.at(i).x + meterRadius &&
+                            pointVec_A.at(i).y >= pointVec_B.at(i).y - meterRadius &&
+                            pointVec_A.at(i).y <= pointVec_B.at(i).y + meterRadius
+                        ) {
+                            equalCount++;
+                        }
                     }
+                    // style of both path are not similar
+                    else if (!isStyleSimilar) break;
                 }
             }
 
@@ -243,10 +264,11 @@ xml::Node *TwinsChecker::findPaths(
 xml::Node *TwinsChecker::findAll(
     xml::Node *kmlNode,
     std::string meterRadiusRateString,
-    bool isIncludeFolders
+    bool isIncludeFolders,
+    bool isOnlySimilarStyle
 ) {
-    xml::Node *pinsFolder = findPins(kmlNode, meterRadiusRateString, true, isIncludeFolders);
-    xml::Node *pathsFolder = findPaths(kmlNode, meterRadiusRateString, true, isIncludeFolders);
+    xml::Node *pinsFolder = findPins(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
+    xml::Node *pathsFolder = findPaths(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
 
     xml::Node *workingFolder = Builder().getFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
 
@@ -410,6 +432,28 @@ double TwinsChecker::getLimitedMeterRadius(std::string meterRadiusRateString) {
     }
 
     return meterRadius;
+}
+
+// used when 'find' function's 'isOnlySimilarStyle' is true
+bool TwinsChecker::checkIfStyleSimilar(
+    xml::Node *placemark_A,
+    xml::Node *placemark_B,
+    bool &isFirstPlcItr
+) {            
+    std::string styleDataStr_A, styleDataStr_B;
+    static StyleStrings kmlStyleStrings;
+
+    if (isFirstPlcItr) {
+        styleDataStr_A = kmlStyleStrings.getPlacemarkStyleData(placemark_A, true);
+        styleDataStr_B = kmlStyleStrings.getPlacemarkStyleData(placemark_B, false);
+        isFirstPlcItr = false;
+        return styleDataStr_A == styleDataStr_B;
+    }
+    else {
+        styleDataStr_A = kmlStyleStrings.getPlacemarkStyleData(placemark_A, false);
+        styleDataStr_B = kmlStyleStrings.getPlacemarkStyleData(placemark_B, false);
+        return styleDataStr_A == styleDataStr_B;
+    }
 }
 
 #endif // __KML_TWINS_CHECKER_CPP__
