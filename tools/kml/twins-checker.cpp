@@ -59,6 +59,8 @@ xml::Node *TwinsChecker::findPins(
     int ctrA = 0, ctrB = 0;
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<Point> pointVec_buffer = pointVec;
+
+    StyleStrings kmlStyleStrings;
     bool isFirstPlcItr = true;
 
     for (auto &pointA : pointVec) {
@@ -70,9 +72,9 @@ xml::Node *TwinsChecker::findPins(
                 pointA.x <= pointB.x + meterRadius &&
                 pointA.y >= pointB.y - meterRadius &&
                 pointA.y <= pointB.y + meterRadius &&
-                (!isOnlySimilarStyle ||
-                (
-                    isOnlySimilarStyle && checkIfStyleSimilar(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                (!isOnlySimilarStyle || (
+                    isOnlySimilarStyle &&
+                    checkSimilarStyle(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
                 ))
             ) {
                 isMatched = true;
@@ -178,6 +180,8 @@ xml::Node *TwinsChecker::findPaths(
     int ctrA = 0, ctrB = 0;
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<std::vector<Point>> pointVecVec_buffer = pointVecVec;
+
+    StyleStrings kmlStyleStrings;
     bool isFirstPlcItr = true;
     
     for (auto &pointVec_A : pointVecVec) {
@@ -187,6 +191,12 @@ xml::Node *TwinsChecker::findPaths(
 
         for (auto &pointVec_B : pointVecVec_buffer) {
             if (ctrA != ctrB && pointVec_B.size() > 0) {
+
+                if (isOnlySimilarStyle &&
+                    !checkSimilarStyle(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                ) {
+                    break;
+                }
 
                 std::vector<Point> *longestPointVec = (
                     pointVec_A.size() >= pointVec_B.size() ?
@@ -218,26 +228,13 @@ xml::Node *TwinsChecker::findPaths(
                         break;
                     }
 
-                    if ((!isOnlySimilarStyle || isStyleSimilar ||
-                        (
-                            isOnlySimilarStyle &&
-                            checkIfStyleSimilar(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
-                        ))
+                    if (pointVec_A.at(i).x >= pointVec_B.at(i).x - meterRadius &&
+                        pointVec_A.at(i).x <= pointVec_B.at(i).x + meterRadius &&
+                        pointVec_A.at(i).y >= pointVec_B.at(i).y - meterRadius &&
+                        pointVec_A.at(i).y <= pointVec_B.at(i).y + meterRadius
                     ) {
-                        if (isOnlySimilarStyle && !isStyleSimilar) {
-                            isStyleSimilar = true;
-                        }
-
-                        if (pointVec_A.at(i).x >= pointVec_B.at(i).x - meterRadius &&
-                            pointVec_A.at(i).x <= pointVec_B.at(i).x + meterRadius &&
-                            pointVec_A.at(i).y >= pointVec_B.at(i).y - meterRadius &&
-                            pointVec_A.at(i).y <= pointVec_B.at(i).y + meterRadius
-                        ) {
-                            equalCount++;
-                        }
+                        equalCount++;
                     }
-                    // style of both path are not similar
-                    else if (!isStyleSimilar) break;
                 }
             }
 
@@ -435,13 +432,13 @@ double TwinsChecker::getLimitedMeterRadius(std::string meterRadiusRateString) {
 }
 
 // used when 'find' function's 'isOnlySimilarStyle' is true
-bool TwinsChecker::checkIfStyleSimilar(
+bool TwinsChecker::checkSimilarStyle(
     xml::Node *placemark_A,
     xml::Node *placemark_B,
     bool &isFirstPlcItr
-) {            
-    std::string styleDataStr_A, styleDataStr_B;
+) {
     static StyleStrings kmlStyleStrings;
+    std::string styleDataStr_A, styleDataStr_B;
 
     if (isFirstPlcItr) {
         styleDataStr_A = kmlStyleStrings.getPlacemarkStyleData(placemark_A, true);

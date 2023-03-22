@@ -42,7 +42,7 @@ class TwinsChecker {
         double getLimitedMeterRadius(std::string meterRadiusRateString);
 
         // used when 'find' function's 'isOnlySimilarStyle' is true
-        bool checkIfStyleSimilar(
+        bool checkSimilarStyle(
             xml::Node *placemark_A,
             xml::Node *placemark_B,
             bool &isFirstPlcItr
