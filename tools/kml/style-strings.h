@@ -243,7 +243,7 @@ class StyleStrings {
         // get style string data (pin with 'hrev', path with 'color-code')
         std::string getPlacemarkStyleData(
             xml::Node *placemark,
-            bool isRefreshStaticData = false
+            bool isRefreshStaticData
         );
 };
 
