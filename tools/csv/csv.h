@@ -5,7 +5,7 @@ namespace csv {
     void changeCSVSeparator(
         std::string fileDir_in,
         std::string fileDir_out,
-        std::string preSign,
+        std::string oldSign,
         std::string newSign
     ) {
         std::ifstream readFile(fileDir_in);
@@ -17,11 +17,11 @@ namespace csv {
 
         if (text != "") {
             for (int i = 0; i < text.size(); i++) {
-                size_t found = text.find(preSign);
+                size_t found = text.find(oldSign);
                 if (found != std::string::npos) {
                     text.erase(
                         text.begin() + found,
-                        text.begin() + found + preSign.size()
+                        text.begin() + found + oldSign.size()
                     );
                     text.insert(found, newSign);
                 }
