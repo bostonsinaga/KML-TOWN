@@ -26,7 +26,7 @@ class Placemark {
         void removePathsByDistance(
             xml::Node *kmlNode,
             double limitDistance,
-            bool isAbove
+            bool isOverDistance
         );
 
         // read placemark name or its folder name (closest parent)
