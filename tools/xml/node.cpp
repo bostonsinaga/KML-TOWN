@@ -12,13 +12,15 @@ Node::Node(std::string name_in, Node *parent_in) {
 }
 
 /*  ATTENTION!
-*   Deletion of object is expected
-*   using:
-*
-*   parent->removeChild(child, true);
-*
-*   But this is not mandatory for a root node.
-*   Which is have no parent.
+    Destruction using 'delete node;' is deprecated.
+    (Can causing error)
+
+    Destruction of object expected using:
+
+    parent->removeChild(child, true);
+
+    But this not working with a root node.
+    Which have no parent.
 */
 Node::~Node() {
     for (auto &child : children) {
