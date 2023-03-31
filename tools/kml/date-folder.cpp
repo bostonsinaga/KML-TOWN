@@ -152,7 +152,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
 
     kmlGeneral.insertEditedPlacemarksIntoFolder(
         mainFolderNode,
-        Builder().getFolder(FOLDERBYDATE_COMMAND_WORKING_FOLDER),
+        Builder().getFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
         newFolderNodes,
         {"Date foldering", "Folder by date"},
         "placemark"

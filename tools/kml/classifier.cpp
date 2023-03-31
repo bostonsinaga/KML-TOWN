@@ -206,7 +206,7 @@ bool Classifier::folderByText(xml::Node *kmlNode, std::string searchStr) {
         }
 
         if (placemarks.size() > 0) {
-            std::string folderName = FOLDERBYTEXT_COMMAND_WORKING_FOLDER + std::string("  ") + searchStr;
+            std::string folderName = FILTER_STRING_COMMAND_WORKING_FOLDER + std::string("  ") + searchStr;
 
             xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
             std::cout << "KML-> Found: " << placemarks.size() << "\n"
