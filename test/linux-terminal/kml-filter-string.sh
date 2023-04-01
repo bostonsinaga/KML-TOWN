@@ -1,1 +1,1 @@
-kml-town --kml --filter-string ../measured.kml --string "10/10/2020" --out ../filter-string.kml
+kml-town --kml -filter-string ../measured.kml -string "10/10/2020" -out ../filter-string.kml

@@ -1,1 +1,1 @@
-kml-town --convert --kml-in ../classified.kml --csv-out ../sheet.csv
+kml-town --convert -kml-in ../classified.kml -csv-out ../sheet.csv

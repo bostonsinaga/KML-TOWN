@@ -1,1 +1,1 @@
-kml-town --kml --measure-paths ../chat.kml --out ../measured.kml
+kml-town --kml -measure-paths ../chat.kml -out ../measured.kml
