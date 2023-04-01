@@ -1,1 +1,1 @@
-kml-town --csv --change-separator ../sheet.csv --old-sign "|" --new-sign "#" --out ../edited-sheet.csv
+kml-town --csv -change-separator ../sheet.csv -old-sign "|" -new-sign "#" -out ../edited-sheet.csv

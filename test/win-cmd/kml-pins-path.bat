@@ -1,1 +1,1 @@
-kml-town --kml --pins-path ../test-in.kml --start-point "  6° 7'21.02S 106°47'1.86T" --end-point "  6°13'30.10S 106°52'36.46T" --out ../test-out.kml
+kml-town --kml -pins-path ../test-in.kml -start-point "  6° 7'21.02S 106°47'1.86T" -end-point "  6°13'30.10S 106°52'36.46T" -out ../test-out.kml
