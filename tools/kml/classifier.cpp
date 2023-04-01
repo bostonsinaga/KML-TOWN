@@ -174,7 +174,7 @@ void Classifier::rearrange(
     }
 }
 
-bool Classifier::folderByText(xml::Node *kmlNode, std::string searchStr) {
+bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
     if (kmlNode) {
 
         std::vector<xml::Node*> placemarks;
@@ -205,13 +205,26 @@ bool Classifier::folderByText(xml::Node *kmlNode, std::string searchStr) {
             }
         }
 
+        std::string frontWord = "";
+
+        for (auto &searchCh : searchStr) {
+            if (searchCh == ' ' && frontWord != "") {
+                std::cerr << "KML-> Filter string warning. The search string has more than one word.\n"
+                          << "      Folder name will use '" << frontWord << "' from the first word\n";
+                break;
+            }
+            else if (searchCh != ' ') {
+                frontWord += searchCh;
+            }
+        }
+
         if (placemarks.size() > 0) {
-            std::string folderName = FILTER_STRING_COMMAND_WORKING_FOLDER + std::string("  ") + searchStr;
+            std::string folderName = FILTER_STRING_COMMAND_WORKING_FOLDER + std::string("  ") + frontWord;
 
             xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
             std::cout << "KML-> Found: " << placemarks.size() << "\n"
                       << "      Placed to folder named '" << folderName << "'\n"
-                      << "      Folder by text completed!\n";
+                      << "      Filter string completed!\n";
 
             kmlGeneral.insertEditedPlacemarksIntoFolder(
                 mainFolderNode,
@@ -223,8 +236,8 @@ bool Classifier::folderByText(xml::Node *kmlNode, std::string searchStr) {
             return true;
         }
         else {
-            std::cerr << "KML-> Folder by text error. "
-                      << "No placemark's name or description contains '" << searchStr << "'\n";
+            std::cerr << "KML-> Filter string error. "
+                      << "No placemark's name or description contains '" << frontWord << "'\n";
             return false;
         }
     }

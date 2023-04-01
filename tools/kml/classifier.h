@@ -11,7 +11,7 @@ class Classifier {
             bool isIncludeFolders
         );
 
-        bool folderByText(xml::Node *kmlNode, std::string searchStr);
+        bool filterString(xml::Node *kmlNode, std::string searchStr);
 };
 
 #endif // __CLASSIFIER_H__
