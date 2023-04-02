@@ -17,7 +17,11 @@ Node::Node(std::string name_in, Node *parent_in) {
 
     Destruction of object expected using:
 
-    parent->removeChild(child, true);
+    'if (parent) parent->removeChild(child, true);'
+    
+    or
+
+    'node->removeFromParent(true);'
 
     But this not working with a root node.
     Which have no parent.
@@ -171,22 +175,27 @@ void Node::setParent(Node *parent_in) {
     parent = parent_in;
 }
 
-// node still exist (take care)
-void Node::removeFromParent() {
+// 'isClean' to self delete node
+void Node::removeFromParent(bool isClean) {
     if (parent) {
         int ctr = 0;
+
         for (auto &child : *parent->getChildren()) {
             if (child == this) {
+
                 parent->getChildren()->erase(
                     parent->getChildren()->begin() + ctr,
                     parent->getChildren()->begin() + ctr + 1
                 );
+
+                if (isClean) delete this;
                 break;
             }
             ctr++;
         }
         parent = nullptr;
     }
+    else if (isClean) delete this;
 }
 
 void Node::addChild(Node *newChild, int order) {
@@ -246,8 +255,8 @@ void Node::swapChildren(Node *childA, Node *childB) {
 }
 
 /*  WARNING!
-*   use 'isClean' if only the child has not been deleted
-*   (don't use 'isClean' from node destructor)
+*   -use 'isClean' if only the child has not been deleted
+*   -don't use 'isClean' from node destructor
 */
 void Node::removeChild(Node *exChild, bool isClean) {
     
