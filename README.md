@@ -39,6 +39,68 @@ This really help me. And I hope this can help you too. Thank you.</br>
 **Boston Sinaga**
 
 
+# COMMANDS
+
+*********************
+** INPUT MANDATORY **
+*********************
+
+-- TOGGLES --
+
+MAIN_MENU_FLAG = "menu"
+HELP_MENU_FLAG = "help"
+VERSION_NUMBER_FLAG = "version"
+CONVERT_TXT_KML_FLAG = "convert"
+CONVERT_KML_CSV_FLAG = "convert"
+KML_CROP_FLAG = "kml"
+KML_SORT_FLAG = "kml"
+KML_PINS_PATH_FLAG = "kml"
+KML_TWINS_CHECK_FLAG = "kml"
+KML_MEASURE_PATHS_FLAG = "kml"
+KML_CLASSIFY_FLAG = "kml"
+KML_FOLDER_BY_DATE_FLAG = "kml"
+KML_FILTER_STRING_FLAG = "kml"
+KML_REMOVE_PATHS_FLAG = "kml"
+CSV_CHANGE_SEPARATOR_FLAG = "csv"
+
+-- PARAMETERS --
+
+CONVERT_TXT_KML_FLAG = "txt-in", "kml-out", "type"
+CONVERT_KML_CSV_FLAG = "kml-in", "csv-out"
+KML_CROP_FLAG = "crop", "start-point", "end-point"
+KML_SORT_FLAG = "sort", "start-point", "end-point"
+KML_PINS_PATH_FLAG = "pins-path", "start-point", "end-point"
+KML_TWINS_CHECK_FLAG = "twins-check", "type", "radius"
+KML_MEASURE_PATHS_FLAG = "measure-paths"
+KML_CLASSIFY_FLAG = "classify"
+KML_FOLDER_BY_DATE_FLAG = "folder-by-date"
+KML_FILTER_STRING_FLAG = "filter-string", "text"
+KML_REMOVE_PATHS_FLAG = "remove-paths"
+CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
+
+********************
+** INPUT OPTIONAL **
+********************
+
+-- TOGGLES --
+
+KML_MEASURE_PATHS_FLAG = "info"
+KML_TWINS_CHECK_FLAG = "include-folders"
+KML_CLASSIFY_FLAG = "clean-folders", "include-folders"
+
+-- PARAMETERS --
+
+KML_CROP_FLAG = "out"
+KML_SORT_FLAG = "out"
+KML_PINS_PATH_FLAG = "out"
+KML_TWINS_CHECK_FLAG = "out"
+KML_MEASURE_PATHS_FLAG = "out"
+KML_CLASSIFY_FLAG = "out"
+KML_FOLDER_BY_DATE_FLAG = "out"
+KML_FILTER_STRING_FLAG = "out"
+KML_REMOVE_PATHS_FLAG = "out", "over-distance", "under-distance"
+CSV_CHANGE_SEPARATOR_FLAG = "out"
+
 
 # SCREENSHOTS
 
