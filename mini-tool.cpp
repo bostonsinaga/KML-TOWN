@@ -193,23 +193,12 @@ namespace mini_tool {
         return std::stod(strVal);
     }
 
-    int isInsideVectorString(
-        std::vector<std::string> &dataVec,
-        std::string dataTest
-    ) {
-        int ctr = 0;
-        for (auto &data : dataVec) {
-            if (data == dataTest) {
-                return ctr;
-            }
-            ctr++;
-        }
-        return -1;
-    }
+    template<typename TYPE_T>
 
-    int isInsideVectorInteger(
-        std::vector<int> &dataVec,
-        int dataTest
+    // return index (-1 not found)
+    int isPrimitiveInsideVector(
+        std::vector<TYPE_T> &dataVec,
+        TYPE_T dataTest
     ) {
         int ctr = 0;
         for (auto &data : dataVec) {

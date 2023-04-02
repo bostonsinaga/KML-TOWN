@@ -43,19 +43,15 @@ namespace mini_tool {
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr);
 
-    // return index (-1 not found)
-    int isInsideVectorString(
-        std::vector<std::string> &strVec,
-        std::string strTest
-    );
+    // 'TYPE_T' is a primitive data type
+    template<typename TYPE_T>
 
     // return index (-1 not found)
-    int isInsideVectorInteger(
-        std::vector<int> &dataVec,
-        int dataTest
+    int isPrimitiveInsideVector(
+        std::vector<TYPE_T> &dataVec,
+        TYPE_T dataTest
     );
 
-    // 'TYPE_T' is a primitive data
     template<typename TYPE_T>
 
     /*

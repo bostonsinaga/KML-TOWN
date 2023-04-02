@@ -32,7 +32,7 @@ void Classifier::rearrange(
             }
             else styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark, false);
 
-            int styleDataStrVec_foundDex = mini_tool::isInsideVectorString(
+            int styleDataStrVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
                 styleDataStrVec, styleDataStr
             );
 
@@ -54,7 +54,7 @@ void Classifier::rearrange(
                     styleDataStrVec_foundDex_buffer = includedFolderNameVecVec.size() - 1;
                 }
                 else {
-                    includedFolderNameVecVec_foundDex = mini_tool::isInsideVectorString(
+                    includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
                         includedFolderNameVecVec.at(styleDataStrVec_foundDex), includedExistFolder_name
                     );
                     styleDataStrVec_foundDex_buffer = styleDataStrVec_foundDex;

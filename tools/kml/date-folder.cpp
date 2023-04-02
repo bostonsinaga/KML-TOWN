@@ -127,7 +127,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             dateStr = "NO DATE";
         }
 
-        int insideDex = mini_tool::isInsideVectorString(dateStrVec, dateStr);
+        int insideDex = mini_tool::isPrimitiveInsideVector<std::string>(dateStrVec, dateStr);
 
         if (insideDex == -1) {
             if (newFolderNodes.size() > 0) {

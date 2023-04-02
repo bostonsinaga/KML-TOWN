@@ -339,7 +339,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                         includedFolderNameVecVec.push_back(std::vector<std::string>{});
                     }
                     else {
-                        includedFolderNameVecVec_foundDex = mini_tool::isInsideVectorString(
+                        includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
                             includedFolderNameVecVec.at(i_buffer), includedExistFolder_name
                         );
                     }
