@@ -1,69 +1,30 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#define TOTAL_COMMANDS_COUNT 59
-#define MAX_INPUT_STRINGS_COUNT 10
+#define TOGGLE_INPUTORDERFLAG 0     // single
+#define PARAMETER_INPUTORDERFLAG 1  // followed by string
+#define STRING_INPUTORDERFLAG 2     // follows parameter
 
+#define TOTAL_COMMANDS_COUNT 15
+
+// COMMAND FLAGS
 #define MAIN_MENU_FLAG 0
 #define HELP_MENU_FLAG 1
-#define STYLE_NAMES_MENU_FLAG 2
-#define VERSION_NUMBER_FLAG 3
-#define CONVERT_TXT_KML_FLAG 4
-#define CONVERT_KML_CSV_FLAG 5
-#define KML_CROP_NEWFILE_FLAG 6
-#define KML_CROP_OVERWRITE_FLAG 7
-#define KML_SORT_NEWFILE_FLAG 8
-#define KML_SORT_OVERWRITE_FLAG 9
-#define KML_PINS_PATH_CROP_NEWFILE_FLAG 10
-#define KML_PINS_PATH_CROP_OVERWRITE_FLAG 11
-#define KML_PATHS_PINS_CROP_NEWFILE_FLAG 12
-#define KML_PATHS_PINS_CROP_OVERWRITE_FLAG 13
-#define KML_PATHS_PINS_NEWFILE_FLAG 14
-#define KML_PATHS_PINS_OVERWRITE_FLAG 15
-#define KML_JOIN_PATHS_CROP_NEWFILE_FLAG 16
-#define KML_JOIN_PATHS_CROP_OVERWRITE_FLAG 17
-#define KML_JOIN_PATHS_NEWFILE_FLAG 18
-#define KML_JOIN_PATHS_OVERWRITE_FLAG 19
-#define KML_SPLIT_PATHS_CROP_NEWFILE_FLAG 20
-#define KML_SPLIT_PATHS_CROP_OVERWRITE_FLAG 21
-#define KML_SPLIT_PATHS_NEWFILE_FLAG 22
-#define KML_SPLIT_PATHS_OVERWRITE_FLAG 23
-#define KML_TWINS_CHECK_NEWFILE_FLAG 24
-#define KML_TWINS_CHECK_OVERWRITE_FLAG 25
-#define KML_TWINS_CHECK_INCLUDE_FOLDER_NEWFILE_FLAG 26
-#define KML_TWINS_CHECK_INCLUDE_FOLDER_OVERWRITE_FLAG 27
-#define KML_MEASURE_PATHS_NEWFILE_FLAG 28
-#define KML_MEASURE_PATHS_OVERWRITE_FLAG 29
-#define KML_MEASURE_PATHS_INFO_FLAG 30
-#define KML_REMOVE_PATH_UNDER_DISTANCE_NEWFILE_FLAG 31
-#define KML_REMOVE_PATH_UNDER_DISTANCE_OVERWRITE_FLAG 32
-#define KML_REMOVE_PATH_OVER_DISTANCE_NEWFILE_FLAG 33
-#define KML_REMOVE_PATH_OVER_DISTANCE_OVERWRITE_FLAG 34
-#define KML_CLASSIFY_NEWFILE_FLAG 35
-#define KML_CLASSIFY_OVERWRITE_FLAG 36
-#define KML_CLASSIFY_CLEAN_FOLDER_NEWFILE_FLAG 37
-#define KML_CLASSIFY_CLEAN_FOLDER_OVERWRITE_FLAG 38
-#define KML_CLASSIFY_INCLUDE_FOLDER_NEWFILE_FLAG 39
-#define KML_CLASSIFY_INCLUDE_FOLDER_OVERWRITE_FLAG 40
-#define KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_NEWFILE_FLAG 41
-#define KML_CLASSIFY_INCLUDE_CLEAN_FOLDER_OVERWRITE_FLAG 42
-#define KML_FOLDERBYDATE_NEWFILE_FLAG 43
-#define KML_FOLDERBYDATE_OVERWRITE_FLAG 44
-#define KML_FILTER_TEXT_NEWFILE_FLAG 45
-#define KML_FILTER_TEXT_OVERWRITE_FLAG 46
-#define KML_STYLEPINS_ICON_NEWFILE_FLAG 47
-#define KML_STYLEPINS_ICON_OVERWRITE_FLAG 48
-#define KML_STYLEPINS_SCALE_NEWFILE_FLAG 49
-#define KML_STYLEPINS_SCALE_OVERWRITE_FLAG 50
-#define KML_STYLEPATH_COLOR_NEWFILE_FLAG 51
-#define KML_STYLEPATH_COLOR_OVERWRITE_FLAG 52
-#define KML_STYLEPATH_THICKNESS_NEWFILE_FLAG 53
-#define KML_STYLEPATH_THICKNESS_OVERWRITE_FLAG 54
-#define KML_STYLEPATH_OPACITY_NEWFILE_FLAG 55
-#define KML_STYLEPATH_OPACITY_OVERWRITE_FLAG 56
-#define CSV_CHANGE_SEPARATOR_NEWFILE_FLAG 57
-#define CSV_CHANGE_SEPARATOR_OVERWRITE_FLAG 58
+#define VERSION_NUMBER_FLAG 2
+#define CONVERT_TXT_KML_FLAG 3
+#define CONVERT_KML_CSV_FLAG 4
+#define KML_CROP_FLAG 5
+#define KML_SORT_FLAG 6
+#define KML_PINS_PATH_FLAG 7
+#define KML_TWINS_CHECK_FLAG 8
+#define KML_MEASURE_PATHS_FLAG 9
+#define KML_CLASSIFY_FLAG 10
+#define KML_FOLDER_BY_DATE_FLAG 11
+#define KML_FILTER_STRING_FLAG 12
+#define KML_REMOVE_PATHS_FLAG 13
+#define CSV_CHANGE_SEPARATOR_FLAG 14
 
+// WORKING FOLDER STRINGS
 #define COMMAND_WORKING_FOLDER "KML-TOWN  --"
 #define CROP_COMMAND_WORKING_FOLDER "KML-TOWN  --CROP"
 #define SORT_COMMAND_WORKING_FOLDER "KML-TOWN  --SORT"
@@ -74,117 +35,106 @@
 #define SPLIT_PATHS_COMMAND_WORKING_FOLDER "KML-TOWN  --SPLIT-PATHS"
 #define TWINS_CHECK_COMMAND_WORKING_FOLDER "KML-TOWN  --TWINS-CHECK"
 #define CLASSIFY_COMMAND_WORKING_FOLDER "KML-TOWN  --CLASSIFY"
-#define FOLDERBYDATE_COMMAND_WORKING_FOLDER "KML-TOWN --FOLDER-BY-DATE"
-#define FOLDERBYTEXT_COMMAND_WORKING_FOLDER "KML-TOWN  --FOLDER-BY-TEXT"
+#define FOLDER_BY_DATE_COMMAND_WORKING_FOLDER "KML-TOWN --FOLDER-BY-DATE"
+#define FILTER_STRING_COMMAND_WORKING_FOLDER "KML-TOWN  --FILTER-STRING"
 
 class Menu {
-    public:
-        Menu();
-        int select(std::vector<std::string> inputStrings);
-        void setNotification(std::string message, bool isNeedEnterKey = true);
-        bool setAlert(std::string message, bool isUseFailedMessage = true);
-        std::string setAdditionalInput(std::string message); // input is first CLI strings
+public:
+      Menu(std::vector<std::string> *inputStrings_ptrIn);
 
-    private:
-        std::string getErrorString(bool isUseDMSErrorMessage);
+      // call methods with string vector pointer to refresh 'inputStrings_ptr' //
 
-        // VARIABLES //
+      /*
+          returns command flags (invalid returns -1)
+          this only check for mandatory input to get intended flag
+      */
+      int select(std::vector<std::string> *inputStrings_ptrIn = nullptr);
 
-        std::string listStrings[TOTAL_COMMANDS_COUNT][MAX_INPUT_STRINGS_COUNT] = {
+      // returns input string vector (follows parameter name)
+      std::vector<std::string> getParameterStrings(
+          const std::string &testStr,
+          bool isOnlyGetOne = false,
+          std::vector<std::string> *inputStrings_ptrIn = nullptr
+      );
 
-            // BASIC //
-            {"--menu", "", "", "", "", "", "", "", "", ""},
-            {"--help", "", "", "", "", "", "", "", "", ""},
-            {"--style-names", "", "", "", "", "", "", "", "", ""},
-            {"--version", "", "", "", "", "", "", "", "", ""},
+      // returns input single string (using 'getParameterStrings' method)
+      std::string getParameterString(
+          const std::string &testStr,
+          bool isUsingVectorBackIndex = false, // 'getParameterStrings' vector product back or front
+          std::vector<std::string> *inputStrings_ptrIn = nullptr
+      );
 
-            // CONVERTING //
-            {"--convert", "--txt-in", "DATA_STRING", "--kml-out", "DATA_STRING", "--type", "DATA_STRING", "", "", ""},
-            {"--convert", "--kml-in", "DATA_STRING", "--csv-out", "DATA_STRING", "", "", "", "", ""},
+      /*
+          returns '1' or '2' if one of strings exist / not both (consecutive with 'param_' order)
+          returns '0' if none exist or both exist
 
-            // KML EDITOR (no '--out' means output will overwrite file input) //
+          note:
+              this will make optional parameter to be mandatory
+              (one of parameter in arguments will be selected based on existence in input strings)
+      */
+      int checkOppositeParameterString(
+          const std::string &testStr_a,
+          const std::string &testStr_b,
+          std::string *strValPtr,
+          bool isUsingVectorBackIndex = false, // 'getParameterStrings' function vector back or front
+          std::vector<std::string> *inputStrings_ptrIn = nullptr
+      );
 
-            // >>>> CROP
-            {"--kml", "--crop", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--crop", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
+      // useful for checking optional toggle
+      bool isToggleExist(
+          const std::string &testStr,
+          std::vector<std::string> *inputStrings_ptrIn = nullptr
+      );
 
-            // >>>> SORT
-            {"--kml", "--sort", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--sort", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
+	  // pop up dialog
+      void setNotification(std::string message, bool isNeedEnterKey = true);
+      bool setAlert(std::string message, bool isUseFailedMessage = true);
+      std::string setAdditionalInput(std::string message); // input is first CLI strings
 
-            // >>>> PINS AND PATH
-            {"--kml", "--pins-path", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--pins-path", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
+      // main menu
+      void displayAvailableCommands();
+      void displayVersionNumber();
 
-            {"--kml", "--paths-pins", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--paths-pins", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
-            {"--kml", "--paths-pins", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--paths-pins", "DATA_STRING", "", "", "", "", "", "", ""},
+private:
+	std::string getErrorString(bool isUseDMSErrorMessage);
+    std::string getKMLTOWNEnvVarDir();
+    bool testReadmeFile(std::ifstream *readFile_ptr, std::string testDirStr);
 
-            {"--kml", "--join-paths", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--join-paths", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
-            {"--kml", "--join-paths", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--join-paths", "DATA_STRING", "", "", "", "", "", "", ""},
+    std::vector<std::string> *inputStrings_ptr = nullptr;
 
-            {"--kml", "--split-paths", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--split-paths", "DATA_STRING", "--start-point", "DATA_STRING", "--end-point", "DATA_STRING", "", "", ""},
-            {"--kml", "--split-paths", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--split-paths", "DATA_STRING", "", "", "", "", "", "", ""},
+    // array are [mandatory, optional]
+    std::vector<std::vector<int>> expectingFlagQueueVec;
 
-            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "", "", ""},
-            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "--out", "DATA_STRING", "--include-folder"},
-            {"--kml", "--twins-check", "DATA_STRING", "--type", "DATA_STRING", "--radius", "DATA_STRING", "--include-folder", "", ""},
+    /* note for 'toggleStringsVec' and 'parameterStringsVec':
 
-            {"--kml", "--measure-paths", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--measure-paths", "DATA_STRING", "", "", "", "", "", "", ""},
-            {"--kml", "--measure-paths", "DATA_STRING", "--info", "", "", "", "", "", ""},
+      ARRAY:
+       -1st array is mandatory set
+       -2nd array is optional set
 
-            {"--kml", "--remove-paths", "DATA_STRING", "--under-distance", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--remove-paths", "DATA_STRING", "--under-distance", "DATA_STRING", "", "", "", "", ""},
+      VECTOR:
+       -1D (outer) is command set
+       -2D (inner) is toggle or parameter set
+    */
 
-            {"--kml", "--remove-paths", "DATA_STRING", "--over-distance", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--remove-paths", "DATA_STRING", "--over-distance", "DATA_STRING", "", "", "", "", ""},
+    // single string (eg. '--str')
+    std::vector<std::vector<std::string>> toggleStringsVec[2] = {
+        std::vector<std::vector<std::string>>(
+            TOTAL_COMMANDS_COUNT, std::vector<std::string>{}
+        ),
+        std::vector<std::vector<std::string>>(
+            TOTAL_COMMANDS_COUNT, std::vector<std::string>{}
+        )
+    };
 
-            // >>>> FILTER
-            {"--kml", "--classify", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "", "", "", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--out", "DATA_STRING", "--clean-folder", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--clean-folder", "", "", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--out", "DATA_STRING", "--include-folder", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--include-folder", "", "", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--out", "DATA_STRING", "--include-clean-folder", "", "", "", ""},
-            {"--kml", "--classify", "DATA_STRING", "--include-clean-folder", "", "", "", "", "", ""},
-
-            {"--kml", "--folder-by-date", "DATA_STRING", "--out", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--folder-by-date", "DATA_STRING", "", "", "", "", "", "", ""},
-
-            {"--kml", "--folder-by-text", "DATA_STRING", "--string", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--folder-by-text", "DATA_STRING", "--string", "DATA_STRING", "", "", "", "", ""},
-
-            // >>>> STYLE
-            {"--kml", "--style-pins", "DATA_STRING", "--icon", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--style-pins", "DATA_STRING", "--icon", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--style-pins", "DATA_STRING", "--scale", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--style-pins", "DATA_STRING", "--scale", "DATA_STRING", "", "", "", "", ""},
-
-            {"--kml", "--style-paths", "DATA_STRING", "--color", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--style-paths", "DATA_STRING", "--color", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--style-paths", "DATA_STRING", "--thickness", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--style-paths", "DATA_STRING", "--thickness", "DATA_STRING", "", "", "", "", ""},
-            {"--kml", "--style-paths", "DATA_STRING", "--opacity", "DATA_STRING", "--out", "DATA_STRING", "", "", ""},
-            {"--kml", "--style-paths", "DATA_STRING", "--opacity", "DATA_STRING", "", "", "", "", ""},
-
-            // CSV //
-            {"--csv", "--change-separator", "DATA_STRING", "--old-sign", "DATA_STRING", "--new-sign", "DATA_STRING", "--out", "DATA_STRING", ""},
-            {"--csv", "--change-separator", "DATA_STRING", "--old-sign", "DATA_STRING", "--new-sign", "DATA_STRING", "", "", ""}
-        };
-
-        std::stringstream
-            mainMenuText_stream,
-            styleNamesMenuText_stream;
-        
-        std::string menuResponseStrings[4];
+    // need string input (eg. '-str')
+    std::vector<std::vector<std::string>> parameterStringsVec[2] = {
+        std::vector<std::vector<std::string>>(
+            TOTAL_COMMANDS_COUNT, std::vector<std::string>{}
+        ),
+        std::vector<std::vector<std::string>>(
+            TOTAL_COMMANDS_COUNT, std::vector<std::string>{}
+        )
+    };
 };
 
 #endif // __MENU_H__

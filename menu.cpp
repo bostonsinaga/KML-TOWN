@@ -3,293 +3,390 @@
 
 #include "menu.h"
 
-Menu::Menu() {
-    mainMenuText_stream
-        << "********************\n"
-        << "*     KML-TOWN     *\n"
-        << "* by boston_sinaga *\n"
-        << "********************\n\n"
-        << "MAIN MENU:\n"
+Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
+    inputStrings_ptr = inputStrings_ptrIn;
 
-        << "\n----------\n"
-        << "BIG NOTES:\n"
-        << "----------\n"
-        << "-some of commands are not working because still in development\n"
-        << "-'sorting' and 'cropping' for '.kml' only available for pins\n"
-        << "-there may still be bugs that appear\n"
+    /////////////////////
+    // INPUT MANDATORY //
+    /////////////////////
 
-        << "\n~HELP COMMANDS:\n\n"
-        << ">>> --help or --menu\n"
-        << "****** show available commands\n\n"
-        << ">>> --style-names\n"
-        << "****** show available input's pin icon and path color names (strings)\n\n"
-        << ">>> --version\n"
-        << "****** show version number\n"
+    // >>> TOGGLES //
 
-        << "\n~CONVERTING COMMANDS:\n\n"
-        << "~~NOTE:\n"
-        << "    -[PLACEMARK_TYPE] value is 'pins' or 'paths'\n\n"
-        
-        << ">>> --convert --txt-in [FILE_NAME] --kml-out [FILE_NAME] --type [PLACEMARK_TYPE]\n"
-        << "****** read '.txt' and write location keywords as '.kml' placemarks.\n"
-        << "       available types: 'pins', 'paths', 'paths-sort'\n\n"
-        
-        << ">>> --convert --kml-in [FILE_NAME] --csv-out [FILE_NAME] :\n"
-        << "****** read '.kml' and write placemarks information as formated '.csv' sheet\n"
-        << "       Notes:\n"
-        << "       -the first multiple folders will be the columns\n"
-        << "       -set column/folder name as 'PATH', 'PATHS' or 'JALUR' to generate path column format\n"
+    toggleStringsVec[0].at(MAIN_MENU_FLAG) = {"menu"};
+    toggleStringsVec[0].at(HELP_MENU_FLAG) = {"help"};
+    toggleStringsVec[0].at(VERSION_NUMBER_FLAG) = {"version"};
+    toggleStringsVec[0].at(CONVERT_TXT_KML_FLAG) = {"convert"};
+    toggleStringsVec[0].at(CONVERT_KML_CSV_FLAG) = {"convert"};
+    toggleStringsVec[0].at(KML_CROP_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_SORT_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_PINS_PATH_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_TWINS_CHECK_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_CLASSIFY_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"kml"};
+    toggleStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"csv"};
 
-        << "\n~KML EDITOR COMMANDS:\n\n"
-        << "~~NOTES:\n"
-        << "    -DMS stands for Degrees Minutes Seconds\n"
-        << "    -not using '--out' means overwrite the file\n"
-        << "    -use '--start-point' and '--end-point' to select desired area in one '.kml'\n"
-        << "     (if degree coordinate as the input, please remove the double quote signs (\") [usually in DMS coordinate]\n"
-        << "     to prevent unexpected or overload command parameters)\n"
-        << "    -selecting area is mandatory in 'crop', 'sort' and 'pins-path'\n\n"
+    // >>> PARAMETERS //
 
-        << "--kml --crop [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** crop '.kml' by rectangular area generated from start to end point\n"
-        << "       and insert them into new folder named '" << CROP_COMMAND_WORKING_FOLDER << "'\n\n"
+    parameterStringsVec[0].at(CONVERT_TXT_KML_FLAG) = {"txt-in", "kml-out", "type"};
+    parameterStringsVec[0].at(CONVERT_KML_CSV_FLAG) = {"kml-in", "csv-out"};
+    parameterStringsVec[0].at(KML_CROP_FLAG) = {"crop", "start-point", "end-point"};
+    parameterStringsVec[0].at(KML_SORT_FLAG) = {"sort", "start-point", "end-point"};
+    parameterStringsVec[0].at(KML_PINS_PATH_FLAG) = {"pins-path", "start-point", "end-point"};
+    parameterStringsVec[0].at(KML_TWINS_CHECK_FLAG) = {"twins-check", "type", "radius"};
+    parameterStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"measure-paths"};
+    parameterStringsVec[0].at(KML_CLASSIFY_FLAG) = {"classify"};
+    parameterStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"folder-by-date"};
+    parameterStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"filter-string", "text"};
+    parameterStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"remove-paths"};
+    parameterStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"change-separator", "old-sign", "new-sign"};
 
-        << "--kml --sort [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** sort '.kml' start with closest placemark from start point\n"
-        << "       then chaining to nearest one but only inside start to end point formed rectangular area\n"
-        << "       and finally insert them into new folder named '" << SORT_COMMAND_WORKING_FOLDER << "'\n\n"
+    ////////////////////
+    // INPUT OPTIONAL //
+    ////////////////////
 
-        << "--kml --pins-path [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** draw path from pins in certain area selection\n"
-        << "       and insert the path into new folder named '" << PINS_PATH_COMMAND_WORKING_FOLDER << "'\n\n"
+    // >>> TOGGLES //
 
-        << "~~NOTES:\n"
-        << "    -selecting area still possible here\n"
-        << "    -not using area selection means process all entire '.kml' placemarks\n\n"
+    toggleStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"info"};
+    toggleStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"include-folders"};
+    toggleStringsVec[1].at(KML_CLASSIFY_FLAG) = {"clean-folders", "include-folders"};
 
-        << "--kml --paths-pins [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** set points of paths as coordinate of new pins\n"
-        << "       and insert the pins into new folder named '" << PATHS_PINS_COMMAND_WORKING_FOLDER << "'\n\n"
+    // >>> PARAMETERS //
 
-        << "--kml --join-paths [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** join paths as one path\n"
-        << "       and insert them into new folder named '" << JOIN_PATHS_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "--kml --split-paths [FILE_NAME] --start-point [COORDINATE] --end-point [COORDINATE] --out [FILE_NAME]\n"
-        << "****** split paths (get more points)\n"
-        << "       and insert them into new folder named '" << SPLIT_PATHS_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "~~NOTE:\n"
-        << "    -below commands cannot use area selection (but on styling it will prompt)\n\n"
-
-        << "--kml --twins-check [FILE_NAME] --type [PLACEMARK_TYPE] --radius [DECIMAL_NUMBER] --out [FILE_NAME] --include-folder <optional>\n"
-        << "****** checking placemark twins with given radius (0-100 meters)\n"
-        << "       and insert them into new folder named '" << TWINS_CHECK_COMMAND_WORKING_FOLDER << "'\n"
-        << "****** '[PLACEMARK_TYPE]' -> input can be a string of 'pin-ignore', 'path-ignore', 'all-ignore'\n"
-        << "                             'pin-style', 'path-style' or 'all-style'\n"
-        << "****** '--include-folder' -> include current placemarks folder/document into working folder\n\n"
-
-        << "--kml --measure-paths [FILE_NAME] --out [FILE_NAME]\n"
-        << "****** measure paths distance (whole input document)\n\n"
-
-        << "--kml --measure-paths [FILE_NAME] --info\n"
-        << "****** only get paths distance information without write file (whole input document)\n\n"
-
-        << "--kml --remove-paths [FILE_NAME] --under-distance [MAX_DISTANCE] --out [FILE_NAME]\n"
-        << "****** remove paths those have distance equal or less than given distance\n"
-        << "       (input distance in meters)\n\n"
-
-        << "--kml --remove-paths [FILE_NAME] --over-distance [MIN_DISTANCE] --out [FILE_NAME]\n"
-        << "****** remove paths those have distance equal or more than given distance\n"
-        << "       (input distance in meters)\n\n"
-
-        << "--kml --classify [FILE_NAME] --out [FILE_NAME] --clean-folder <optional, choose> --include-folder <optional, choose> --include-clean-folder <optional, choose>\n"
-        << "****** classify placemarks based on their style (useful for '.csv' columns maker)\n"
-        << "       and insert them into new folder named '" << CLASSIFY_COMMAND_WORKING_FOLDER << "\n"
-        << "****** '--clean-folder' -> clean empty folders\n"
-        << "****** '--include-folder' -> include placemarks folder/document into working folder\n"
-        << "****** '--include-clean-folder' -> include placemarks folder and clean empty folders\n\n"
-
-        << "--kml --folder-by-date [FILE_NAME] --out [FILE_NAME]\n"
-        << "****** pack placemarks by their date into new folder named '"<< FOLDERBYDATE_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "~~NOTE:\n"
-        << "    -[STRING] can be any words\n\n"
-
-        << "--kml --folder-by-text [FILE_NAME] --string [STRING] --out [FILE_NAME]\n"
-        << "****** pack placemarks by search string inside their name or description\n"
-        << "       and insert them into new folder named '" << FOLDERBYTEXT_COMMAND_WORKING_FOLDER << "'\n\n"
-
-        << "~~NOTES:\n"
-        << "    -no need to inserting into new folder\n"
-        << "     the placemarks will stay in their directory (parent element)\n"
-        << "    -please look at '--style-names' for available style names\n"
-        << "    -area selection will prompt after first parameters set (enter pressed)\n\n"
-        
-        << "--kml --style-pins [FILE_NAME] --icon [PIN_ICON_NAME] --out [FILE_NAME]\n"
-        << "****** change pins icon (default is 'ylw-pushpin' for '.txt' pins scanner)\n\n"
-
-        << "--kml --style-pins [FILE_NAME] --scale [PIN_ICON_NAME] --out [FILE_NAME]\n"
-        << "****** set pins scale (default is 1.0)\n\n"
-        
-        << "--kml --style-paths [FILE_NAME] --color [PATH_COLOR_NAME] --out [FILE_NAME]\n"
-        << "****** change paths color (default is white)\n\n"
-
-        << "--kml --style-paths [FILE_NAME] --thickness [PATH_COLOR_NAME] --out [FILE_NAME]\n"
-        << "****** change paths thickness (default is 2.0)\n\n"
-
-        << "--kml --style-paths [FILE_NAME] --opacity [PATH_COLOR_NAME] --out [FILE_NAME]\n"
-        << "****** change paths opacity (default is 1.0 [0.0 - 1.0])\n\n"
-
-        << "~~NOTE:\n"
-        << "    -below is '.csv' editor tool\n\n"
-
-        << "--csv --change-separator [FILE_NAME] --old-sign [STRING] --new-sign [STRING] --out [FILE_NAME]\n"
-        << "****** change '.csv' columns separator string (sign)\n"
-        << "       (consider to not use space in string to avoid parsing error)\n";
-
-    styleNamesMenuText_stream
-        << "********************\n"
-        << "*     KML-TOWN     *\n"
-        << "* by boston_sinaga *\n"
-        << "********************\n\n"
-        << "STYLE NAMES MENU:\n\n"
-
-        << "~BELOW ARE AVAILABLE INPUT STRINGS FOR [PIN_ICON_NAME]:\n"
-
-        << "\n>>> PUSHPIN:\n\n"
-        << "ylw-pushpin\n"
-        << "blue-pushpin\n"
-        << "grn-pushpin\n"
-        << "ltblu-pushpin\n"
-        << "pink-pushpin\n"
-        << "purple-pushpin\n"
-        << "red-pushpin\n"
-        << "wht-pushpin\n"
-
-        << "\n>>> PADDLES:\n\n"
-        << "A           blu-blank\n"
-        << "B           blu-diamond\n"
-        << "C           blu-circle\n"
-        << "D           blu-square\n"
-        << "E           blu-stars\n"
-        << "F           grn-blank\n"
-        << "G           grn-diamond\n"
-        << "H           grn-circle\n"
-        << "I           grn-square\n"
-        << "J           grn-stars\n"
-        << "K           ltblu-blank\n"
-        << "L           ltblu-diamond\n"
-        << "M           ltblu-circle\n"
-        << "N           ltblu-square\n"
-        << "O           ltblu-stars\n"
-        << "P           pink-blank\n"
-        << "Q           pink-diamond\n"
-        << "R           pink-circle\n"
-        << "S           pink-square\n"
-        << "T           pink-stars\n"
-        << "U           ylw-blank\n"
-        << "V           ylw-diamond\n"
-        << "W           ylw-circle\n"
-        << "X           ylw-square\n"
-        << "Y           ylw-stars\n"
-        << "Z           wht-blank\n"
-        << "1           wht-diamond\n"
-        << "2           wht-circle\n"
-        << "3           wht-square\n"
-        << "4           wht-stars\n"
-        << "5           red-blank\n"
-        << "6           red-diamond\n"
-        << "7           red-circle\n"
-        << "8           red-square\n"
-        << "9           red-stars\n"
-        << "10          purple-blank\n"
-        << "            purple-diamond\n"
-        << "            purple-circle\n"
-        << "            purple-square\n"
-        << "            purple-stars\n"
-
-        << "\n>>> SHAPES:\n\n"
-        << "arrow-reverse           airports                golf\n"
-        << "arrow                   ferry                   trail\n"
-        << "track                   heliport                shopping\n"
-        << "donut                   subway                  movies\n"
-        << "forbidden               tram                    convenience\n"
-        << "info-i                  info                    grocery\n"
-        << "polygon                 info_circle             arts\n"
-        << "open-diamond            flag                    homegardenbusiness\n"
-        << "square                  rainy                   electronics\n"
-        << "star                    water                   mechanic\n"
-        << "target                  snowflake_simple        gas_stations\n"
-        << "triangle                marina                  realestate\n"
-        << "cross-hairs             fishing                 salon\n"
-        << "placemark_square        sailing                 dollar\n"
-        << "placemark_circle        swimming                euro\n"
-        << "shaded_dot              ski                     yen\n"
-        << "dining                  parks                   firedept\n"
-        << "coffee                  campfire                hospitals\n"
-        << "bars                    picnic                  lodging\n"
-        << "snack_bar               campground              phone\n"
-        << "man                     ranger_station          caution\n"
-        << "woman                   toilets                 earthquake\n"
-        << "wheel_chair_accessible  poi                     falling_rocks\n"
-        << "parking_lot             hiker                   post_office\n"
-        << "cabs                    cycling                 police\n"
-        << "bus                     motorcycling            sunny\n"
-        << "truck                   horsebackriding         partly_cloudy\n"
-        << "rail                    play                    volcano\n"
-        << "                                                camera\n"
-        << "                                                webcam\n\n"
-
-        << "~BELOW ARE AVAILABLE INPUT STRINGS FOR [PATH_COLOR_NAME]:\n"
-
-        << "\n>>> COLORS:\n\n"
-        << "red             green          blue\n"
-        << "yellow          orange         cyan\n"
-        << "magenta         purple         black\n"
-        << "chocolate       white          gray\n";
-
-    // menu respons list
-    menuResponseStrings[0] = mainMenuText_stream.str();
-    menuResponseStrings[1] = mainMenuText_stream.str();
-    menuResponseStrings[2] = styleNamesMenuText_stream.str();
-    menuResponseStrings[3] = "KML-TOWN v0.10.4 ALPHA 2023-03-22\n";
+    parameterStringsVec[1].at(KML_CROP_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_SORT_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_PINS_PATH_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_CLASSIFY_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_FOLDER_BY_DATE_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_FILTER_STRING_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_REMOVE_PATHS_FLAG) = {"out", "over-distance", "under-distance"};
+    parameterStringsVec[1].at(CSV_CHANGE_SEPARATOR_FLAG) = {"out"};
 }
 
-int Menu::select(std::vector<std::string> inputStrings) {
+/*
+    returns command flags (invalid returns -1)
+    this only check for mandatory input to get intended flag
+*/
+int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
 
-    int passCount = 0, retFlag = -1;
-    bool isUsingSelectionArea = false;
+    if (inputStrings_ptrIn) {
+        inputStrings_ptr = inputStrings_ptrIn;
+    }
     
-    // loop 'TOTAL_COMMANDS_COUNT' times
-    for (int i = 0; i < sizeof(listStrings) / sizeof(*listStrings); i++) {
+    bool isFailForced = false,
+         isParameterListeningString = false,
+         isUsingSelectionArea = false,
+         isParameterNotFollowedByString = false;
 
-        for (int j = 0; j < MAX_INPUT_STRINGS_COUNT; j++) {
-            if (inputStrings.at(j) == listStrings[i][j] ||
-                (inputStrings.at(j) != "" && listStrings[i][j] == "DATA_STRING")
-            ) {
-                passCount++;
+    int mainCtr = 0,
+        INPUTORDERFLAG = STRING_INPUTORDERFLAG;
+
+    // this function main loop
+    for (auto &inputStr : *inputStrings_ptr) {
+
+        // determine input string type
+        if (inputStr.length() > 2 &&
+            inputStr.at(0) == '-' &&
+            inputStr.at(1) == '-'
+        ) {
+            INPUTORDERFLAG = TOGGLE_INPUTORDERFLAG;
+        }
+        else if (
+            inputStr.length() > 1 &&
+            inputStr.at(0) == '-'
+        ) {
+            INPUTORDERFLAG = PARAMETER_INPUTORDERFLAG;
+        }
+        else {
+            INPUTORDERFLAG = STRING_INPUTORDERFLAG;
+        }
+
+        int strCheckingStartDex = 0;
+
+        // [mandatory, optional]
+        std::vector<std::vector<std::string>> *ptrStringsVec[2];
+
+        // select the appropriate module/tool
+        switch (INPUTORDERFLAG) {
+            case TOGGLE_INPUTORDERFLAG: {
+
+                if (isParameterListeningString) {
+                    isFailForced = true;
+                    break;
+                }
+
+                strCheckingStartDex = 2;
+                ptrStringsVec[0] = &toggleStringsVec[0];
+                ptrStringsVec[1] = &toggleStringsVec[1];
+            break;}
+            case PARAMETER_INPUTORDERFLAG: {
+
+                if (isParameterListeningString) {
+                    isFailForced = true;
+                    break;
+                }
+
+                // error when no string following (parameter at back)
+                if (mainCtr == inputStrings_ptr->size() - 1) {
+                    isParameterNotFollowedByString = true;
+                }
+                
+                strCheckingStartDex = 1;
+                ptrStringsVec[0] = &parameterStringsVec[0];
+                ptrStringsVec[1] = &parameterStringsVec[1];
+                isParameterListeningString = true;
+            break;}
+            case STRING_INPUTORDERFLAG: {
+                
+                if (!isParameterListeningString) {
+                    isFailForced = true;
+                    break;
+                }
+
+                expectingFlagQueueVec.push_back(expectingFlagQueueVec.back());
+                isParameterListeningString = false;
+            break;}
+        }
+
+        if (isFailForced) break;
+
+        // 'false' means parameter string is currently as input
+        if (strCheckingStartDex) {
+
+            expectingFlagQueueVec.push_back({});
+            std::string inputStr_subStr;
+
+            int priorityDex = 0,
+                limit_i = ptrStringsVec[priorityDex]->size();
+
+            bool isUseOptional = false;
+
+            for (int i = 0; i < limit_i; i++) {
+                for (int j = 0; j < ptrStringsVec[priorityDex]->at(i).size(); j++) {
+
+                    std::string str = ptrStringsVec[priorityDex]->at(i).at(j);
+                    inputStr_subStr = inputStr.substr(strCheckingStartDex);
+
+                    if (inputStr_subStr == str) {
+                        expectingFlagQueueVec.back().push_back(i);
+                    }
+
+                    // whether using DMS error in 'getErrorString' function
+                    if (!isUsingSelectionArea &&
+                        (inputStr_subStr == "start-point" ||
+                        inputStr_subStr == "end-point")
+                    ) {
+                        isUsingSelectionArea = true;
+                    }
+                }
+
+                // 'expectingFlagQueueVec' empty at end of 'i' loop
+                if (i == limit_i - 1 &&
+                    expectingFlagQueueVec.back().size() == 0
+                ) {
+                    // check for optional list
+                    if (!isUseOptional) {
+                        isUseOptional = true;
+                        priorityDex = 1;
+                        i = 0;
+                    }
+                    // not detected
+                    else isFailForced = true;
+                }
             }
 
-            if (!isUsingSelectionArea && inputStrings.at(j) == "--start-point") {
-                isUsingSelectionArea = true;
-            }
+            // not detected
+            if (isFailForced) break;
         }
-        
-        if (passCount == MAX_INPUT_STRINGS_COUNT) {
-            if (i <= VERSION_NUMBER_FLAG) {
-                std::cout << menuResponseStrings[i];
-            }
-            retFlag = i;
-            break;
-        }
-        else passCount = 0;
+
+        mainCtr++;
     }
 
-    if (passCount != MAX_INPUT_STRINGS_COUNT) {
+    if (isFailForced || isParameterNotFollowedByString) {
         std::cerr << getErrorString(isUsingSelectionArea);
+        return -1;
     }
 
-    return retFlag;
+    // check expecting flags consistency (determine intended flag) //
+    
+    bool isConsistent = true;
+    int intendedFlag; // the below product (command flag)
+
+    if (expectingFlagQueueVec.size() > 0) {
+        std::vector<int> sustainFlags = expectingFlagQueueVec.at(0);
+
+        for (int i = 1; i < expectingFlagQueueVec.size(); i++) {
+
+            /*
+                get 2D intersected current 'expectingFlagQueueVec' indexes
+                (return empty if all not found)
+            */
+            std::vector<std::vector<int>>
+                intersectIndexesVec = (     // pass 1D vector only
+                    mini_tool::vectorIntersectsVector<int>(sustainFlags, expectingFlagQueueVec.at(i))
+                );
+
+            if (intersectIndexesVec.size() > 0) {
+
+                // set to 'intersectIndexesVec' 1D vector
+                std::vector<int> intersectIndexes = (
+                    mini_tool::collapse2DTo1DVector<int>(intersectIndexesVec)
+                );
+
+                sustainFlags = {};
+
+                for (auto &index : intersectIndexes) {
+                    sustainFlags.push_back(expectingFlagQueueVec.at(i).at(index));
+                }
+            }
+            else { // not consistent
+                isConsistent = false;
+                break;
+            }
+        }
+
+        if (isConsistent) {
+            intendedFlag = sustainFlags.front();
+        }
+    }
+    else isConsistent = false;
+
+    if (isConsistent) {
+        return intendedFlag;
+    }
+    else {
+        std::cerr << getErrorString(isUsingSelectionArea);
+        return -1;
+    }
+}
+
+// returns input string vector (follows parameter name)
+std::vector<std::string> Menu::getParameterStrings(
+    const std::string &testStr,
+    bool isOnlyGetOne,
+    std::vector<std::string> *inputStrings_ptrIn
+) {
+    if (inputStrings_ptrIn) {
+        inputStrings_ptr = inputStrings_ptrIn;
+    }
+
+    int ctr = 0;
+    std::vector<std::string> retStrVec;
+
+    // this function main loop
+    for (auto &inputStr : *inputStrings_ptr) {
+
+        if (inputStr.length() > 1 &&
+            inputStr.at(0) == '-'
+        ) {
+            if (inputStr.substr(1) == testStr) {
+                if (inputStrings_ptr->size() > ctr + 1) {
+                    // expected input string is '+1' index
+                    retStrVec.push_back(inputStrings_ptr->at(ctr + 1));
+                    if (isOnlyGetOne) break;
+                }
+                // unexpected input string (may followed by toggle or parameter)
+                else return std::vector<std::string>{};
+            }
+        }
+
+        ctr++;
+    }
+
+    return retStrVec;
+}
+
+// returns input single string (using 'getParameterStrings' method)
+std::string Menu::getParameterString(
+    const std::string &testStr,
+    bool isUsingVectorBackIndex, // 'getParameterStrings' vector product back or front
+    std::vector<std::string> *inputStrings_ptrIn
+) {
+    std::string retStr = "";
+    std::vector<std::string> strVec;
+
+    if (inputStrings_ptrIn) {
+        strVec = getParameterStrings(testStr, true, inputStrings_ptrIn);
+    }
+    else strVec = getParameterStrings(testStr, true);
+
+    if (strVec.size() > 0) {
+        if (isUsingVectorBackIndex) retStr = strVec.back();
+        else retStr = strVec.front();
+    }
+
+    return retStr;
+}
+
+/*
+    returns '1' or '2' if one of strings exist / not both (consecutive with 'param_' order)
+    returns '0' if none exist or both exist
+
+    note:
+        this will make optional parameter to be mandatory
+        (one of parameter in arguments will be selected based on existence in input strings)
+*/
+int Menu::checkOppositeParameterString(
+    const std::string &param_a,
+    const std::string &param_b,
+    std::string *strValPtr,
+    bool isUsingVectorBackIndex, // 'getParameterStrings' function vector back or front
+    std::vector<std::string> *inputStrings_ptrIn
+) {
+    int retInt = 0;
+
+    std::string
+        paramStr_a = getParameterString(param_a),
+        paramStr_b = getParameterString(param_b);
+
+    if (paramStr_a != "" && paramStr_b == "") {
+        *strValPtr = paramStr_a;
+        retInt = 1;
+    }
+    else if (paramStr_a == "" && paramStr_b != "") {
+        *strValPtr = paramStr_b;
+        retInt = 2;
+    }
+    // none exist or both exist
+    else if (paramStr_a != "" && paramStr_b != "") {
+        std::cerr << "KML-TOWN-> Error. Please choose only one of '"
+                  << param_a << "' or '" << param_b << "'\n";
+    }
+    else {
+        std::cerr << "KML-TOWN-> Error. Please specify '"
+                  << param_a << "' or '" << param_b << "'\n";
+    }
+
+    return retInt;
+}
+
+// useful for checking optional toggle
+bool Menu::isToggleExist(
+    const std::string &testStr,
+    std::vector<std::string> *inputStrings_ptrIn
+) {
+    if (inputStrings_ptrIn) {
+        inputStrings_ptr = inputStrings_ptrIn;
+    }
+
+    // this function main loop
+    for (auto &inputStr : *inputStrings_ptr) {
+
+        if (inputStr.length() > 2 &&
+            inputStr.at(0) == '-' &&
+            inputStr.at(1) == '-'
+        ) {
+            if (inputStr.substr(2) == testStr) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void Menu::setNotification(std::string message, bool isNeedEnterKey) {
@@ -313,7 +410,7 @@ bool Menu::setAlert(std::string message, bool isUseFailedMessage) {
     }
     else {
         if (isUseFailedMessage) {
-            std::cerr << "KML-TOWN-> Command canceled!\n\n**FAILED**\n";
+            std::cerr << "**CANCELED**\n";
         }
         return false;
     }
@@ -322,11 +419,9 @@ bool Menu::setAlert(std::string message, bool isUseFailedMessage) {
 // input is first CLI strings
 std::string Menu::setAdditionalInput(std::string message) {
     std::cout << message;
-
     std::string input;
     std::cin >> input;
     std::cout << std::endl;
-
     return input;
 }
 
@@ -336,7 +431,7 @@ std::string Menu::getErrorString(bool isUseDMSErrorMessage) {
     if (isUseDMSErrorMessage) {
         retStr_stream
             << "KML-TOWN-> You may have to remove double quote signs (\") of degree (DMS) coordinate\n"
-            << "           to prevent unexpected or overload command parameters!\n\n";
+            << "           to prevent unexpected or overload command parameters!\n";
     }
 
     retStr_stream
@@ -344,6 +439,239 @@ std::string Menu::getErrorString(bool isUseDMSErrorMessage) {
         << "\n**FAILED**\n";
 
     return retStr_stream.str();
+}
+
+// from 'README.md' (tested on Windows)
+std::string Menu::getKMLTOWNEnvVarDir() {
+
+    const char* env_p = std::getenv("PATH");
+
+    // 'std::strlen' from 'cstring' library
+    int env_p_ct = std::strlen(env_p);
+
+    int listenCtr = 0;
+
+    bool isFound = false,
+         isContainsBackslash = false; // eg. C:\KML-TOWN\bin (using backslash)
+
+    std::string
+        expectedStr = "KML-TOWN",
+        retStr = "";
+
+    for (int i = 0; i < env_p_ct; i++) {
+
+        if (!isContainsBackslash) {
+            if (env_p[i] == '\\') {
+                isContainsBackslash = true;
+            }
+        }
+
+        if (i < env_p_ct - 1 &&
+            env_p[i] == expectedStr[listenCtr] &&
+            env_p[i + 1] == expectedStr[listenCtr + 1]
+        ) {
+            listenCtr++;
+
+            if (listenCtr == expectedStr.length() - 1) {
+                isFound = true;
+
+                // 'listenCtr' at the end of "KML-TOWN" part in 'env_p'
+                listenCtr = i + 1;
+
+                break;
+            }
+        }
+        else listenCtr = 0;
+    }
+
+    if (isFound) {
+        for (int i = listenCtr; i >= 0; i--) {
+
+            if (env_p[i] == ';') {
+                listenCtr = i + 1;
+                break;
+            }
+            else if (i == 0) {
+                listenCtr = 0;
+            }
+        }
+
+        for (int i = listenCtr; i < env_p_ct; i++) {
+            if (env_p[i] == ';') {
+                break;
+            }
+            retStr += env_p[i];
+        }
+    }
+
+    std::string fileName = "README.md";
+
+    if (isContainsBackslash) {
+        fileName = "\\" + fileName;
+    }
+    else fileName = "/" + fileName;
+
+    return retStr + fileName;
+}
+
+// main menu / help
+void Menu::displayAvailableCommands() {
+    std::ifstream readFile;
+    
+    if (!testReadmeFile(&readFile, getKMLTOWNEnvVarDir())) {
+        return;
+    }
+
+    std::string text, stringBuffer;
+    bool isDetected = false;
+
+    while (std::getline(readFile, stringBuffer)) {
+
+        // end
+        if (isDetected && mini_tool::isStringContains(stringBuffer, "# SCREENSHOTS")) {
+            break;
+        }
+
+        // inside
+        if (isDetected) {
+            text += stringBuffer + "\n";
+        }
+
+        // start
+        if (!isDetected && mini_tool::isStringContains(stringBuffer, "# COMMANDS")) {
+            isDetected = true;
+        }    
+    }
+
+    // clean single new line at edge //
+
+    int newLineCtr = 0;
+    std::string strBuff = text;
+
+    // front new line clean
+    for (int i = 0; i < text.length(); i++) {
+        if (text.at(i) == '\n') {
+            if (i < text.length() - 1) {
+                strBuff = strBuff.substr(i + 1 - newLineCtr);
+                newLineCtr++;
+            }
+        }
+        else {
+            text = strBuff;
+            break;
+        }
+    }
+    
+    // back new line clean
+    for (int i = text.length() - 1; i >= 0; i--) {
+        if (text.at(i) == '\n') {
+            strBuff = strBuff.substr(0, i);
+        }
+        else {
+            text = strBuff;
+            break;
+        }
+    }
+
+    readFile.close();
+
+    // display main menu
+    std::cout << "******************\n"
+              << "**   KML-TOWN   **\n"
+              << "** command list **\n"
+              << "******************\n"
+              << "\n"
+              << "By Boston Sinaga\n"
+              << "https://github.com/bostonsinaga\n"
+              << "\n"
+              << text
+              << "\n";
+}
+
+// from 'README.md'
+void Menu::displayVersionNumber() {
+    std::ifstream readFile;
+
+    if (!testReadmeFile(&readFile, getKMLTOWNEnvVarDir())) {
+        return;
+    }
+
+    std::string text;
+
+    while (std::getline(readFile, text)) {
+        if (mini_tool::isStringContains(text, "# KML-TOWN v")) {
+            break;
+        }    
+    }
+
+    readFile.close();
+
+    // remove '# ' in 'text'
+    for (int i = 0; i < text.length(); i++) {
+        if ((text.at(i) == '#' ||
+            text.at(i) == ' ') &&
+            i < text.length() - 1
+        ) {
+            text = text.substr(i + 1);
+            i--;
+        }
+        else break;
+    }
+
+    // display version number
+    std::cout << text << std::endl;
+}
+
+bool Menu::testReadmeFile(
+    std::ifstream *readFile_ptr,
+    std::string testDirStr
+) {
+    *readFile_ptr = std::ifstream(testDirStr);
+
+    // file found
+    if (readFile_ptr->is_open()) {
+        return true;
+    }
+    // file not found (check)
+    else {
+        /*
+            using debug readme file inside main folder 
+            'bin/platform/../../README.md'
+        */
+
+        size_t foundDex = testDirStr.find("/README.md");
+        std::string slashStr = "../../";
+
+        if (foundDex == std::string::npos) {
+            foundDex = testDirStr.find("\\README.md");
+            slashStr = "..\\..\\";
+        }
+
+        // 'Environment Variables -> PATH' is debug directory
+        if (foundDex != std::string::npos) {
+
+            testDirStr = (
+                testDirStr.substr(0, foundDex + 1) +
+                slashStr +
+                testDirStr.substr(foundDex + 1)
+            );
+
+            *readFile_ptr = std::ifstream(testDirStr);
+
+            // file found
+            if (readFile_ptr->is_open()) {
+                return true;
+            }
+        }
+    }
+
+    // file not found (end)
+    std::cout << "KML-TOWN-> Command list display error. 'README.md' file not found.\n"
+              << "           Please make sure that the file is inside '..\\KML-TOWN\\bin\\'\n"
+              << "           or '..\\KML-TOWN\\platform\\bin\\' and 'Environment Variables -> PATH'\n"
+              << "           follows the given format\n";
+
+    return false;
 }
 
 #endif // __MENU_CPP__
