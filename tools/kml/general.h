@@ -12,10 +12,11 @@ class General {
         xml::Node *getRootDocument(xml::Node *kmlNode);
         std::string getRootDocumentName(xml::Node *kmlNode);
 
-        void fillWithPins(
-            xml::Node *containerNode,
-            std::vector<xml::Node*> &placemarkVec,          // should be empty
-            std::vector<xml::Node*> &placemarksCoorNodeVec  // should be empty
+        void fillWithPlacemarks(
+            xml::Node *containerNode,   // eg. 'Folder' or 'Document' node
+            std::string coordinatesTypeName,    // eg. 'Point' or 'LineString'
+            std::vector<xml::Node*> &pinVec,    // should be empty
+            std::vector<xml::Node*> &pinsCoorNodeVec    // should be empty
         );
 
         void putOnTopFolder(

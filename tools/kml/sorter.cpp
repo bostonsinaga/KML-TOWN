@@ -38,8 +38,9 @@ std::vector<xml::Node*> Sorter::orderPins(
     if (dualismVector.size() == 1) {
         pinsContainerNode = dualismVector.front();
         
-        kmlGeneral.fillWithPins(
+        kmlGeneral.fillWithPlacemarks(
             pinsContainerNode,
+            "Point",
             pinNodes,
             pinCoorNodes
         );

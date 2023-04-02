@@ -26,8 +26,9 @@ std::vector<xml::Node*> Cropper::cutPins(
 
     General kmlGeneral;
 
-    kmlGeneral.fillWithPins(
+    kmlGeneral.fillWithPlacemarks(
         pinsContainerNode,
+        "Point",
         pinNodes,
         pinCoorNodes
     );

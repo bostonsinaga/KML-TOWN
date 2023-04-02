@@ -108,12 +108,13 @@ std::string General::getRootDocumentName(xml::Node *kmlNode) {
     return "noname";
 }
 
-void General::fillWithPins(
-    xml::Node *containerNode,
-    std::vector<xml::Node*> &pinVec,          // should be empty
-    std::vector<xml::Node*> &pinsCoorNodeVec  // should be empty
+void General::fillWithPlacemarks(
+    xml::Node *containerNode,   // eg. 'Folder' or 'Document' node
+    std::string coordinatesTypeName,    // eg. 'Point' or 'LineString'
+    std::vector<xml::Node*> &pinVec,    // should be empty
+    std::vector<xml::Node*> &pinsCoorNodeVec    // should be empty
 ) {
-    pinVec = containerNode->getDescendantsByName("Point", true);
+    pinVec = containerNode->getDescendantsByName(coordinatesTypeName, true);
     for (auto &pin : pinVec) {
         pinsCoorNodeVec.push_back(pin->getFirstDescendantByName("coordinates"));
         pin = pin->getParent(); // to be node named 'Placemark'
