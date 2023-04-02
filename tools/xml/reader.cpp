@@ -6,7 +6,7 @@
 Node *Reader::fileParse(std::string fileName, bool isNotify) {
 
     std::ifstream readFile(fileName);
-    std::string text, stringBuffer;
+    std::string text = "", stringBuffer;
 
     while (std::getline(readFile, stringBuffer)) {
         text += stringBuffer + "\n";
