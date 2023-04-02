@@ -220,6 +220,90 @@ namespace mini_tool {
         }
         return -1;
     }
+
+    template<typename TYPE_T>
+
+    /*
+        return intersect indexes of 'testVec'
+        in 2 kind of vector (duplicate and single[second dimension is 1 member])
+
+        if not found at 'containerVec' index will set second dimension empty
+        if all not found will return emty vector
+
+        empty first dimension will be deleted
+
+        return examples:
+
+        {
+            {0, 1, 2}       ->  duplicate on
+            {3, 4}              container[2] and test[5]
+        }
+
+        {
+            {0}             ->  duplicate off
+            {3}                 container[2] and test[5]
+        }
+    */
+    std::vector<std::vector<int>> vectorIntersectsVector(   // pass 1D vector only
+        std::vector<TYPE_T> &containerVec,
+        std::vector<TYPE_T> &testVec,
+        bool isTestDuplicate
+    ) {
+        bool isIntersected = false;
+        std::vector<std::vector<int>> intersectIndexesVec(containerVec.size(), std::vector<int>{});
+
+        // test vector //
+
+        int containerCtr = 0;
+        for (auto &containerVal : containerVec) {
+
+            int testCtr = 0;
+            for (auto &testVal : testVec) {
+                
+                if (containerVal == testVal) {
+                    
+                    if (!isIntersected) isIntersected = true;
+                    intersectIndexesVec.at(containerCtr).push_back(testCtr);
+                    if (!isTestDuplicate) break;
+                }
+
+                testCtr++;
+            }
+
+            containerCtr++;
+        }
+
+        // cleaning empty first dimension
+        if (isIntersected) {
+            std::vector<std::vector<int>> intersectIndexesVec_buffer;
+            
+            for (auto &indexes : intersectIndexesVec) {
+                if (indexes.size() > 0) {
+                    intersectIndexesVec_buffer.push_back(indexes);
+                }
+            }
+
+            intersectIndexesVec = intersectIndexesVec_buffer;
+        }
+        // return check
+        else return std::vector<std::vector<int>>{};
+        return intersectIndexesVec;
+    }
+
+    template<typename TYPE_T>
+
+    // set first member of second dimension to be a member of new 1D vector
+    std::vector<TYPE_T> collapse2DTo1DVector(std::vector<std::vector<TYPE_T>> &vec_in) {
+        std::vector<TYPE_T> newVec;
+
+        for (auto &vec1D : vec_in) {
+            if (vec1D.size() > 0) {
+                newVec.push_back(vec1D.front());
+            }
+        }
+
+        return newVec;
+    }
 }
 
 #endif // __MINI_TOOL_CPP__

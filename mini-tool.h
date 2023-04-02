@@ -43,17 +43,40 @@ namespace mini_tool {
 
     void completeDegreeCoordinateSecondsSign(std::string *coorStr);
 
-    // return counter (-1 not found)
+    // return index (-1 not found)
     int isInsideVectorString(
         std::vector<std::string> &strVec,
         std::string strTest
     );
 
-    // return counter (-1 not found)
+    // return index (-1 not found)
     int isInsideVectorInteger(
         std::vector<int> &dataVec,
         int dataTest
     );
+
+    // 'TYPE_T' is a primitive data
+    template<typename TYPE_T>
+
+    /*
+        return intersect indexes of 'testVec'
+        in 2 kind of vector (duplicate and single[second dimension is 1 member])
+
+        if not found at 'containerVec' index will set second dimension empty
+        if all not found will return emty vector
+
+        empty first dimension will be deleted
+    */
+    std::vector<std::vector<int>> vectorIntersectsVector(   // pass 1D vector only
+        std::vector<TYPE_T> &containerVec,
+        std::vector<TYPE_T> &testVec,
+        bool isTestDuplicate = false
+    );
+
+    template<typename TYPE_T>
+    
+    // set first member of second dimension to be a member of new 1D vector
+    std::vector<TYPE_T> collapse2DTo1DVector(std::vector<std::vector<TYPE_T>> &vec_in);
 }
 
 #endif // __MINI_TOOL__H__
