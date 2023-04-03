@@ -13,14 +13,14 @@
 
 /* degree sign input in literal (°) reformatted with 2 characters */
 #define DEG_INT_CHAR_PT1 -62 // normal degree sign
-#define DEG_INT_CHAR_PT2 -80
+#define DEG_INT_CHAR_PT2 -80 // ...
 
 /*
     degree sign anomaly may appear when
     receiving degree coordinate parameter from '.bat' or '.sh' file
 */
 #define ANM_DEG_INT_CHAR_PT1 45 // anomaly degree sign
-#define ANM_DEG_INT_CHAR_PT2 166
+#define ANM_DEG_INT_CHAR_PT2 166 // ...
 
 #include "mini-tool.cpp"
 #include "menu.cpp"
