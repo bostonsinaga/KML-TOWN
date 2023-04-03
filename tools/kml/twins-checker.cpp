@@ -137,9 +137,7 @@ xml::Node *TwinsChecker::findPaths(
             *   (single coordinate) or empty path
             */
             if (pointVecVec.back().size() <= 1) {
-                
                 placemark->removeFromParent(true);
-
                 nodes.pop_back();
                 pointVecVec.pop_back();
                 continue;
