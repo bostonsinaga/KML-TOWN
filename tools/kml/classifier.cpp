@@ -62,7 +62,7 @@ void Classifier::rearrange(
 
                 // there isn't any yet
                 if (includedFolderNameVecVec_foundDex == -1) {
-                    includedNewFolder_node = kmlBuilder.getFolder(includedExistFolder_name);
+                    includedNewFolder_node = kmlBuilder.createFolder(includedExistFolder_name);
                     includedFolderNameVecVec.at(styleDataStrVec_foundDex_buffer).push_back(includedExistFolder_name);
                     includedExistFolder_name = "";
                 }
@@ -87,7 +87,7 @@ void Classifier::rearrange(
                 }
 
                 newFolderNodes.push_back(
-                    kmlBuilder.getFolder(folderName)
+                    kmlBuilder.createFolder(folderName)
                 );
 
                 // INCLUDE FOLDERS STUFF //
@@ -129,7 +129,7 @@ void Classifier::rearrange(
 
         xml::Node
             *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode),
-            *classifyFolder = kmlBuilder.getFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+            *classifyFolder = kmlBuilder.createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
 
         if (isCleanFolders) {
 
@@ -228,7 +228,7 @@ bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
 
             kmlGeneral.insertEditedPlacemarksIntoFolder(
                 mainFolderNode,
-                Builder().getFolder(folderName),
+                Builder().createFolder(folderName),
                 placemarks,
                 {"", ""},
                 ""

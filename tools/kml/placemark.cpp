@@ -12,7 +12,7 @@ void Placemark::pinsPath(
     std::string styleMapId;
     kmlBuilder.insertStyleMap(
         kmlNode,
-        kmlBuilder.getPathStyleMap(&styleMapId)
+        kmlBuilder.createPathStyleMap(&styleMapId)
     );
 
     std::vector<std::string> coorStrVec;
@@ -22,7 +22,7 @@ void Placemark::pinsPath(
         );
     }
 
-    std::vector<xml::Node*> pathNodes {kmlBuilder.getPath(
+    std::vector<xml::Node*> pathNodes {kmlBuilder.createPath(
         kmlBuilder.COORSTR_NO_ADD_ALTITUDE,
         styleMapId,
         coorStrVec,
@@ -34,7 +34,7 @@ void Placemark::pinsPath(
 
     kmlGeneral.insertEditedPlacemarksIntoFolder(
         kmlGeneral.searchMainFolder(kmlNode),
-        Builder().getFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
+        Builder().createFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-path unifying", "Pins-path unify"},
         ""
@@ -51,7 +51,7 @@ void Placemark::pinsPathSegments(
     std::string styleMapId;
     kmlBuilder.insertStyleMap(
         kmlNode,
-        kmlBuilder.getPathStyleMap(&styleMapId)
+        kmlBuilder.createPathStyleMap(&styleMapId)
     );
 
     std::vector<std::string> coorStrVec, dateStrVec;
@@ -74,7 +74,7 @@ void Placemark::pinsPathSegments(
         };
 
         pathNodes.push_back(
-            kmlBuilder.getPath(
+            kmlBuilder.createPath(
                 kmlBuilder.COORSTR_NO_ADD_ALTITUDE,
                 styleMapId,
                 coorStrPair,
@@ -88,7 +88,7 @@ void Placemark::pinsPathSegments(
 
     kmlGeneral.insertEditedPlacemarksIntoFolder(
         kmlGeneral.searchMainFolder(kmlNode),
-        Builder().getFolder(PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
+        Builder().createFolder(PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-paths segmenting", "Pins-paths segmentation"},
         ""

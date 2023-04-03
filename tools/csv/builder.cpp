@@ -82,7 +82,7 @@ bool Builder::compose(
         rowNodesVector.push_back(outsiderNodes);
 
         kml::Builder kmlBuilder;
-        columnNodes.push_back(kmlBuilder.getFolder("Others"));
+        columnNodes.push_back(kmlBuilder.createFolder("Others"));
     }
 
     if (columnNodes.size() == 0) {

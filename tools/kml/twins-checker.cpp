@@ -263,7 +263,7 @@ xml::Node *TwinsChecker::findAll(
     xml::Node *pinsFolder = findPins(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
     xml::Node *pathsFolder = findPaths(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
 
-    xml::Node *workingFolder = Builder().getFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
+    xml::Node *workingFolder = Builder().createFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
 
     if (pinsFolder) workingFolder->addChild(pinsFolder);
     if (pathsFolder) workingFolder->addChild(pathsFolder);
@@ -302,16 +302,16 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         Builder kmlBuilder;
         Placemark kmlPlacemark;
 
-        xml::Node *returnFolder = kmlBuilder.getFolder(
+        xml::Node *returnFolder = kmlBuilder.createFolder(
             isParentFolderNamedAType ?
             mini_tool::changeStringCase(placemarksType, mini_tool::UPPER_CASE_FLAG) :
             TWINS_CHECK_COMMAND_WORKING_FOLDER
         );
 
-        xml::Node *folderOri = kmlBuilder.getFolder(std::string("ORIGINALS"));
+        xml::Node *folderOri = kmlBuilder.createFolder(std::string("ORIGINALS"));
         returnFolder->addChild(folderOri);
 
-        xml::Node *folderDupl = kmlBuilder.getFolder(std::string("DUPLICATES"));
+        xml::Node *folderDupl = kmlBuilder.createFolder(std::string("DUPLICATES"));
         returnFolder->addChild(folderDupl);
 
         int matchedCtr = 0, i_buffer = -1;
@@ -342,7 +342,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
 
                     // there isn't any yet
                     if (includedFolderNameVecVec_foundDex == -1) {
-                        includedNewFolder_node = kmlBuilder.getFolder(includedExistFolder_name);
+                        includedNewFolder_node = kmlBuilder.createFolder(includedExistFolder_name);
                         includedFolderNameVecVec.at(i_buffer).push_back(includedExistFolder_name);
                         includedExistFolder_name = "";
                     }

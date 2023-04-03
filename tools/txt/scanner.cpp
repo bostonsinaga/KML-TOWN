@@ -29,7 +29,7 @@ xml::Node *Scanner::parsePins(
         int dateVecCtr = 0;
         for (auto &coorStr : yieldParseFunc.at(coorStrVec_flag)) {
             mainFolderNode->addChild(
-                kmlBuilder.getPin(
+                kmlBuilder.createPin(
                     kmlBuilder.COORSTR_ZERO_ADD_ALTITUDE,
                     styleMapId,
                     coorStr,
@@ -247,19 +247,19 @@ xml::Node *Scanner::getMainFolder(
 
     // BUILDER SETUP //
     
-    xml::Node *kmlNode = kmlBuilder.getSkeleton(docName);
+    xml::Node *kmlNode = kmlBuilder.createSkeleton(docName);
 
     if (isPins) {
         // determined as 'yellow_push_pin'
         kmlBuilder.insertStyleMap(
             kmlNode,
-            kmlBuilder.getPinStyleMap(styleMapId_hook)
+            kmlBuilder.createPinStyleMap(styleMapId_hook)
         );
     }
     else {
         kmlBuilder.insertStyleMap(
             kmlNode,
-            kmlBuilder.getPathStyleMap(styleMapId_hook)
+            kmlBuilder.createPathStyleMap(styleMapId_hook)
         );
     }
 

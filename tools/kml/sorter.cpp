@@ -100,7 +100,7 @@ std::vector<xml::Node*> Sorter::orderPins(
         // insert into a different folder
         kmlGeneral.insertEditedPlacemarksIntoFolder(
             pinsContainerNode,
-            Builder().getFolder(SORT_COMMAND_WORKING_FOLDER),
+            Builder().createFolder(SORT_COMMAND_WORKING_FOLDER),
             sortedPinNodes,
             {"Sorting", "Sort"},
             "pin"

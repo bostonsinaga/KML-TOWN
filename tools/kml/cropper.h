@@ -15,6 +15,13 @@ class Cropper {
             Point endPt,    // decimal coordinate
             bool isFolderInsertion
         );
+
+        std::vector<xml::Node*> cutPaths(
+            xml::Node *pathsContainerNode,
+            Point startPt,  // decimal coordinate
+            Point endPt,    // decimal coordinate
+            bool isFolderInsertion
+        );
 };
 
 #endif // __KML_CROPPER_H__

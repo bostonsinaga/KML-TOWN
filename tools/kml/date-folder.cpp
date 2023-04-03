@@ -135,7 +135,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             }
 
             dateStrVec.push_back(dateStr);
-            newFolderNodes.push_back(Builder().getFolder(dateStr, false));
+            newFolderNodes.push_back(Builder().createFolder(dateStr, false));
             insideDex = dateStrVec.size() - 1;
             bufferItemsCount = 0;
         }
@@ -152,7 +152,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
 
     kmlGeneral.insertEditedPlacemarksIntoFolder(
         mainFolderNode,
-        Builder().getFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
+        Builder().createFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
         newFolderNodes,
         {"Date foldering", "Folder by date"},
         "placemark"

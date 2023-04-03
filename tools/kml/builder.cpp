@@ -3,7 +3,7 @@
 
 #include "builder.h"
 
-xml::Node *Builder::getFolder(
+xml::Node *Builder::createFolder(
     std::string name,
     bool isOpen
 ) {
@@ -23,7 +23,7 @@ xml::Node *Builder::getFolder(
 }
 
 // return one style map set of pins
-xml::Node *Builder::getPinStyleMap(
+xml::Node *Builder::createPinStyleMap(
     std::string *styleMapId_hook,
     std::string pinIconNamed,
     std::string pinIconScaleStr
@@ -148,7 +148,7 @@ xml::Node *Builder::getPinStyleMap(
 }
 
 // return one style map set of path
-xml::Node *Builder::getPathStyleMap(
+xml::Node *Builder::createPathStyleMap(
     std::string *styleMapId_hook,
     std::string pathColorNamed,
     std::string pathThicknessStr
@@ -215,7 +215,7 @@ xml::Node *Builder::getPathStyleMap(
     );
 }
 
-xml::Node *Builder::getPin(
+xml::Node *Builder::createPin(
     int altitudeAdditionFlag,
     std::string styleMapId,
     std::string decimalCoorStr,
@@ -247,7 +247,7 @@ xml::Node *Builder::getPin(
     );
 }
 
-xml::Node *Builder::getPath(
+xml::Node *Builder::createPath(
     int altitudeAdditionFlag,
     std::string styleMapId,
     std::vector<std::string> &coorStrVec,
@@ -303,7 +303,7 @@ xml::Node *Builder::getPath(
     );
 }
 
-xml::Node *Builder::getSkeleton(std::string &docName) {
+xml::Node *Builder::createSkeleton(std::string &docName) {
     if (docName == "") docName = "KML-TOWN";
 
     std::stringstream placemark_strStream;

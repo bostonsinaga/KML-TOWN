@@ -5,20 +5,20 @@ class Builder {
     public:
         Builder() {}
         
-        xml::Node *getFolder(
+        xml::Node *createFolder(
             std::string name = "",
             bool isOpen = false
         );
 
         // return one style map set of pins
-        xml::Node *getPinStyleMap(
+        xml::Node *createPinStyleMap(
             std::string *styleMapId_hook,
             std::string pinIconNamed = "",
             std::string pinIconScaleStr = "1.0"
         );
 
         // return one style map set of path
-        xml::Node *getPathStyleMap(
+        xml::Node *createPathStyleMap(
             std::string *styleMapId_hook,
             std::string pathColorNamed = "",
             std::string pathThicknessStr = "2.0"
@@ -30,7 +30,7 @@ class Builder {
             COORSTR_NO_ADD_ALTITUDE
         };
 
-        xml::Node *getPin(
+        xml::Node *createPin(
             int altitudeAdditionFlag,
             std::string styleMapId,
             std::string decimalCoorStr,
@@ -38,7 +38,7 @@ class Builder {
             std::string description = ""
         );
 
-        xml::Node *getPath(
+        xml::Node *createPath(
             int altitudeAdditionFlag,
             std::string styleMapId,
             std::vector<std::string> &coorStrVec,
@@ -46,7 +46,7 @@ class Builder {
             std::string description = ""
         );
 
-        xml::Node *getSkeleton(std::string &docName);
+        xml::Node *createSkeleton(std::string &docName);
         void setTitle(xml::Node *kmlNode, std::string &docName);
         void insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode);
 
