@@ -269,7 +269,7 @@ xml::Node *Builder::getPath(
 
     for (auto &coorStr : coorStrVec) {
 
-        /* if unsure of comma count (coordinat form) consistency */
+        /* when unsure of comma count (coordinate form) consistency */
         if (isAltAddStrUpdate) {
             altAddStr = getAltitudeAddition(
                 altitudeAdditionFlag,
