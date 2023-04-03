@@ -23,6 +23,12 @@ class Point {
         Point operator/(Point divPt);
 
         static std::vector<Point> getPathPointsFromString(std::string coorString);
+
+        static std::vector<std::string> stringifyVector(
+            std::vector<Point> points,
+            bool isAddZeroAltitude = true
+        );
+
         std::string stringify(bool isAddZeroAltitude = true);
 
         double x = 0, y = 0;

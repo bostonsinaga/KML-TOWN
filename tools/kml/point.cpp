@@ -212,6 +212,19 @@ std::vector<Point> Point::getPathPointsFromString(std::string coorString) {
     return retPoints;
 }
 
+std::vector<std::string> Point::stringifyVector(
+    std::vector<Point> points,
+    bool isAddZeroAltitude
+) {
+   std::vector<std::string> retPointStrVec;
+
+   for (auto &pt : points) {
+        retPointStrVec.push_back(pt.stringify(isAddZeroAltitude));
+   }
+
+   return retPointStrVec;
+}
+
 std::string Point::stringify(bool isAddZeroAltitude) {
     return std::string(
         std::to_string(x) + "," + std::to_string(y) + (isAddZeroAltitude ? ",0" : "")
