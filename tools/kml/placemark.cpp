@@ -231,24 +231,26 @@ void Placemark::removePathsByDistance(
 }
 
 // read placemark name or its folder name (closest parent)
-std::string Placemark::getName(xml::Node *placemark) {
-    std::string name = "";
+std::string Placemark::getName(
+    xml::Node *placemark,
+    bool isWithParentName,
+    std::string defaultEmptyString
+) {
+    std::string name = defaultEmptyString;
 
     if (placemark) {
-
         xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
 
         if (placemarkName) {
             name = placemarkName->getInnerText();
         }
-        else {
+        else if (isWithParentName) {
             xml::Node *folderNode = placemark->getParent();
             if (folderNode) {
                 placemarkName = folderNode->getFirstDescendantByName("name");
                 if (placemarkName) {
                     name = placemarkName->getInnerText();
                 }
-                else name = "noname";
             }
         }
     }
@@ -282,6 +284,21 @@ void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
     }
 
     ctr++;
+}
+
+// read placemark name or its folder name (closest parent)
+std::string Placemark::getDescription(xml::Node *placemark) {
+    std::string description = "";
+
+    if (placemark) {
+        xml::Node *placemarkDescription = placemark->getFirstDescendantByName("description");
+
+        if (placemarkDescription) {
+            description = placemarkDescription->getInnerText();
+        }
+    }
+
+    return description;
 }
 
 #endif // __KML_PLACEMARK_CPP__
