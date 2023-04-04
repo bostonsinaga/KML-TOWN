@@ -73,7 +73,7 @@ class Node {
 
         void setAttributes(std::vector<Attribute> attributes_in);
         void addAttribute(Attribute attribute_in);
-        void setParent(Node *parent_in);
+        void setParent(Node *parent_in, bool isSwitchParent = false, int order = -1);
         void removeFromParent(bool isClean = false);
         void addChild(Node *newChild, int order = -1);
         void addChildren(std::vector<Node*> newChildren);

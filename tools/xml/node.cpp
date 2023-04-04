@@ -171,8 +171,20 @@ void Node::addAttribute(Attribute attribute_in) {
     attributes.push_back(attribute_in);
 }
 
-void Node::setParent(Node *parent_in) {
+void Node::setParent(
+    Node *parent_in,
+    bool isSwitchParent,
+    int order
+) {
     parent = parent_in;
+
+    if (isSwitchParent) {
+        removeFromParent();
+    }
+
+    if (parent) {
+        parent->addChild(this, order);
+    }
 }
 
 // 'isClean' to self delete node
