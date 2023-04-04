@@ -30,14 +30,14 @@ class Placemark {
         );
 
         // read placemark name or its folder name (closest parent)
-        static std::string getName(
-            xml::Node *placemark,
-            bool isWithParentName = true,
-            std::string defaultEmptyString = "noname"
-        );
-
+        static std::string getName(xml::Node *placemark);
         static void logName(xml::Node *placemark, bool isResetCtr = false);
-        static std::string getDescription(xml::Node *placemark);
+
+        // get inner text of certain node data (alternative for 'getName' method)
+        static std::string getDataText(
+            xml::Node *placemark,
+            std::string dataNodeName
+        );
 };
 
 #endif // __KML_PLACEMARK_H__

@@ -231,12 +231,8 @@ void Placemark::removePathsByDistance(
 }
 
 // read placemark name or its folder name (closest parent)
-std::string Placemark::getName(
-    xml::Node *placemark,
-    bool isWithParentName,
-    std::string defaultEmptyString
-) {
-    std::string name = defaultEmptyString;
+std::string Placemark::getName(xml::Node *placemark) {
+    std::string name = "noname";
 
     if (placemark) {
         xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
@@ -244,7 +240,7 @@ std::string Placemark::getName(
         if (placemarkName) {
             name = placemarkName->getInnerText();
         }
-        else if (isWithParentName) {
+        else {
             xml::Node *folderNode = placemark->getParent();
             if (folderNode) {
                 placemarkName = folderNode->getFirstDescendantByName("name");
@@ -265,7 +261,6 @@ void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
     if (isResetCtr) ctr = 1;
 
     if (placemark) {
-
         xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
 
         if (placemarkName) {
@@ -286,19 +281,22 @@ void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
     ctr++;
 }
 
-// read placemark name or its folder name (closest parent)
-std::string Placemark::getDescription(xml::Node *placemark) {
-    std::string description = "";
+// get inner text of certain node data (alternative for 'getName' method)
+std::string Placemark::getDataText(
+    xml::Node *placemark,
+    std::string dataNodeName
+) {
+    std::string dataStr = "";
 
     if (placemark) {
-        xml::Node *placemarkDescription = placemark->getFirstDescendantByName("description");
+        xml::Node *placemarkData = placemark->getFirstDescendantByName(dataNodeName);
 
-        if (placemarkDescription) {
-            description = placemarkDescription->getInnerText();
+        if (placemarkData) {
+            dataStr = placemarkData->getInnerText();
         }
     }
 
-    return description;
+    return dataStr;
 }
 
 #endif // __KML_PLACEMARK_CPP__
