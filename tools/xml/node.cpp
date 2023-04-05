@@ -173,6 +173,7 @@ void Node::addAttribute(Attribute attribute_in) {
 
 void Node::setParent(
     Node *parent_in,
+    bool isParentAddChild,
     bool isSwitchParent,
     int order
 ) {
@@ -182,7 +183,7 @@ void Node::setParent(
         removeFromParent();
     }
 
-    if (parent) {
+    if (isParentAddChild && parent) {
         parent->addChild(this, order);
     }
 }
@@ -220,7 +221,7 @@ void Node::addChild(Node *newChild, int order) {
     }
     else children.push_back(newChild);
 
-    newChild->setParent(this);
+    newChild->setParent(this, false);
 }
 
 void Node::addChildren(std::vector<Node*> newChildren) {
@@ -293,7 +294,7 @@ void Node::removeChildren() {
 std::vector<Node*> Node::releaseChildren() {
     
     for (auto &child : children) {
-        child->setParent(nullptr);
+        child->setParent(nullptr, false);
     }
 
     std::vector<Node*> retChildren = children;
