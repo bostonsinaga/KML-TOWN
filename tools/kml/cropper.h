@@ -13,14 +13,26 @@ class Cropper {
             xml::Node *pinsContainerNode,
             Point startPt,  // decimal coordinate
             Point endPt,    // decimal coordinate
-            bool isFolderInsertion
+            bool isFolderInsertion,
+            bool isIncludeFolders,
+            bool isParentFolderNamedAType
         );
 
         std::vector<xml::Node*> cutPaths(
             xml::Node *pathsContainerNode,
             Point startPt,  // decimal coordinate
             Point endPt,    // decimal coordinate
-            bool isFolderInsertion
+            bool isFolderInsertion,
+            bool isIncludeFolders,
+            bool isParentFolderNamedAType
+        );
+
+        std::vector<xml::Node*> cutAll(
+            xml::Node *pathsContainerNode,
+            Point startPt,  // decimal coordinate
+            Point endPt,    // decimal coordinate
+            bool isFolderInsertion,
+            bool isIncludeFolders
         );
 };
 
