@@ -98,7 +98,9 @@ namespace call_briefer {
                     mainFolderNode,                   // (actually if there were pins in selection
                     kml::Point(*axisStrVec.at(0)),    // otherwise return empty as on 'isFolderInsertion' true)
                     kml::Point(*axisStrVec.at(1)),
-                    isFolderInsertion
+                    isFolderInsertion,
+                    false,
+                    false
                 );
 
                 // test the cropped folder //
