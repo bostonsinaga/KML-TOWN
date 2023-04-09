@@ -41,7 +41,7 @@ class Builder {
         xml::Node *createPath(
             int altitudeAdditionFlag,
             std::string styleMapId,
-            std::vector<std::string> &coorStrVec,
+            std::vector<std::string> coorStrVec,
             std::string name = "",
             std::string description = ""
         );
