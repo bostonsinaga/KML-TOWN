@@ -527,6 +527,12 @@ void Menu::displayAvailableCommands() {
 
     while (std::getline(readFile, stringBuffer)) {
 
+        // clean '<br>' (breakline mark)
+        size_t foundBr = stringBuffer.find("<br>");
+        if (foundBr != std::string::npos) {
+            stringBuffer = stringBuffer.substr(0, foundBr) + stringBuffer.substr(foundBr + 4);
+        }
+
         // end
         if (isDetected && mini_tool::isStringContains(stringBuffer, "# SCREENSHOTS")) {
             break;

@@ -47,35 +47,35 @@ This really help me. And I hope this can help you too. Thank you.</br>
 
 -- TOGGLES --
 
-MAIN_MENU_FLAG = "menu"
-HELP_MENU_FLAG = "help"
-VERSION_NUMBER_FLAG = "version"
-CONVERT_TXT_KML_FLAG = "convert"
-CONVERT_KML_CSV_FLAG = "convert"
-KML_CROP_FLAG = "kml"
-KML_SORT_FLAG = "kml"
-KML_PINS_PATH_FLAG = "kml"
-KML_TWINS_CHECK_FLAG = "kml"
-KML_MEASURE_PATHS_FLAG = "kml"
-KML_CLASSIFY_FLAG = "kml"
-KML_FOLDER_BY_DATE_FLAG = "kml"
-KML_FILTER_STRING_FLAG = "kml"
-KML_REMOVE_PATHS_FLAG = "kml"
+MAIN_MENU_FLAG = "menu"<br>
+HELP_MENU_FLAG = "help"<br>
+VERSION_NUMBER_FLAG = "version"<br>
+CONVERT_TXT_KML_FLAG = "convert"<br>
+CONVERT_KML_CSV_FLAG = "convert"<br>
+KML_CROP_FLAG = "kml"<br>
+KML_SORT_FLAG = "kml"<br>
+KML_PINS_PATH_FLAG = "kml"<br>
+KML_TWINS_CHECK_FLAG = "kml"<br>
+KML_MEASURE_PATHS_FLAG = "kml"<br>
+KML_CLASSIFY_FLAG = "kml"<br>
+KML_FOLDER_BY_DATE_FLAG = "kml"<br>
+KML_FILTER_STRING_FLAG = "kml"<br>
+KML_REMOVE_PATHS_FLAG = "kml"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "csv"
 
 -- PARAMETERS --
 
-CONVERT_TXT_KML_FLAG = "txt-in", "kml-out", "type"
-CONVERT_KML_CSV_FLAG = "kml-in", "csv-out"
-KML_CROP_FLAG = "crop", "start-point", "end-point"
-KML_SORT_FLAG = "sort", "start-point", "end-point"
-KML_PINS_PATH_FLAG = "pins-path", "start-point", "end-point"
-KML_TWINS_CHECK_FLAG = "twins-check", "type", "radius"
-KML_MEASURE_PATHS_FLAG = "measure-paths"
-KML_CLASSIFY_FLAG = "classify"
-KML_FOLDER_BY_DATE_FLAG = "folder-by-date"
-KML_FILTER_STRING_FLAG = "filter-string", "text"
-KML_REMOVE_PATHS_FLAG = "remove-paths"
+CONVERT_TXT_KML_FLAG = "txt-in", "kml-out", "type"<br>
+CONVERT_KML_CSV_FLAG = "kml-in", "csv-out"<br>
+KML_CROP_FLAG = "crop", "start-point", "end-point"<br>
+KML_SORT_FLAG = "sort", "start-point", "end-point"<br>
+KML_PINS_PATH_FLAG = "pins-path", "start-point", "end-point"<br>
+KML_TWINS_CHECK_FLAG = "twins-check", "type", "radius"<br>
+KML_MEASURE_PATHS_FLAG = "measure-paths"<br>
+KML_CLASSIFY_FLAG = "classify"<br>
+KML_FOLDER_BY_DATE_FLAG = "folder-by-date"<br>
+KML_FILTER_STRING_FLAG = "filter-string", "text"<br>
+KML_REMOVE_PATHS_FLAG = "remove-paths"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
 
 ********************
@@ -84,21 +84,21 @@ CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
 
 -- TOGGLES --
 
-KML_MEASURE_PATHS_FLAG = "info"
-KML_TWINS_CHECK_FLAG = "include-folders"
+KML_MEASURE_PATHS_FLAG = "info"<br>
+KML_TWINS_CHECK_FLAG = "include-folders"<br>
 KML_CLASSIFY_FLAG = "clean-folders", "include-folders"
 
 -- PARAMETERS --
 
-KML_CROP_FLAG = "out"
-KML_SORT_FLAG = "out"
-KML_PINS_PATH_FLAG = "out"
-KML_TWINS_CHECK_FLAG = "out"
-KML_MEASURE_PATHS_FLAG = "out"
-KML_CLASSIFY_FLAG = "out"
-KML_FOLDER_BY_DATE_FLAG = "out"
-KML_FILTER_STRING_FLAG = "out"
-KML_REMOVE_PATHS_FLAG = "out", "over-distance", "under-distance"
+KML_CROP_FLAG = "out"<br>
+KML_SORT_FLAG = "out"<br>
+KML_PINS_PATH_FLAG = "out"<br>
+KML_TWINS_CHECK_FLAG = "out"<br>
+KML_MEASURE_PATHS_FLAG = "out"<br>
+KML_CLASSIFY_FLAG = "out"<br>
+KML_FOLDER_BY_DATE_FLAG = "out"<br>
+KML_FILTER_STRING_FLAG = "out"<br>
+KML_REMOVE_PATHS_FLAG = "out", "over-distance", "under-distance"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "out"
 
 
