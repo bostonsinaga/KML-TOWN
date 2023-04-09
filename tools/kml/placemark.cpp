@@ -231,17 +231,17 @@ void Placemark::removePathsByDistance(
 }
 
 // read placemark name or its folder name (closest parent)
-std::string Placemark::getName(xml::Node *placemark) {
+std::string Placemark::getName(xml::Node *placemarkNode) {
     std::string name = "noname";
 
-    if (placemark) {
-        xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
+    if (placemarkNode) {
+        xml::Node *placemarkName = placemarkNode->getFirstDescendantByName("name");
 
         if (placemarkName) {
             name = placemarkName->getInnerText();
         }
         else {
-            xml::Node *folderNode = placemark->getParent();
+            xml::Node *folderNode = placemarkNode->getParent();
             if (folderNode) {
                 placemarkName = folderNode->getFirstDescendantByName("name");
                 if (placemarkName) {
@@ -255,19 +255,19 @@ std::string Placemark::getName(xml::Node *placemark) {
 }
 
 // read placemark name or its folder name (closest parent)
-void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
+void Placemark::logName(xml::Node *placemarkNode, bool isResetCtr) {
 
     static int ctr = 1;
     if (isResetCtr) ctr = 1;
 
-    if (placemark) {
-        xml::Node *placemarkName = placemark->getFirstDescendantByName("name");
+    if (placemarkNode) {
+        xml::Node *placemarkName = placemarkNode->getFirstDescendantByName("name");
 
         if (placemarkName) {
             std::cout << ctr << ") Placemark name ---> " << placemarkName->getInnerText() << std::endl;
         }
         else {
-            xml::Node *folderNode = placemark->getParent();
+            xml::Node *folderNode = placemarkNode->getParent();
             if (folderNode) {
                 placemarkName = folderNode->getFirstDescendantByName("name");
                 if (placemarkName) {
@@ -283,13 +283,13 @@ void Placemark::logName(xml::Node *placemark, bool isResetCtr) {
 
 // get inner text of certain node data (alternative for 'getName' method)
 std::string Placemark::getDataText(
-    xml::Node *placemark,
+    xml::Node *placemarkNode,
     std::string dataNodeName
 ) {
     std::string dataStr = "";
 
-    if (placemark) {
-        xml::Node *placemarkData = placemark->getFirstDescendantByName(dataNodeName);
+    if (placemarkNode) {
+        xml::Node *placemarkData = placemarkNode->getFirstDescendantByName(dataNodeName);
 
         if (placemarkData) {
             dataStr = placemarkData->getInnerText();
@@ -297,6 +297,73 @@ std::string Placemark::getDataText(
     }
 
     return dataStr;
+}
+
+// used in method that need '--include-folders'
+void Placemark::includeFolder(
+    xml::Node *placemarkNode,
+    xml::Node *folderNode,
+    int testIndex,
+    bool isResetStatic
+) {
+    static std::vector<std::vector<std::string>> includedFolderNameVecVec;
+    static std::vector<int> existIndexes;
+
+    if (isResetStatic) {
+        includedFolderNameVecVec.clear();
+        existIndexes.clear();
+    }
+
+    xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
+    std::string includedExistFolder_name = "";     // !"" -> exist
+
+    // include folders check
+    if (placemarkNode->getParent()) {
+
+        int includedFolderNameVecVec_foundDex = -1;
+        includedExistFolder_name = getName(placemarkNode->getParent());
+        int existIndex = mini_tool::isPrimitiveInsideVector<int>(existIndexes, testIndex);
+
+        if (existIndexes.size() == 0 || existIndex == -1) {
+            existIndexes.push_back(testIndex);
+            includedFolderNameVecVec.push_back(std::vector<std::string>{});
+        }
+        else {
+            includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
+                includedFolderNameVecVec.at(existIndex), includedExistFolder_name
+            );
+        }
+
+        // there isn't any yet
+        if (includedFolderNameVecVec_foundDex == -1) {
+            includedNewFolder_node = Builder().createFolder(includedExistFolder_name);
+            includedFolderNameVecVec.back().push_back(includedExistFolder_name);
+            includedExistFolder_name = "";
+        }
+    }
+    
+    // add to new folder //
+
+    placemarkNode->removeFromParent();
+
+    if (includedNewFolder_node) {
+        includedNewFolder_node->addChild(placemarkNode);
+        folderNode->addChild(includedNewFolder_node);
+    }
+    else if (includedExistFolder_name != "") {
+        
+        for (auto &includedExistFolder_node : *folderNode->getChildren()) {
+            if (includedExistFolder_name == getName(includedExistFolder_node)) {
+
+                includedExistFolder_node->addChild(placemarkNode);
+                break;
+            }
+        }
+    }
+    // 'placemarkNode' has no parent (rare)
+    else {
+        folderNode->addChild(placemarkNode);
+    }
 }
 
 #endif // __KML_PLACEMARK_CPP__

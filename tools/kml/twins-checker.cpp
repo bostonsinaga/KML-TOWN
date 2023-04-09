@@ -294,13 +294,8 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
     General kmlGeneral;
     std::string kmlNameString = kmlGeneral.getRootDocumentName(kmlNode);
 
-    // include folders stuff
-    std::vector<std::vector<std::string>> includedFolderNameVecVec;
-
     if (matchedIndexes[0].size() > 0) {
-        
         Builder kmlBuilder;
-        Placemark kmlPlacemark;
 
         xml::Node *returnFolder = kmlBuilder.createFolder(
             isParentFolderNamedAType ?
@@ -314,44 +309,16 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         xml::Node *folderDupl = kmlBuilder.createFolder(std::string("DUPLICATES"));
         returnFolder->addChild(folderDupl);
 
-        int matchedCtr = 0, i_buffer = -1;
+        int matchedCtr = 0;
+        bool isIncludeFolderStaticRefresh = true;
 
         for (int i = 0; i < 2; i++) {
             for (auto &index : matchedIndexes[i]) {
 
-                // INCLUDE FOLDERS STUFF //
-
-                xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
-                std::string includedExistFolder_name = "";     // !"" -> exist
-
-                // include folders check
-                if (isIncludeFolders && placemarkNodes.at(index)->getParent()) {
-
-                    int includedFolderNameVecVec_foundDex = -1;
-                    includedExistFolder_name = kmlPlacemark.getName(placemarkNodes.at(index)->getParent());
-
-                    if (i != i_buffer) {
-                        i_buffer = i;
-                        includedFolderNameVecVec.push_back(std::vector<std::string>{});
-                    }
-                    else {
-                        includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
-                            includedFolderNameVecVec.at(i_buffer), includedExistFolder_name
-                        );
-                    }
-
-                    // there isn't any yet
-                    if (includedFolderNameVecVec_foundDex == -1) {
-                        includedNewFolder_node = kmlBuilder.createFolder(includedExistFolder_name);
-                        includedFolderNameVecVec.at(i_buffer).push_back(includedExistFolder_name);
-                        includedExistFolder_name = "";
-                    }
-                }
-
-                // ********* INCLUDE FOLDERS STUFF //
-
                 // remove from parent
-                placemarkNodes.at(index)->removeFromParent();
+                if (!isIncludeFolders) {
+                    placemarkNodes.at(index)->removeFromParent();
+                }
 
                 xml::Node *twinsDivFolder;
 
@@ -363,25 +330,19 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                 // duplicates
                 else twinsDivFolder = folderDupl;
 
-                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
-                    if (includedNewFolder_node) {
-                        includedNewFolder_node->addChild(placemarkNodes.at(index));
-                        twinsDivFolder->addChild(includedNewFolder_node);
-                    }
-                    else if (includedExistFolder_name != "") {
-                        
-                        for (auto &includedExistFolder_node : *twinsDivFolder->getChildren()) {
-                            if (includedExistFolder_name == kmlPlacemark.getName(includedExistFolder_node)) {
-
-                                includedExistFolder_node->addChild(placemarkNodes.at(index));
-                                break;
-                            }
-                        }
-                    }
+                    Placemark().includeFolder(
+                        placemarkNodes.at(index),
+                        twinsDivFolder,
+                        i,
+                        isIncludeFolderStaticRefresh
+                    );
                 }
-                // ********* INCLUDE FOLDERS STUFF //
                 else twinsDivFolder->addChild(placemarkNodes.at(index));
+
+                if (isIncludeFolderStaticRefresh) {
+                    isIncludeFolderStaticRefresh = false;
+                }
             }
         }
 

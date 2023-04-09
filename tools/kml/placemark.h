@@ -30,13 +30,21 @@ class Placemark {
         );
 
         // read placemark name or its folder name (closest parent)
-        static std::string getName(xml::Node *placemark);
-        static void logName(xml::Node *placemark, bool isResetCtr = false);
+        static std::string getName(xml::Node *placemarkNode);
+        static void logName(xml::Node *placemarkNode, bool isResetCtr = false);
 
         // get inner text of certain node data (alternative for 'getName' method)
         static std::string getDataText(
-            xml::Node *placemark,
+            xml::Node *placemarkNode,
             std::string dataNodeName
+        );
+
+        // used in method that need '--include-folders'
+        void includeFolder(
+            xml::Node *placemarkNode,
+            xml::Node *folderNode,
+            int testIndex = 0,
+            bool isResetStatic = false
         );
 };
 

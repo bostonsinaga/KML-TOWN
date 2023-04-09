@@ -41,6 +41,12 @@ class General {
         );
 
         void setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out);
+        
+        void cleanFolders(
+            xml::Node *mainFolderNode,
+            xml::Node *classifiedFolder,
+            std::vector<xml::Node*> &newFolderVec
+        );
 };
 
 #endif // __KML_GENERAL_H__

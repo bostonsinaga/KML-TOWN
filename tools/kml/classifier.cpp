@@ -9,12 +9,8 @@ void Classifier::rearrange(
     bool isIncludeFolders
 ) {
     if (kmlNode) {
-
         std::vector<std::string> styleDataStrVec;
         std::vector<xml::Node*> newFolderNodes;
-
-        // include folders stuff
-        std::vector<std::vector<std::string>> includedFolderNameVecVec;
 
         General kmlGeneral;
         Placemark kmlPlacemark;
@@ -23,55 +19,24 @@ void Classifier::rearrange(
 
         bool isFirstPlcItr = true;
         std::string styleDataStr;
+        int ctr = 0;
 
-        for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
+        for (auto &placemarkNode : kmlNode->getDescendantsByName("Placemark", true)) {
 
             if (isFirstPlcItr) {
-                styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark, true);
+                styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemarkNode, true);
                 isFirstPlcItr = false;
             }
-            else styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemark, false);
+            else styleDataStr = kmlStyleStrings.getPlacemarkStyleData(placemarkNode, false);
 
             int styleDataStrVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
                 styleDataStrVec, styleDataStr
             );
 
-            // INCLUDE FOLDERS STUFF //
-
-            xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
-            std::string includedExistFolder_name = "";     // !"" -> exist
-
-            // include folders check
-            if (isIncludeFolders && placemark->getParent()) {
-
-                int includedFolderNameVecVec_foundDex = -1,
-                    styleDataStrVec_foundDex_buffer;
-
-                includedExistFolder_name = kmlPlacemark.getName(placemark->getParent());
-
-                if (styleDataStrVec_foundDex == -1) {
-                    includedFolderNameVecVec.push_back(std::vector<std::string>{});
-                    styleDataStrVec_foundDex_buffer = includedFolderNameVecVec.size() - 1;
-                }
-                else {
-                    includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
-                        includedFolderNameVecVec.at(styleDataStrVec_foundDex), includedExistFolder_name
-                    );
-                    styleDataStrVec_foundDex_buffer = styleDataStrVec_foundDex;
-                }
-
-                // there isn't any yet
-                if (includedFolderNameVecVec_foundDex == -1) {
-                    includedNewFolder_node = kmlBuilder.createFolder(includedExistFolder_name);
-                    includedFolderNameVecVec.at(styleDataStrVec_foundDex_buffer).push_back(includedExistFolder_name);
-                    includedExistFolder_name = "";
-                }
-            }
-
-            // ********* INCLUDE FOLDERS STUFF //
-
             // remove from parent
-            placemark->removeFromParent();
+            if (!isIncludeFolders) {
+                placemarkNode->removeFromParent();
+            }
 
             // there isn't any yet
             if (styleDataStrVec_foundDex == -1) {
@@ -90,82 +55,51 @@ void Classifier::rearrange(
                     kmlBuilder.createFolder(folderName)
                 );
 
-                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
-                    includedNewFolder_node->addChild(placemark);
-                    newFolderNodes.back()->addChild(includedNewFolder_node);
-                }   // ********* INCLUDE FOLDERS STUFF //
+                    kmlPlacemark.includeFolder(
+                        placemarkNode,
+                        newFolderNodes.back(),
+                        styleDataStrVec.size() - 1, true
+                    );
+                }
                 else {
-                    newFolderNodes.back()->addChild(placemark);
+                    newFolderNodes.back()->addChild(placemarkNode);
                 }
             }
             // already available
             else {
                 xml::Node *folderNode = newFolderNodes.at(styleDataStrVec_foundDex);
 
-                // INCLUDE FOLDERS STUFF //
                 if (isIncludeFolders) {
-                    if (includedNewFolder_node) {
-                        includedNewFolder_node->addChild(placemark);
-                        folderNode->addChild(includedNewFolder_node);
-                    }
-                    else if (includedExistFolder_name != "") {
-                        
-                        for (auto &includedExistFolder_node : *folderNode->getChildren()) {
-                            if (includedExistFolder_name == kmlPlacemark.getName(includedExistFolder_node)) {
-
-                                includedExistFolder_node->addChild(placemark);
-                                break;
-                            }
-                        }
-                    }
+                    kmlPlacemark.includeFolder(
+                        placemarkNode,
+                        folderNode,
+                        styleDataStrVec_foundDex, false
+                    );
                 }
-                // ********* INCLUDE FOLDERS STUFF //
-                else folderNode->addChild(placemark);
+                else folderNode->addChild(placemarkNode);
             }
+
+            ctr++;
         }
 
         // add the folders to a working folder //
 
         xml::Node
             *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode),
-            *classifyFolder = kmlBuilder.createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+            *classifiedFolderNode = kmlBuilder.createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
 
         if (isCleanFolders) {
-
-            std::vector<xml::Node*>
-                *mainFolderChildrenPtr = mainFolderNode->getChildren(),
-                savedNodes;
-
-            for (auto &node : *mainFolderChildrenPtr) {
-                std::string nodeName = node->getName();
-
-                if (nodeName != "StyleMap" &&
-                    nodeName != "Style" &&
-                    nodeName != "name" &&
-                    nodeName != "description" &&
-                    nodeName != "open"
-                ) {
-                    delete node;
-                    node = nullptr;
-                }
-                else savedNodes.push_back(node);
-            }
-
-            // alternative for 'removeFromParent()'
-            mainFolderChildrenPtr->clear();
-            *mainFolderChildrenPtr = savedNodes;
-
-            for (auto &folderNode : newFolderNodes) {
-                classifyFolder->addChild(folderNode);
-            }
-
-            mainFolderNode->addChild(classifyFolder);
+            kmlGeneral.cleanFolders(
+                mainFolderNode,
+                classifiedFolderNode,
+                newFolderNodes
+            );
         }
         else {
             kmlGeneral.insertEditedPlacemarksIntoFolder(
                 mainFolderNode,
-                classifyFolder,
+                classifiedFolderNode,
                 newFolderNodes,
                 {"Classifying placemarks", "Classify placemarks"},
                 ""
@@ -180,26 +114,26 @@ bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
         std::vector<xml::Node*> placemarks;
         General kmlGeneral = General();
 
-        for (auto &placemark : kmlNode->getDescendantsByName("Placemark", true)) {
+        for (auto &placemarkNode : kmlNode->getDescendantsByName("Placemark", true)) {
 
             xml::Node *plmk_stringNode;
             bool isAble = false;
 
-            plmk_stringNode = placemark->getFirstDescendantByName("name");
+            plmk_stringNode = placemarkNode->getFirstDescendantByName("name");
             if (plmk_stringNode) {
                 if (plmk_stringNode->getInnerText().find(searchStr) != std::string::npos) {
-                    placemark->removeFromParent();
-                    placemarks.push_back(placemark);
+                    placemarkNode->removeFromParent();
+                    placemarks.push_back(placemarkNode);
                     isAble = true;
                 }
             }
 
             if (!isAble) {
-                plmk_stringNode = placemark->getFirstDescendantByName("description");
+                plmk_stringNode = placemarkNode->getFirstDescendantByName("description");
                 if (plmk_stringNode) {
                     if (plmk_stringNode->getInnerText().find(searchStr) != std::string::npos) {
-                        placemark->removeFromParent();
-                        placemarks.push_back(placemark);
+                        placemarkNode->removeFromParent();
+                        placemarks.push_back(placemarkNode);
                     }
                 }
             }

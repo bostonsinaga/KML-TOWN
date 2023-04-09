@@ -278,25 +278,60 @@ bool General::logEditedPlacemarks(
 
 //set document name as 'fileDir_out' file name
 void General::setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out) {
-    xml::Node *mainFolderNode = searchMainFolder(kmlNode);
+    xml::Node *mainFolder = searchMainFolder(kmlNode);
 
-    while (mainFolderNode) {
+    while (mainFolder) {
 
-        xml::Node *nameNode = mainFolderNode->getFirstChildByName("name");
+        xml::Node *nameNode = mainFolder->getFirstChildByName("name");
         if (!nameNode) {
-            nameNode = new xml::Node("name", mainFolderNode);
-            putOnTopFolder(mainFolderNode, {nameNode});
+            nameNode = new xml::Node("name", mainFolder);
+            putOnTopFolder(mainFolder, {nameNode});
         }
         nameNode->setInnerText(mini_tool::cutFileDirName(fileDir_out));
 
-        xml::Node *possibleParentNode = mainFolderNode->getParent();
+        xml::Node *possibleParentNode = mainFolder->getParent();
         if (possibleParentNode &&
             possibleParentNode->getName() != "kml"
         ) {
-            mainFolderNode = possibleParentNode;
+            mainFolder = possibleParentNode;
         }
         else break;
     }
+}
+
+void General::cleanFolders(
+    xml::Node *mainFolder,
+    xml::Node *classifiedFolder,
+    std::vector<xml::Node*> &newFolderVec
+) {
+    std::vector<xml::Node*>
+        *mainFolderChildrenPtr = mainFolder->getChildren(),
+        savedNodes;
+
+    for (auto &node : *mainFolderChildrenPtr) {
+        std::string nodeName = node->getName();
+
+        if (nodeName != "StyleMap" &&
+            nodeName != "Style" &&
+            nodeName != "name" &&
+            nodeName != "description" &&
+            nodeName != "open"
+        ) {
+            delete node;
+            node = nullptr;
+        }
+        else savedNodes.push_back(node);
+    }
+
+    // alternative for 'removeFromParent()'
+    mainFolderChildrenPtr->clear();
+    *mainFolderChildrenPtr = savedNodes;
+
+    for (auto &folderNode : newFolderVec) {
+        classifiedFolder->addChild(folderNode);
+    }
+
+    mainFolder->addChild(classifiedFolder);
 }
 
 #endif // __KML_GENERAL_CPP__
