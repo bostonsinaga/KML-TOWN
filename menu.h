@@ -101,8 +101,6 @@ private:
     bool testReadmeFile(std::ifstream *readFile_ptr, std::string testDirStr);
 
     std::vector<std::string> *inputStrings_ptr = nullptr;
-
-    // array are [mandatory, optional]
     std::vector<std::vector<int>> expectingFlagQueueVec;
 
     /* note for 'toggleStringsVec' and 'parameterStringsVec':

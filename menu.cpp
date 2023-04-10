@@ -85,6 +85,9 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
     int mainCtr = 0,
         INPUTORDERFLAG = STRING_INPUTORDERFLAG;
 
+    // used in 'amount check'
+    int mandatoriesCount = 0;
+
     // this function main loop
     for (auto &inputStr : *inputStrings_ptr) {
 
@@ -163,7 +166,8 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
             int priorityDex = 0,
                 limit_i = ptrStringsVec[priorityDex]->size();
 
-            bool isUseOptional = false;
+            bool isUseOptional = false,
+                 isMandatoryChecked = false;
 
             for (int i = 0; i < limit_i; i++) {
                 for (int j = 0; j < ptrStringsVec[priorityDex]->at(i).size(); j++) {
@@ -173,6 +177,20 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
 
                     if (inputStr_subStr == str) {
                         expectingFlagQueueVec.back().push_back(i);
+
+                        // count mandatory input
+                        if (!isMandatoryChecked && priorityDex == 0) {
+
+                            isMandatoryChecked = true;
+                            mandatoriesCount++;
+
+                            // include parameter's string
+                            if (strCheckingStartDex == 1 &&
+                                mainCtr < inputStrings_ptr->size() - 1
+                            ) {
+                                mandatoriesCount++;
+                            }
+                        }
                     }
 
                     // whether using DMS error in 'getErrorString' function
@@ -207,6 +225,10 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
     }
 
     if (isFailForced || isParameterNotFollowedByString) {
+        if (isParameterNotFollowedByString) {
+            std::cerr << "KML-TOWN-> Incomplete parameter\n";
+        }
+
         std::cerr << getErrorString(isUsingSelectionArea);
         return -1;
     }
@@ -214,7 +236,7 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
     // check expecting flags consistency (determine intended flag) //
     
     bool isConsistent = true;
-    int intendedFlag; // the below product (command flag)
+    int intendedFlag = -1; // the below product (command flag)
 
     if (expectingFlagQueueVec.size() > 0) {
         std::vector<int> sustainFlags = expectingFlagQueueVec.at(0);
@@ -255,10 +277,28 @@ int Menu::select(std::vector<std::string> *inputStrings_ptrIn) {
     }
     else isConsistent = false;
 
-    if (isConsistent) {
+    /*  AMOUNT CHECK
+        'inputStrings_ptr' count must more than or equals
+        mandatory toggles and parameters count
+    */
+    bool isInputsCountEnough = true;
+    int expectedInputsCount = intendedFlag >= 0 ? (
+        toggleStringsVec[0].at(intendedFlag).size() +
+        parameterStringsVec[0].at(intendedFlag).size() * 2
+    ) : 1;
+
+    if (mandatoriesCount < expectedInputsCount) {
+        isInputsCountEnough = false;
+    }
+
+    if (isConsistent && isInputsCountEnough) {
         return intendedFlag;
     }
     else {
+        if (!isInputsCountEnough) {
+            std::cerr << "KML-TOWN-> Too few mandatory inputs\n";
+        }
+
         std::cerr << getErrorString(isUsingSelectionArea);
         return -1;
     }
