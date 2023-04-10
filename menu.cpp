@@ -32,7 +32,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
 
     parameterStringsVec[0].at(CONVERT_TXT_KML_FLAG) = {"txt-in", "kml-out", "type"};
     parameterStringsVec[0].at(CONVERT_KML_CSV_FLAG) = {"kml-in", "csv-out"};
-    parameterStringsVec[0].at(KML_CROP_FLAG) = {"crop", "start-point", "end-point"};
+    parameterStringsVec[0].at(KML_CROP_FLAG) = {"crop", "start-point", "end-point", "type"};
     parameterStringsVec[0].at(KML_SORT_FLAG) = {"sort", "start-point", "end-point"};
     parameterStringsVec[0].at(KML_PINS_PATH_FLAG) = {"pins-path", "start-point", "end-point"};
     parameterStringsVec[0].at(KML_TWINS_CHECK_FLAG) = {"twins-check", "type", "radius"};
