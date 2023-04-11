@@ -184,6 +184,25 @@ Point Point::operator/(Point divPt) {
     return Point(x / divPt.x, y / divPt.y);
 }
 
+Point Point::operator+(double val) {
+    return Point(x + val, y + val);
+}
+
+Point Point::operator-(double val) {
+    return Point(x - val, y - val);
+}
+
+Point Point::operator*(double val) {
+    return Point(x * val, y * val);
+}
+
+Point Point::operator/(double val) {
+    if (val == 0.0) {
+        val = 0.000001;
+    }
+    return Point(x / val, y / val);
+}
+
 // expected input: '180,-90,0 -180,90,0'
 std::vector<Point> Point::getPathPointsFromString(std::string coorString) {
     

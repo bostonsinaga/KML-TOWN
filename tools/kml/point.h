@@ -22,6 +22,11 @@ class Point {
         Point operator*(Point multPt);
         Point operator/(Point divPt);
 
+        Point operator+(double val);
+        Point operator-(double val);
+        Point operator*(double val);
+        Point operator/(double val);
+
         static std::vector<Point> getPathPointsFromString(std::string coorString);
 
         static std::vector<std::string> stringifyVector(
