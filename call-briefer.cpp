@@ -22,13 +22,14 @@ namespace call_briefer {
         return fileDir_out;
     }
 
-    std::vector<xml::Node*> cropPinsFunc(
+    std::vector<xml::Node*> cropPlacemarkFunc(
         xml::Node *kmlNode,
         std::vector<std::string*> axisStrVec,
-        bool isFolderInsertion // 'false' return nodes, 'true' return empty
+        bool isFolderInsertion, // 'false' return nodes, 'true' return empty
+        std::string &type_paramStr
     ) {
         xml::Node *retContainerNode = nullptr;
-        std::vector<xml::Node*> croppedPinNodes;
+        std::vector<xml::Node*> croppedPlacemarkNodes;
         bool isSucceeded = true;
         
         if (kmlNode) {
@@ -92,28 +93,47 @@ namespace call_briefer {
                     }
                 }
 
-                // cut the pins
-                kml::Cropper kmlCropper;              /* NOTE: */
-                croppedPinNodes = kmlCropper.cutPins( // may return nodes if 'isFolderInsertion' false
-                    mainFolderNode,                   // (actually if there were pins in selection
-                    kml::Point(*axisStrVec.at(0)),    // otherwise return empty as on 'isFolderInsertion' true)
-                    kml::Point(*axisStrVec.at(1)),
-                    isFolderInsertion,
-                    false,
-                    false
-                );
+                /*  CROPPER
+                    may return nodes if 'isFolderInsertion' false
+                    (actually if there were pins in selection
+                    otherwise return empty as on 'isFolderInsertion' true)
+                */
+                kml::Cropper kmlCropper;
+
+                // cut the pins //
+
+                if (mini_tool::isStringContains(type_paramStr, "pin", true)) {
+                    croppedPlacemarkNodes = kmlCropper.cutPins(
+                        mainFolderNode,
+                        kml::Point(*axisStrVec.at(0)),
+                        kml::Point(*axisStrVec.at(1)),
+                        isFolderInsertion,
+                        false,
+                        false
+                    );
+                }
+                else if (mini_tool::isStringContains(type_paramStr, "path", true)) {
+                    croppedPlacemarkNodes = kmlCropper.cutPaths(
+                        mainFolderNode,
+                        kml::Point(*axisStrVec.at(0)),
+                        kml::Point(*axisStrVec.at(1)),
+                        isFolderInsertion,
+                        false,
+                        false
+                    );
+                }
 
                 // test the cropped folder //
 
                 xml::Node *croppedFolderNode = (
-                    mainFolderNode->getFirstChildByName("Folder", false)
+                    mainFolderNode->getFirstChildByName("Folder")
                 );
                 
                 if (croppedFolderNode && isFolderInsertion) {
-                    if (croppedFolderNode->getFirstChildByName("name", false)->getInnerText()
+                    if (kml::Placemark().getDataText(croppedFolderNode, "name")
                         == CROP_COMMAND_WORKING_FOLDER
                     ) {
-                        retContainerNode = croppedFolderNode; // 'croppedPinNodes' is empty
+                        retContainerNode = croppedFolderNode; // 'croppedPlacemarkNodes' is empty
                     }
                     else isSucceeded = false;
                 }
@@ -123,7 +143,7 @@ namespace call_briefer {
         else isSucceeded = false;
 
         if (isSucceeded) {
-            if (croppedPinNodes.size() == 0) {
+            if (croppedPlacemarkNodes.size() == 0) {
                 if (isFolderInsertion) {
                     return std::vector<xml::Node*>{retContainerNode};
                 }
@@ -132,7 +152,7 @@ namespace call_briefer {
                     return std::vector<xml::Node*>{};
                 }
             }
-            else return croppedPinNodes;
+            else return croppedPlacemarkNodes;
         }
         else {
             std::cerr << "\n**FAILED**\n";
@@ -146,11 +166,14 @@ namespace call_briefer {
         std::vector<std::string*> axisStrVec,
         bool isFolderInsertion // 'false' return nodes, 'true' return empty
     ) {
+        std::string typeStr = "pins"; // temporary
+
         /* 'dualismVector' may contains nodes for command that involves 'sorter' */
-        std::vector<xml::Node*> dualismVector = cropPinsFunc(
+        std::vector<xml::Node*> dualismVector = cropPlacemarkFunc(
             kmlNode,
             axisStrVec,
-            isFolderInsertion
+            isFolderInsertion,
+            typeStr
         );
 
         if (dualismVector.size() > 0) {
