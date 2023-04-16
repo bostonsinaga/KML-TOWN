@@ -250,4 +250,24 @@ std::string Point::stringify(bool isAddZeroAltitude) {
     );
 }
 
+bool Point::isBetween(Point &testPt, Point &startPt, Point &endPt) {
+
+    if ((testPt.x >= startPt.x && testPt.x <= endPt.x && // BL - TR
+        testPt.y >= startPt.y && testPt.y <= endPt.y)
+        ||
+        (testPt.x >= startPt.x && testPt.x <= endPt.x && // TL - BR
+        testPt.y >= endPt.y && testPt.y <= startPt.y)
+        ||
+        (testPt.x >= endPt.x && testPt.x <= startPt.x && // TR - BL
+        testPt.y >= endPt.y && testPt.y <= startPt.y)
+        ||
+        (testPt.x >= endPt.x && testPt.x <= startPt.x && // BR - TL
+        testPt.y >= startPt.y && testPt.y <= endPt.y)
+    ) {
+        return true;
+    }
+    
+    return false;
+}
+
 #endif // __KML_POINT_CPP__

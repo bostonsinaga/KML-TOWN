@@ -36,6 +36,8 @@ class Point {
 
         std::string stringify(bool isAddZeroAltitude = true);
 
+        static bool isBetween(Point &testPt, Point &startPt, Point &endPt);
+
         double x = 0, y = 0;
 };
 
