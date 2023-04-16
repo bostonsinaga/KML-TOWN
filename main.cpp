@@ -62,16 +62,16 @@ int main(int argc, char *argv[]) {
         menu.displayVersionNumber();
     }
 
-    //////////////////////////
-    // CONVERT TXT KML FLAG //
-    //////////////////////////
+    ////////////////////////
+    // CONVERT TXT TO KML //
+    ////////////////////////
     
     else if (SELECTED_FLAG == CONVERT_TXT_KML_FLAG) {
 
         std::string
-            type_paramStr = menu.getParameterString("type"),
             fileIn_paramStr = menu.getParameterString("txt-in"),
-            fileOut_paramStr = menu.getParameterString("kml-out");
+            fileOut_paramStr = menu.getParameterString("kml-out"),
+            type_paramStr = menu.getParameterString("type");
 
         xml::Node *kmlNode = call_briefer::selectFunctionByType(
             type_paramStr,
@@ -108,10 +108,11 @@ int main(int argc, char *argv[]) {
                             );
                         }
                         else {
-                            selectedPinNodes = call_briefer::cropPinsFunc(
+                            selectedPinNodes = call_briefer::cropPlacemarkFunc(
                                 kmlNode_baby,
                                 {&selectCoorStr[0], &selectCoorStr[1]},
-                                false
+                                false,
+                                type_paramStr
                             );
                         }
 
@@ -134,9 +135,9 @@ int main(int argc, char *argv[]) {
         call_briefer::writeFileFunc(kmlNode, fileOut_paramStr);
     }
 
-    //////////////////////////
-    // CONVERT KML CSV FLAG //
-    //////////////////////////
+    ////////////////////////
+    // CONVERT KML TO CSV //
+    ////////////////////////
 
     else if (SELECTED_FLAG == CONVERT_KML_CSV_FLAG) {
 
@@ -195,7 +196,8 @@ int main(int argc, char *argv[]) {
             fileIn_paramStr = menu.getParameterString("crop"),
             fileOut_paramStr = menu.getParameterString("out"),
             startPoint_paramStr = menu.getParameterString("start-point"),
-            endPoint_paramStr = menu.getParameterString("end-point");
+            endPoint_paramStr = menu.getParameterString("end-point"),
+            type_paramStr = menu.getParameterString("type");
         
         kml::Cropper().printNotification(menu);
 
@@ -209,10 +211,11 @@ int main(int argc, char *argv[]) {
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
 
-            if (call_briefer::cropPinsFunc(
+            if (call_briefer::cropPlacemarkFunc(
                 kmlNode,
                 {&startPoint_paramStr, &endPoint_paramStr},
-                true
+                true,
+                type_paramStr
             ).size() > 0) {
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
             }
