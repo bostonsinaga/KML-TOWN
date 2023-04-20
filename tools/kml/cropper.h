@@ -54,10 +54,17 @@ class Cropper {
             const std::function<void(Point&)> &callback
         );
 
+        enum {
+            IN_OUT_KEEPEDGEFLAG,
+            OUT_IN_KEEPEDGEFLAG,
+            OUT_OUT_KEEPEDGEFLAG
+        };
+
         // add additional point at selection rect intersection (must intersected)
         void keepPathEdge(
             std::vector<Point> &outsiderPtVec,  // this two vectors should be filled except,
             std::vector<Point> &insiderPtVec,   // 'insiderPtVec' can be empty if only path beyonds selection rect but intersects it
+            int keepEdgeFlag,
             LineEquation *linEq_AB_hooked = nullptr
         );
 

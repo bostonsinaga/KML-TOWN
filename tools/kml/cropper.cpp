@@ -124,7 +124,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
         }
     };
 
-    // create segments part as 3 separated paths //
+    // create segments part as 3 separated paths
     auto createPathsFromParts = [&](xml::Node *pathNode, std::string &styleString) {
         xml::Node *segmentPaths[3];
 
@@ -153,9 +153,6 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
     for (auto &pathCoor : pathCoorNodes) {
 
-        // empty segments part
-        reloadSegmentsPart();
-
         std::vector<Point> pathPoints = (
             Point::getPathPointsFromString(pathCoor->getInnerText())
         );
@@ -179,7 +176,8 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
                     keepPathEdge(
                         segmentPathPoints[2],
-                        segmentBuffer
+                        segmentBuffer,
+                        OUT_IN_KEEPEDGEFLAG
                     );
 
                     createPathsFromParts(pathNodes.at(mainCtr), styleString);
@@ -197,7 +195,8 @@ std::vector<xml::Node*> Cropper::cutPaths(
                         if (isPreviousOutsider) {
                             keepPathEdge(
                                 segmentPathPoints[0],
-                                segmentPathPoints[1]
+                                segmentPathPoints[1],
+                                OUT_IN_KEEPEDGEFLAG
                             );
                         }
                     }
@@ -213,7 +212,8 @@ std::vector<xml::Node*> Cropper::cutPaths(
                 if (isDetectedInsider && !isPreviousOutsider) {
                     keepPathEdge(
                         segmentPathPoints[2],
-                        segmentPathPoints[1]
+                        segmentPathPoints[1],
+                        IN_OUT_KEEPEDGEFLAG
                     );
                 }
                 /*
@@ -222,7 +222,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
                 */
                 else {
                     LineEquation linEq_AB_hook;
-                    bool isPathPointsLoopContinue = false;
+                    bool isSkipPathPointsLoop = false;
 
                     for (int j = 0; j < 3; j += 2) {
 
@@ -255,17 +255,18 @@ std::vector<xml::Node*> Cropper::cutPaths(
                             keepPathEdge(
                                 segmentPathPoints[0],
                                 segmentPathPoints[1],
+                                OUT_OUT_KEEPEDGEFLAG,
                                 &linEq_AB_hook
                             );
 
                             isDetectedInsider = true;
                             isPreviousOutsider = false;
-                            isPathPointsLoopContinue = true;
+                            isSkipPathPointsLoop = true;
                             break;
                         }
                     }
 
-                    if (isPathPointsLoopContinue) continue;
+                    if (isSkipPathPointsLoop) continue;
                 }
 
                 isPreviousOutsider = true;
@@ -274,10 +275,13 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
         // remove previous path if croppable
         if (isDetectedInsider) {
-            createPathsFromParts(pathNodes.at(mainCtr), styleString);            
+            createPathsFromParts(pathNodes.at(mainCtr), styleString);
             pathNodes.at(mainCtr)->removeFromParent(true);
         }
         
+        // empty segments part
+        reloadSegmentsPart();
+
         mainCtr++;
     }
 
@@ -326,8 +330,15 @@ std::vector<xml::Node*> Cropper::cutAll(
 // 'm' is gradient and 'c' is constant
 Cropper::LineEquation Cropper::produceLineEquation(Point &ptA, Point &ptB) {
     LineEquation retLinEq;
-    retLinEq.m = (ptA.y - ptB.y) / (ptA.x - ptB.x);
+
+    double xDiff = ptA.x - ptB.x;
+    if (xDiff == 0.0) {
+        xDiff = 0.000001;
+    }
+
+    retLinEq.m = (ptA.y - ptB.y) / xDiff;
     retLinEq.c = ptA.y - retLinEq.m * ptA.x;
+
     return retLinEq;
 }
 
@@ -379,6 +390,7 @@ void Cropper::obtainNewPointFromIntersection(
 void Cropper::keepPathEdge(
     std::vector<Point> &outsiderPtVec,  // this two vectors should be filled except,
     std::vector<Point> &insiderPtVec,   // 'insiderPtVec' can be empty if only path beyonds selection rect but intersects it
+    int keepEdgeFlag,
     LineEquation *linEq_AB_hooked
 ) {
     int outsiderVecSz = outsiderPtVec.size();
@@ -386,7 +398,27 @@ void Cropper::keepPathEdge(
 
     LineEquation linEq_AB;
 
-    if (insiderPtVec.size() > 0) {
+    if (keepEdgeFlag == IN_OUT_KEEPEDGEFLAG) {
+
+        if (linEq_AB_hooked) linEq_AB = *linEq_AB_hooked;
+        else linEq_AB = produceLineEquation(
+            outsiderPtVec.front(),
+            insiderPtVec.back()
+        );
+
+        obtainNewPointFromIntersection(
+            outsiderPtVec.front(),
+            insiderPtVec.back(),
+            linEq_AB,
+            [&](Point &ptNew) {
+                Point ptBuffer = outsiderPtVec.front();
+                outsiderPtVec.at(0) = ptNew;
+                outsiderPtVec.push_back(ptBuffer);
+                insiderPtVec.push_back(ptNew);
+            }
+        );
+    }
+    else if (keepEdgeFlag == OUT_IN_KEEPEDGEFLAG) {
 
         if (linEq_AB_hooked) linEq_AB = *linEq_AB_hooked;
         else linEq_AB = produceLineEquation(
@@ -402,16 +434,12 @@ void Cropper::keepPathEdge(
                 Point ptBuffer = insiderPtVec.front();
                 insiderPtVec.at(0) = ptNew;
                 insiderPtVec.push_back(ptBuffer);
-
-                ptBuffer = outsiderPtVec.back();
-                outsiderPtVec.pop_back();
                 outsiderPtVec.push_back(ptNew);
-                outsiderPtVec.push_back(ptBuffer);
             }
         );
     }
     // when path beyonds selection rect but intersects it
-    else {
+    else if (keepEdgeFlag == OUT_OUT_KEEPEDGEFLAG) {
         if (outsiderVecSz == 1) return;
 
         if (linEq_AB_hooked) linEq_AB = *linEq_AB_hooked;
@@ -551,9 +579,18 @@ bool Cropper::isSegmentIntersectsSelectionRect(
             x = (linEq_oppRect.c - linEq_AB.c) / mDiff,
             y = linEq_AB.m * x + linEq_AB.c;
         
-        Point testPt = Point(x, y);
+        Point testPt = Point(x, y),
+              ptCenter_AB = (ptA + ptB) / 2,
+              ptAbsDiff = testPt - ptCenter_AB,
+              ptRectSize_AB = ptA - ptB;
 
-        if (Point::isBetween(testPt, selRect.ptArr[0], selRect.ptArr[2])) {
+        ptAbsDiff = Point(std::abs(ptAbsDiff.x), std::abs(ptAbsDiff.y));
+        ptRectSize_AB = Point(std::abs(ptRectSize_AB.x), std::abs(ptRectSize_AB.y));
+
+        // 'testPt' must at between selection rect and point A B rect
+        if (Point::isBetween(testPt, selRect.ptArr[0], selRect.ptArr[2]) &&
+            ptAbsDiff.x <= ptRectSize_AB.x && ptAbsDiff.y <= ptRectSize_AB.y
+        ) {
             return true;
         }
         
