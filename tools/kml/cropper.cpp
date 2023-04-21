@@ -160,6 +160,9 @@ std::vector<xml::Node*> Cropper::cutPaths(
         bool isPreviousOutsider = false,
              isDetectedInsider = false;
 
+        // intersection segment switch index 
+        int itcSegSwcDex = 0;
+
         std::string styleString = Placemark::getDataText(pathNodes.at(mainCtr), "styleUrl");
 
         for (int i = 0; i < pathPoints.size(); i++) {
@@ -210,6 +213,8 @@ std::vector<xml::Node*> Cropper::cutPaths(
                 
                 // previous point at inside rect and current at outside rect
                 if (isDetectedInsider && !isPreviousOutsider) {
+                    itcSegSwcDex = 2;
+
                     keepPathEdge(
                         segmentPathPoints[2],
                         segmentPathPoints[1],
@@ -224,46 +229,44 @@ std::vector<xml::Node*> Cropper::cutPaths(
                     LineEquation linEq_AB_hook;
                     bool isSkipPathPointsLoop = false;
 
-                    for (int j = 0; j < 3; j += 2) {
+                    // set cropped path (insider) first edge point
+                    if (segmentPathPoints[itcSegSwcDex].size() > 1 &&
+                        isSegmentIntersectsSelectionRect(
+                            segmentPathPoints[itcSegSwcDex].at(segmentPathPoints[itcSegSwcDex].size() - 2),
+                            segmentPathPoints[itcSegSwcDex].back(),
+                            &linEq_AB_hook
+                        )
+                    ) {
+                        // multiple insiders from outsider intersection with selection rect
+                        if (itcSegSwcDex == 2) {
+                            Point ptBuffer[2] = {
+                                segmentPathPoints[2].at(segmentPathPoints[2].size() - 2),
+                                segmentPathPoints[2].back()
+                            };
 
-                        // set cropped path (insider) first edge point
-                        if (segmentPathPoints[j].size() > 1 &&
-                            isSegmentIntersectsSelectionRect(
-                                segmentPathPoints[j].at(segmentPathPoints[j].size() - 2),
-                                segmentPathPoints[j].back(),
-                                &linEq_AB_hook
-                            )
-                        ) {
-                            // multiple insiders from outsider intersection with selection rect
-                            if (j == 2) {
-                                Point ptBuffer[2] = {
-                                    segmentPathPoints[j].at(segmentPathPoints[j].size() - 2),
-                                    segmentPathPoints[j].back()
-                                };
+                            segmentPathPoints[2].pop_back();
+                            createPathsFromParts(pathNodes.at(mainCtr), styleString);
+                            reloadSegmentsPart();
 
-                                segmentPathPoints[j].pop_back();
-                                createPathsFromParts(pathNodes.at(mainCtr), styleString);
-                                reloadSegmentsPart();
+                            segmentPathPoints[0].push_back(ptBuffer[0]);
+                            segmentPathPoints[0].push_back(ptBuffer[1]);
 
-                                segmentPathPoints[0].push_back(ptBuffer[0]);
-                                segmentPathPoints[0].push_back(ptBuffer[1]);
-                            }
-
-                            i--;
-
-                            // 'segmentPathPoints[1]' is empty
-                            keepPathEdge(
-                                segmentPathPoints[0],
-                                segmentPathPoints[1],
-                                OUT_OUT_KEEPEDGEFLAG,
-                                &linEq_AB_hook
-                            );
-
-                            isDetectedInsider = true;
-                            isPreviousOutsider = false;
-                            isSkipPathPointsLoop = true;
-                            break;
+                            itcSegSwcDex = 0;
                         }
+
+                        i--;
+
+                        // 'segmentPathPoints[1]' is empty
+                        keepPathEdge(
+                            segmentPathPoints[0],
+                            segmentPathPoints[1],
+                            OUT_OUT_KEEPEDGEFLAG,
+                            &linEq_AB_hook
+                        );
+
+                        isDetectedInsider = true;
+                        isPreviousOutsider = false;
+                        isSkipPathPointsLoop = true;
                     }
 
                     if (isSkipPathPointsLoop) continue;
@@ -589,11 +592,11 @@ bool Cropper::isSegmentIntersectsSelectionRect(
 
         // 'testPt' must at between selection rect and point A B rect
         if (Point::isBetween(testPt, selRect.ptArr[0], selRect.ptArr[2]) &&
-            ptAbsDiff.x <= ptRectSize_AB.x && ptAbsDiff.y <= ptRectSize_AB.y
+            ptAbsDiff.x < ptRectSize_AB.x && ptAbsDiff.y < ptRectSize_AB.y
         ) {
             return true;
         }
-        
+
         return false;
     }
     
