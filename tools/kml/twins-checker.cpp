@@ -3,11 +3,6 @@
 
 #include "twins-checker.h"
 
-/* NOTES:
-*   -after process commands COMING SOON!
-*   -the radius measurement is deprecated (not using 'haversine' formula)
-*/
-
 // return working folder node
 xml::Node *TwinsChecker::findPins(
     xml::Node *kmlNode,
