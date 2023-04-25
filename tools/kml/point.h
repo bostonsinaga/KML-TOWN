@@ -9,7 +9,7 @@
 class Point {
     public:
         Point() {};
-        Point(double x_in, double y_in);
+        Point(LD x_in, LD y_in);
 
         // from string coordinate
         Point(std::string coorString);
@@ -22,10 +22,10 @@ class Point {
         Point operator*(Point multPt);
         Point operator/(Point divPt);
 
-        Point operator+(double val);
-        Point operator-(double val);
-        Point operator*(double val);
-        Point operator/(double val);
+        Point operator+(LD val);
+        Point operator-(LD val);
+        Point operator*(LD val);
+        Point operator/(LD val);
 
         static std::vector<Point> getPathPointsFromString(std::string coorString);
 
@@ -36,9 +36,17 @@ class Point {
 
         std::string stringify(bool isAddZeroAltitude = true);
 
-        static bool isBetween(Point &testPt, Point &startPt, Point &endPt);
+        static bool isBetween(
+            Point &testPt,
+            Point &startPt,
+            Point &endPt
+        );
 
-        double x = 0, y = 0;
+        LD x = 0, y = 0;
+
+    private:
+        // keep value precision
+        std::string to_string_with_precision(LD &axis);
 };
 
 #endif // __KML_POINT_H__

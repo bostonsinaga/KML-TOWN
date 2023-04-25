@@ -8,7 +8,7 @@
 *   -but not limited for distance as meter
 */
 
-Point::Point(double x_in, double y_in) {
+Point::Point(LD x_in, LD y_in) {
     x = x_in;
     y = y_in;
 }
@@ -184,19 +184,19 @@ Point Point::operator/(Point divPt) {
     return Point(x / divPt.x, y / divPt.y);
 }
 
-Point Point::operator+(double val) {
+Point Point::operator+(LD val) {
     return Point(x + val, y + val);
 }
 
-Point Point::operator-(double val) {
+Point Point::operator-(LD val) {
     return Point(x - val, y - val);
 }
 
-Point Point::operator*(double val) {
+Point Point::operator*(LD val) {
     return Point(x * val, y * val);
 }
 
-Point Point::operator/(double val) {
+Point Point::operator/(LD val) {
     if (val == 0.0) {
         val = 0.000001;
     }
@@ -235,23 +235,28 @@ std::vector<std::string> Point::stringifyVector(
     std::vector<Point> points,
     bool isAddZeroAltitude
 ) {
-   std::vector<std::string> retPointStrVec;
+    std::vector<std::string> retPointStrVec;
 
-   for (auto &pt : points) {
+    for (auto &pt : points) {
         retPointStrVec.push_back(pt.stringify(isAddZeroAltitude));
-   }
+    }
 
-   return retPointStrVec;
+    return retPointStrVec;
 }
 
 std::string Point::stringify(bool isAddZeroAltitude) {
-    return std::string(
-        std::to_string(x) + "," + std::to_string(y) + (isAddZeroAltitude ? ",0" : "")
+    return (
+        to_string_with_precision(x) + "," +
+        to_string_with_precision(y) +
+        (isAddZeroAltitude ? ",0" : "")
     );
 }
 
-bool Point::isBetween(Point &testPt, Point &startPt, Point &endPt) {
-
+bool Point::isBetween(
+    Point &testPt,
+    Point &startPt,
+    Point &endPt
+) {
     if ((testPt.x >= startPt.x && testPt.x <= endPt.x && // BL - TR
         testPt.y >= startPt.y && testPt.y <= endPt.y)
         ||
@@ -268,6 +273,17 @@ bool Point::isBetween(Point &testPt, Point &startPt, Point &endPt) {
     }
     
     return false;
+}
+
+std::string Point::to_string_with_precision(LD &axis) {
+    std::ostringstream out;
+    
+    // maximum digits is 16 (from Google Earth generated '.kml')
+    int axisDigitCounts = std::log10(std::abs(axis));
+    out.precision(15 - axisDigitCounts);
+    
+    out << std::fixed << axis;
+    return std::move(out).str();
 }
 
 #endif // __KML_POINT_CPP__
