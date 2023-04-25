@@ -22,6 +22,8 @@
 #define ANM_DEG_INT_CHAR_PT1 45 // anomaly degree sign
 #define ANM_DEG_INT_CHAR_PT2 166 // ...
 
+typedef long double LD;
+
 #include "mini-tool.cpp"
 #include "menu.cpp"
 #include "tools/xml/xml.h"
