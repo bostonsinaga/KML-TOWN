@@ -38,7 +38,7 @@ class Cropper {
     private:
         struct LineEquation {
             // 'm' is gradient and 'c' is constant
-            double m, c;
+            LD m, c;
         };
 
         LineEquation produceLineEquation(Point &ptA, Point &ptB);

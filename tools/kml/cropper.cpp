@@ -334,9 +334,9 @@ std::vector<xml::Node*> Cropper::cutAll(
 Cropper::LineEquation Cropper::produceLineEquation(Point &ptA, Point &ptB) {
     LineEquation retLinEq;
 
-    double xDiff = ptA.x - ptB.x;
+    LD xDiff = ptA.x - ptB.x;
     if (xDiff == 0.0) {
-        xDiff = 0.000001;
+        xDiff = 0.000000000001;
     }
 
     retLinEq.m = (ptA.y - ptB.y) / xDiff;
@@ -504,7 +504,7 @@ void Cropper::setupSelectionRect(Point &startPt, Point &endPt) {
     // intersection lambdas //
 
     selRect.intersect[0] = [&](LineEquation &linEq_AB, Point *newPt_hook)->bool {
-        double y = linEq_AB.m * selRect.ptArr[0].x + linEq_AB.c;
+        LD y = linEq_AB.m * selRect.ptArr[0].x + linEq_AB.c;
 
         if (y >= selRect.ptArr[0].y &&
             y < selRect.ptArr[1].y
@@ -517,7 +517,7 @@ void Cropper::setupSelectionRect(Point &startPt, Point &endPt) {
     };
 
     selRect.intersect[1] = [&](LineEquation &linEq_AB, Point *newPt_hook)->bool {
-        double x = (selRect.ptArr[1].y - linEq_AB.c) / linEq_AB.m;
+        LD x = (selRect.ptArr[1].y - linEq_AB.c) / linEq_AB.m;
 
         if (x >= selRect.ptArr[1].x &&
             x < selRect.ptArr[2].x
@@ -530,7 +530,7 @@ void Cropper::setupSelectionRect(Point &startPt, Point &endPt) {
     };
 
     selRect.intersect[2] = [&](LineEquation &linEq_AB, Point *newPt_hook)->bool {
-        double y = linEq_AB.m * selRect.ptArr[2].x + linEq_AB.c;
+        LD y = linEq_AB.m * selRect.ptArr[2].x + linEq_AB.c;
 
         if (y <= selRect.ptArr[2].y &&
             y > selRect.ptArr[3].y
@@ -543,7 +543,7 @@ void Cropper::setupSelectionRect(Point &startPt, Point &endPt) {
     };
 
     selRect.intersect[3] = [&](LineEquation &linEq_AB, Point *newPt_hook)->bool {
-        double x = (selRect.ptArr[3].y - linEq_AB.c) / linEq_AB.m;
+        LD x = (selRect.ptArr[3].y - linEq_AB.c) / linEq_AB.m;
 
         if (x <= selRect.ptArr[3].x &&
             x > selRect.ptArr[0].x
@@ -575,12 +575,11 @@ bool Cropper::isSegmentIntersectsSelectionRect(
         f(x)1 = f(x)2
         x = (c2 - c1) / (m1 - m2)
     */
-    double mDiff = linEq_AB.m - linEq_oppRect.m;
+    LD mDiff = linEq_AB.m - linEq_oppRect.m;
     
     if (mDiff != 0.0) {
-        double
-            x = (linEq_oppRect.c - linEq_AB.c) / mDiff,
-            y = linEq_AB.m * x + linEq_AB.c;
+        LD x = (linEq_oppRect.c - linEq_AB.c) / mDiff,
+           y = linEq_AB.m * x + linEq_AB.c;
         
         Point testPt = Point(x, y),
               ptCenter_AB = (ptA + ptB) / 2,
