@@ -59,7 +59,8 @@ void Classifier::rearrange(
                     kmlPlacemark.includeFolder(
                         placemarkNode,
                         newFolderNodes.back(),
-                        styleDataStrVec.size() - 1, true
+                        styleDataStrVec.size() - 1,
+                        true
                     );
                 }
                 else {
@@ -74,7 +75,8 @@ void Classifier::rearrange(
                     kmlPlacemark.includeFolder(
                         placemarkNode,
                         folderNode,
-                        styleDataStrVec_foundDex, false
+                        styleDataStrVec_foundDex,
+                        false
                     );
                 }
                 else folderNode->addChild(placemarkNode);
