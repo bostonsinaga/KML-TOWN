@@ -95,37 +95,39 @@ void Placemark::pinsPathSegments(
     );
 }
 
-int Placemark::getPathDistance(std::vector<Point> &points) {
+template<typename TYPE_T>
 
-    double accumulateDistance = 0;
+// using 'haversine' formula (returns distance in meters)
+LD Placemark::getHaversineDistance(
+    TYPE_T startPt,
+    TYPE_T endPt
+) {
+    LD lat1 = startPt.x,
+       lat2 = endPt.x,
+       lon1 = startPt.y,
+       lon2 = endPt.y;
+
+    LD radian1 = lat1 * M_PI / 180.0;
+    LD radian2 = lat2 * M_PI / 180.0;
+    LD deltaRadian1 = (lat2 - lat1) * M_PI / 180.0;
+    LD deltaRadian2 = (lon2 - lon1) * M_PI / 180.0;
+
+    LD a = std::sin(deltaRadian1 / 2) * std::sin(deltaRadian1 / 2) +
+        std::cos(radian1) * std::cos(radian2) *
+        std::sin(deltaRadian2 / 2) * std::sin(deltaRadian2 / 2);
+
+    LD c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
+
+    // average earth radius times 'c'
+    return 6371000.0 * c;
+}
+
+int Placemark::getPathDistance(std::vector<Point> &points) {
+    LD accumulateDistance = 0;
     Point prevPoint = points.front();
 
     for (int i = 1; i < points.size(); i++) {
-
-        ///////////////////////////////
-        // USING ‘HAVERSINE’ FORMULA //
-        ///////////////////////////////
-        
-        double
-            lat1 = prevPoint.x,
-            lat2 = points.at(i).x,
-            lon1 = prevPoint.y,
-            lon2 = points.at(i).y;
-
-        double RADIUS = 6371000.00; // in meter
-        double radian1 = lat1 * M_PI/180;
-        double radian2 = lat2 * M_PI/180;
-        double deltaRadian1 = (lat2-lat1) * M_PI/180;
-        double deltaRadian2 = (lon2-lon1) * M_PI/180;
-
-        double a = std::sin(deltaRadian1/2) * std::sin(deltaRadian1/2) +
-                std::cos(radian1) * std::cos(radian2) *
-                std::sin(deltaRadian2/2) * std::sin(deltaRadian2/2);
-        double c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
-
-        double d = RADIUS * c; // in meter
-
-        accumulateDistance += d;
+        accumulateDistance += getHaversineDistance<Point&>(prevPoint, points.at(i));
         prevPoint = points.at(i);
     }
 
@@ -193,7 +195,7 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
 
 void Placemark::removePathsByDistance(
     xml::Node *kmlNode,
-    double limitDistance,
+    LD limitDistance,
     bool isOverDistance
 ) {
     if (kmlNode) {
@@ -364,6 +366,19 @@ void Placemark::includeFolder(
     else {
         folderNode->addChild(placemarkNode);
     }
+}
+
+Point Placemark::convertDegreeToMeterPoint(Point &ptIn) {
+    return Point(
+        getHaversineDistance<Point>(
+            Point(ptIn.x, 0),
+            Point(0, 0)
+        ),
+        getHaversineDistance<Point>(
+            Point(0, ptIn.y),
+            Point(0, 0)
+        )
+    );
 }
 
 #endif // __KML_PLACEMARK_CPP__

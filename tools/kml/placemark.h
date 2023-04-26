@@ -16,6 +16,13 @@ class Placemark {
             bool isFolderize
         );
 
+        template<typename TYPE_T>
+
+        LD getHaversineDistance(
+            TYPE_T startPt,
+            TYPE_T endPt
+        );
+
         int getPathDistance(std::vector<Point> &points);
         
         bool setPathDistance(
@@ -25,7 +32,7 @@ class Placemark {
 
         void removePathsByDistance(
             xml::Node *kmlNode,
-            double limitDistance,
+            LD limitDistance,
             bool isOverDistance
         );
 
@@ -46,6 +53,8 @@ class Placemark {
             int testIndex = 0,
             bool isResetStatic = false
         );
+
+        Point convertDegreeToMeterPoint(Point &ptIn);
 };
 
 #endif // __KML_PLACEMARK_H__
