@@ -8,6 +8,7 @@
 
 class Point {
     public:
+        /* '0,0' point is in near Central Africa */
         Point() {};
         Point(LD x_in, LD y_in);
 
