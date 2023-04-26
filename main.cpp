@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {
                     );
 
                     if (kmlNode_baby) {
+
                         // from south west - north east
                         std::string selectCoorStr[2] = {
                             "90°0'0.0S 180°0'0.0W", "90°0'0.0N 180°0'0.0E"
@@ -97,7 +98,7 @@ int main(int argc, char *argv[]) {
 
                         std::vector<xml::Node*> selectedPinNodes;
 
-                        if (mini_tool::isStringContains(type_paramStr, "sort", true)) {
+                        if (menu.isToggleExist("sort")) {
 
                             // using sorter
                             std::cout << "KML-TOWN-> Sorting 'pins'..\n";

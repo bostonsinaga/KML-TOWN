@@ -49,6 +49,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
 
     // >>> TOGGLES //
 
+    toggleStringsVec[1].at(CONVERT_TXT_KML_FLAG) = {"sort"};
     toggleStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"info"};
     toggleStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"include-folders"};
     toggleStringsVec[1].at(KML_CLASSIFY_FLAG) = {"clean-folders", "include-folders"};
