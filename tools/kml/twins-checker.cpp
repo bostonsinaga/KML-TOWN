@@ -15,7 +15,6 @@ xml::Node *TwinsChecker::findPins(
 
     std::vector<xml::Node*> nodes;
     std::vector<Point> pointVec;
-    Placemark kmlPlacemark;
 
     // FILTERING PINS //
 
@@ -30,22 +29,7 @@ xml::Node *TwinsChecker::findPins(
                 pointNode->getFirstDescendantByName("coordinates")->getInnerText()
             ));
 
-            // SPECIAL! Convert point as 'degree' to point as 'meter' //
-
-            std::vector<Point>
-                ptHor_vec = { // X
-                    Point(pointVec.back().x, 0),
-                    Point(0, 0)
-                },
-                ptVer_vec = { // Y
-                    Point(0, pointVec.back().y),
-                    Point(0, 0)
-                };
-
-            pointVec.back() = Point(
-                kmlPlacemark.getPathDistance(ptHor_vec),
-                kmlPlacemark.getPathDistance(ptVer_vec)
-            );
+            pointVec.back() = Placemark().convertDegreeToMeterPoint(pointVec.back());
         }
     }
 
@@ -138,28 +122,12 @@ xml::Node *TwinsChecker::findPaths(
                 continue;
             }
 
-            Placemark kmlPlacemark;
             std::vector<Point> pointVec_buffer;
 
             for (auto &point : pointVecVec.back()) {
-
-                /* '0,0' point in near central Africa */
-
-                std::vector<Point> 
-                    ptHor_vec = std::vector<Point> { // X
-                        Point(point.x, 0),
-                        Point(0, 0)
-                    },
-                    ptVer_vec = std::vector<Point> { // Y
-                        Point(0, point.y),
-                        Point(0, 0)
-                    };
-
-                // convert 'degree' point to 'meter' point
-                pointVec_buffer.push_back(Point(
-                    kmlPlacemark.getPathDistance(ptHor_vec),
-                    kmlPlacemark.getPathDistance(ptVer_vec)
-                ));
+                pointVec_buffer.push_back(
+                    Placemark().convertDegreeToMeterPoint(point)
+                );
             }
 
             pointVecVec.back() = pointVec_buffer;
