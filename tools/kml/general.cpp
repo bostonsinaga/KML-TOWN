@@ -173,15 +173,6 @@ void General::insertEditedPlacemarksIntoFolder(
     const std::vector<std::string> &noticeFuncName,
     std::string typeStr
 ) {
-    // previous container name for noticing purpose //
-
-    std::string prevFolderName = prevContainerNode->getName();
-    xml::Node *prevFolderNameNode = prevContainerNode->getFirstDescendantByName("name");
-
-    if (prevFolderNameNode) {
-        prevFolderName = prevFolderNameNode->getInnerText();
-    }
-
     // succeeded
     if (placemarks.size() > 0) {
         putOnTopFolder(prevContainerNode, {newContainerNode});
