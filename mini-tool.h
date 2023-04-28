@@ -41,7 +41,7 @@ namespace mini_tool {
         int onlyCharDex = -1 // index of single character change
     );
 
-    void completeDegreeCoordinateSecondsSign(std::string *coorStr);
+    void completeDegreeCoordinateSecondsSign(std::string &coorStr);
 
     // 'TYPE_T' is a primitive data type
     template<typename TYPE_T>

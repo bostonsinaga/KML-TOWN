@@ -145,21 +145,21 @@ namespace mini_tool {
         return string_in;
     }
 
-    void completeDegreeCoordinateSecondsSign(std::string *coorStr) {
+    void completeDegreeCoordinateSecondsSign(std::string &coorStr) {
         int ctr = 0,
             letterCtr = 0,
             letterDex[2];
         
-        for (auto &ch : *coorStr) {
+        for (auto &ch : coorStr) {
             if (isALetter(ch)) {
 
                 letterDex[letterCtr] = ctr;
                 letterCtr++;
 
                 if (letterCtr == 2) {
-                    coorStr->insert(coorStr->begin() + letterDex[0], '\"');
+                    coorStr.insert(coorStr.begin() + letterDex[0], '\"');
                     letterDex[1]++;
-                    coorStr->insert(coorStr->begin() + letterDex[1], '\"');
+                    coorStr.insert(coorStr.begin() + letterDex[1], '\"');
                     break;
                 }
             }
