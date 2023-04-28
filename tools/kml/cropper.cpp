@@ -19,7 +19,7 @@ std::vector<xml::Node*> Cropper::cutPins(
     Point startPt,  // decimal coordinate
     Point endPt,    // decimal coordinate
     bool isFolderInsertion,
-    bool isIncludeFolders,
+    bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
     bool isParentFolderNamedAType
 ) {
     std::vector<xml::Node*>
@@ -50,17 +50,48 @@ std::vector<xml::Node*> Cropper::cutPins(
     }
 
     if (isFolderInsertion) { // insert into a different folder
-        kmlGeneral.insertEditedPlacemarksIntoFolder(
-            pinsContainerNode,
-            Builder().createFolder(CROP_COMMAND_WORKING_FOLDER),
-            croppedPinNodes,
-            {"Cropping", "Crop"},
-            "pin"
+
+        xml::Node *workingFolder = Builder().createFolder(
+            isParentFolderNamedAType ?
+            "PINS" : CROP_COMMAND_WORKING_FOLDER
         );
-        
-        if (croppedPinNodes.size() > 0) {
-            return std::vector<xml::Node*>{croppedPinNodes.front()->getParent()};
+
+        if (isIncludeFolders) {
+
+            kmlGeneral.putOnTopFolder(
+                pinsContainerNode,
+                {workingFolder}
+            );
+
+            for (int i = 0; i < croppedPinNodes.size(); i++) {
+                Placemark().includeFolder(
+                    croppedPinNodes.at(i),
+                    workingFolder,
+                    0, i == 0
+                );
+            }
         }
+        else {
+            kmlGeneral.insertEditedPlacemarksIntoFolder(
+                pinsContainerNode,
+                workingFolder,
+                croppedPinNodes,
+                {"Cropping", "Crop"},
+                "pin"
+            );
+        }
+        
+        // succeeded
+        if (croppedPinNodes.size() > 0) {
+
+            if (isIncludeFolders) {
+                std::cout << "KML-> Crop pins inside '" << pinsContainerNode->getName()
+                          << "' named '" << Placemark().getDataText(pinsContainerNode, "name") << "' completed!\n";
+            }
+
+            return std::vector<xml::Node*>{workingFolder};
+        }
+        // failed
         else return std::vector<xml::Node*>{pinsContainerNode};
     }
     else { // logging
@@ -72,9 +103,8 @@ std::vector<xml::Node*> Cropper::cutPins(
         )) { // succeeded
             return croppedPinNodes;
         }
-        else { // failed
-            return std::vector<xml::Node*>{};
-        }
+        // failed
+        else return std::vector<xml::Node*>{};
     }
 
     return std::vector<xml::Node*>{};
@@ -85,7 +115,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
     Point startPt,  // decimal coordinate
     Point endPt,    // decimal coordinate
     bool isFolderInsertion,
-    bool isIncludeFolders,
+    bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
     bool isParentFolderNamedAType
 ) {
     setupSelectionRect(startPt, endPt);
@@ -141,11 +171,12 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
                 // exclude
                 if (i != 1) {
-                    segmentPaths[i]->setParent(pathNode->getParent(), true);
+                    segmentPaths[i]->setParent(pathNode->getParent(), false);
                 }
                 // include
                 else {
                     croppedPathNodes.push_back(segmentPaths[i]);
+                    segmentPaths[i]->setParent(pathNode->getParent(), false);
                 }
             }
         }
@@ -288,21 +319,55 @@ std::vector<xml::Node*> Cropper::cutPaths(
         mainCtr++;
     }
 
+    // returns single node vector
     if (isFolderInsertion) { // insert into a different folder
-        kmlGeneral.insertEditedPlacemarksIntoFolder(
-            pathsContainerNode,
-            Builder().createFolder(CROP_COMMAND_WORKING_FOLDER),
-            croppedPathNodes,
-            {"Cropping", "Crop"},
-            "path"
+
+        xml::Node *workingFolder = Builder().createFolder(
+            isParentFolderNamedAType ?
+            "PATH" : CROP_COMMAND_WORKING_FOLDER
         );
-        
-        if (croppedPathNodes.size() > 0) {
-            return std::vector<xml::Node*>{croppedPathNodes.front()->getParent()};
+
+        if (isIncludeFolders) {
+
+            kmlGeneral.putOnTopFolder(
+                pathsContainerNode,
+                {workingFolder}
+            );
+
+            for (int i = 0; i < croppedPathNodes.size(); i++) {
+                Placemark().includeFolder(
+                    croppedPathNodes.at(i),
+                    workingFolder,
+                    0, i == 0
+                );
+            }
         }
+        else {
+            kmlGeneral.insertEditedPlacemarksIntoFolder(
+                pathsContainerNode,
+                workingFolder,
+                croppedPathNodes,
+                {"Cropping", "Crop"},
+                "path"
+            );
+        }
+        
+        // succeeded
+        if (croppedPathNodes.size() > 0) {
+
+            if (isIncludeFolders) {
+                std::cout << "KML-> Crop paths inside '" << pathsContainerNode->getName()
+                          << "' named '" << Placemark().getDataText(pathsContainerNode, "name") << "' completed!\n";
+            }
+
+            return std::vector<xml::Node*>{workingFolder};
+        }
+        // failed
         else return std::vector<xml::Node*>{pathsContainerNode};
     }
+    // returns multiple nodes vector
     else { // logging
+
         if (kmlGeneral.logEditedPlacemarks(
             "path",
             {"Cropping", "Crop"},
@@ -311,21 +376,65 @@ std::vector<xml::Node*> Cropper::cutPaths(
         )) { // succeeded
             return croppedPathNodes;
         }
-        else { // failed
-            return std::vector<xml::Node*>{};
-        }
+        // failed
+        else return std::vector<xml::Node*>{};
     }
 
     return std::vector<xml::Node*>{};
 }
 
 std::vector<xml::Node*> Cropper::cutAll(
-    xml::Node *pathsContainerNode,
+    xml::Node *placemarksContainerNode,
     Point startPt,  // decimal coordinate
     Point endPt,    // decimal coordinate
-    bool isFolderInsertion,
     bool isIncludeFolders
 ) {
+    // actually get single node vector
+    std::vector<xml::Node*> pinsNodes = cutPins(
+        placemarksContainerNode,
+        startPt,
+        endPt,
+        true,
+        isIncludeFolders,
+        true
+    );
+
+    // actually get single node vector
+    std::vector<xml::Node*> pathsNodes = cutPaths(
+        placemarksContainerNode,
+        startPt,
+        endPt,
+        true,
+        isIncludeFolders,
+        true
+    );
+
+    xml::Node *workingFolder = Builder().createFolder(CROP_COMMAND_WORKING_FOLDER);
+
+    if (pinsNodes.size() > 0 &&
+        pinsNodes.front() != placemarksContainerNode
+    ) {
+        pinsNodes.front()->removeFromParent();
+        workingFolder->addChild(pinsNodes.front());
+    }
+
+    if (pathsNodes.size() > 0 &&
+        pathsNodes.front() != placemarksContainerNode
+    ) {
+        pathsNodes.front()->removeFromParent();
+        workingFolder->addChild(pathsNodes.front());
+    }
+
+    // connect to 'kmlNode'
+    if (pinsNodes.size() > 0 || pathsNodes.size() > 0) {
+
+        General().putOnTopFolder(
+            placemarksContainerNode,
+            {workingFolder}
+        );
+
+        return std::vector<xml::Node*>{workingFolder};
+    }
 
     return std::vector<xml::Node*>{};
 }

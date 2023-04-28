@@ -14,7 +14,7 @@ class Cropper {
             Point startPt,  // decimal coordinate
             Point endPt,    // decimal coordinate
             bool isFolderInsertion,
-            bool isIncludeFolders,
+            bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
             bool isParentFolderNamedAType
         );
 
@@ -22,16 +22,15 @@ class Cropper {
             xml::Node *pathsContainerNode,
             Point startPt,  // decimal coordinate
             Point endPt,    // decimal coordinate
-            bool isFolderInsertion,
-            bool isIncludeFolders,
+            bool isFolderInsertion, 
+            bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
             bool isParentFolderNamedAType
         );
 
         std::vector<xml::Node*> cutAll(
-            xml::Node *pathsContainerNode,
+            xml::Node *placemarksContainerNode,
             Point startPt,  // decimal coordinate
             Point endPt,    // decimal coordinate
-            bool isFolderInsertion,
             bool isIncludeFolders
         );
     
