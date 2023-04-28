@@ -24,8 +24,9 @@ namespace call_briefer {
 
     std::vector<xml::Node*> cropPlacemarkFunc(
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec,
+        std::vector<std::string> &axisStrVec,
         bool isFolderInsertion, // 'false' return nodes, 'true' return empty
+        bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
         std::string &type_paramStr
     ) {
         xml::Node *retContainerNode = nullptr;
@@ -49,7 +50,7 @@ namespace call_briefer {
                         normalDegreeSignComplementIndexes,
                         normalDegreeSignComplementCharCodes;
 
-                    for (auto &ch : *str) {
+                    for (auto &ch : str) {
                         
                         if (ch == char(ANM_DEG_INT_CHAR_PT1)) {
                             ch = char(DEG_INT_CHAR_PT1);
@@ -61,14 +62,14 @@ namespace call_briefer {
                         }
 
                         if (!isAnomaly) {
-                            if (ch == char(DEG_INT_CHAR_PT1) && ctr != str->size() - 1) {
-                                if (str->at(ctr + 1) != char(DEG_INT_CHAR_PT2)) {
+                            if (ch == char(DEG_INT_CHAR_PT1) && ctr != str.size() - 1) {
+                                if (str.at(ctr + 1) != char(DEG_INT_CHAR_PT2)) {
                                     normalDegreeSignComplementIndexes.push_back(ctr + 1);
                                     normalDegreeSignComplementCharCodes.push_back(DEG_INT_CHAR_PT2);
                                 }
                             }
                             else if (ch == char(DEG_INT_CHAR_PT2) && ctr != 0) {
-                                if (str->at(ctr - 1) != char(DEG_INT_CHAR_PT1)) {
+                                if (str.at(ctr - 1) != char(DEG_INT_CHAR_PT1)) {
                                     normalDegreeSignComplementIndexes.push_back(ctr);
                                     normalDegreeSignComplementCharCodes.push_back(DEG_INT_CHAR_PT1);
                                 }
@@ -83,8 +84,8 @@ namespace call_briefer {
                         ctr = 0;
 
                         for (auto &index : normalDegreeSignComplementIndexes) {
-                            str->insert(
-                                str->begin() + index + strIndexExpandRate,
+                            str.insert(
+                                str.begin() + index + strIndexExpandRate,
                                 char(normalDegreeSignComplementCharCodes.at(ctr))
                             );
                             ctr++;
@@ -100,26 +101,32 @@ namespace call_briefer {
                 */
                 kml::Cropper kmlCropper;
 
-                // cut the pins //
-
                 if (mini_tool::isStringContains(type_paramStr, "pin", true)) {
                     croppedPlacemarkNodes = kmlCropper.cutPins(
                         mainFolderNode,
-                        kml::Point(*axisStrVec.at(0)),
-                        kml::Point(*axisStrVec.at(1)),
+                        kml::Point(axisStrVec.at(0)),
+                        kml::Point(axisStrVec.at(1)),
                         isFolderInsertion,
-                        false,
+                        isIncludeFolders,
                         false
                     );
                 }
                 else if (mini_tool::isStringContains(type_paramStr, "path", true)) {
                     croppedPlacemarkNodes = kmlCropper.cutPaths(
                         mainFolderNode,
-                        kml::Point(*axisStrVec.at(0)),
-                        kml::Point(*axisStrVec.at(1)),
+                        kml::Point(axisStrVec.at(0)),
+                        kml::Point(axisStrVec.at(1)),
                         isFolderInsertion,
-                        false,
+                        isIncludeFolders,
                         false
+                    );
+                }
+                else if (mini_tool::isStringContains(type_paramStr, "all", true)) {
+                    croppedPlacemarkNodes = kmlCropper.cutAll(
+                        mainFolderNode,
+                        kml::Point(axisStrVec.at(0)),
+                        kml::Point(axisStrVec.at(1)),
+                        isIncludeFolders
                     );
                 }
 
@@ -163,7 +170,7 @@ namespace call_briefer {
     std::vector<xml::Node*> sortPinsFunc(
         Menu &menu,
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec,
+        std::vector<std::string> &axisStrVec,
         bool isFolderInsertion // 'false' return nodes, 'true' return empty
     ) {
         std::string typeStr = "pins"; // temporary
@@ -173,17 +180,19 @@ namespace call_briefer {
             kmlNode,
             axisStrVec,
             isFolderInsertion,
+            false,
             typeStr
         );
 
         if (dualismVector.size() > 0) {
-            // pins sorting
-            kml::Sorter sorter;
-            std::vector<xml::Node*> sortedPinNodes = sorter.orderPins(
+            kml::Sorter kmlSorter;
+
+            std::vector<xml::Node*> sortedPinNodes = kmlSorter.orderPins(
                 dualismVector,
-                kml::Point(*axisStrVec.at(0)), // start point
+                kml::Point(axisStrVec.at(0)), // start point
                 isFolderInsertion
             );
+
             return sortedPinNodes;
         }
         else return std::vector<xml::Node*>{};

@@ -11,15 +11,16 @@ namespace call_briefer {
 
     std::vector<xml::Node*> cropPlacemarkFunc(
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec,
+        std::vector<std::string> &axisStrVec,
         bool isFolderInsertion, // 'false' return nodes, 'true' return empty
+        bool isIncludeFolders,  // if true the 'isFolderInsertion' must be true
         std::string &type_paramStr
     );
 
     std::vector<xml::Node*> sortPinsFunc(
         Menu &menu,
         xml::Node *kmlNode,
-        std::vector<std::string*> axisStrVec,
+        std::vector<std::string> &axisStrVec,
         bool isFolderInsertion // 'false' return nodes, 'true' return empty
     );
 
