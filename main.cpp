@@ -75,6 +75,8 @@ int main(int argc, char *argv[]) {
             fileOut_paramStr = menu.getParameterString("kml-out"),
             type_paramStr = menu.getParameterString("type");
 
+        bool sort_toggleBool = menu.isToggleExist("sort");
+
         xml::Node *kmlNode = call_briefer::selectFunctionByType(
             type_paramStr,
             {"pin", "path"},
@@ -97,23 +99,23 @@ int main(int argc, char *argv[]) {
                         };
 
                         std::vector<xml::Node*> selectedPinNodes;
+                        std::vector<std::string> selPtVec = {selectCoorStr[0], selectCoorStr[1]};
 
-                        if (menu.isToggleExist("sort")) {
-
-                            // using sorter
+                        if (sort_toggleBool) {
                             std::cout << "KML-TOWN-> Sorting 'pins'..\n";
-
+                            
                             selectedPinNodes = call_briefer::sortPinsFunc(
                                 menu,
                                 kmlNode_baby,
-                                {&selectCoorStr[0], &selectCoorStr[1]},
+                                selPtVec,
                                 false
                             );
                         }
                         else {
                             selectedPinNodes = call_briefer::cropPlacemarkFunc(
                                 kmlNode_baby,
-                                {&selectCoorStr[0], &selectCoorStr[1]},
+                                selPtVec,
+                                false,
                                 false,
                                 type_paramStr
                             );
@@ -201,6 +203,8 @@ int main(int argc, char *argv[]) {
             startPoint_paramStr = menu.getParameterString("start-point"),
             endPoint_paramStr = menu.getParameterString("end-point"),
             type_paramStr = menu.getParameterString("type");
+
+        bool includeFolders_toggleBool = menu.isToggleExist("include-folders");
         
         kml::Cropper().printNotification(menu);
 
@@ -211,13 +215,16 @@ int main(int argc, char *argv[]) {
         );
 
         if (fileDir_check != "") {
+
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             if (call_briefer::cropPlacemarkFunc(
                 kmlNode,
-                {&startPoint_paramStr, &endPoint_paramStr},
+                selPtVec,
                 true,
+                includeFolders_toggleBool,
                 type_paramStr
             ).size() > 0) {
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
@@ -247,13 +254,15 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
+
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             if (call_briefer::sortPinsFunc(
                 menu,
                 kmlNode,
-                {&startPoint_paramStr, &endPoint_paramStr},
+                selPtVec,
                 true
             ).size() > 0) {
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
@@ -283,13 +292,15 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
+
             xml::Reader kmlReader;
             xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             std::vector<xml::Node*> sortedPinNodes = call_briefer::sortPinsFunc(
                 menu,
                 kmlNode,
-                {&startPoint_paramStr, &endPoint_paramStr},
+                selPtVec,
                 false
             );
 
