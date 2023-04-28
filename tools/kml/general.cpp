@@ -153,14 +153,19 @@ void General::putOnTopFolder(
     std::vector<xml::Node*> *containerExistChildren = containerFolder->getChildren();
 
     for (auto &node : nodeVec) {
-
+        
         // firstly append new folder
         containerFolder->addChild(node);
-
-        containerFolder->swapChildren(
-            containerExistChildren->at(priorityFolderCount),
-            node
-        );
+        
+        for (int i = containerExistChildren->size() - 2;
+             i >= priorityFolderCount;
+             i--
+        ) {
+            containerFolder->swapChildren(
+                containerExistChildren->at(i),
+                node
+            );
+        }
 
         priorityFolderCount++;
     }
