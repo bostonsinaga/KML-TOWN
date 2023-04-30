@@ -171,7 +171,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
                 // exclude
                 if (i != 1) {
-                    segmentPaths[i]->setParent(pathNode->getParent(), false);
+                    segmentPaths[i]->setParent(pathNode->getParent(), true);
                 }
                 // include
                 else {
