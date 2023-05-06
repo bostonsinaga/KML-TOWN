@@ -36,9 +36,14 @@ class Placemark {
             bool isOverDistance
         );
 
-        // read placemark name or its folder name (closest parent)
+        // get placemark name or its folder name (closest parent)
         static std::string getName(xml::Node *placemarkNode);
-        static void logName(xml::Node *placemarkNode, bool isResetCtr = false);
+
+        // print placemark name or its folder name (closest parent)
+        static void logName(
+            xml::Node *placemarkNode,
+            bool isResetCtr = false
+        );
 
         // get inner text of certain node data (alternative for 'getName' method)
         static std::string getDataText(

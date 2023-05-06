@@ -232,7 +232,7 @@ void Placemark::removePathsByDistance(
     }
 }
 
-// read placemark name or its folder name (closest parent)
+// get placemark name or its folder name (closest parent)
 std::string Placemark::getName(xml::Node *placemarkNode) {
     std::string name = "noname";
 
@@ -256,14 +256,16 @@ std::string Placemark::getName(xml::Node *placemarkNode) {
     return name;
 }
 
-// read placemark name or its folder name (closest parent)
-void Placemark::logName(xml::Node *placemarkNode, bool isResetCtr) {
-
+// print placemark name or its folder name (closest parent)
+void Placemark::logName(
+    xml::Node *placemarkNode,
+    bool isResetCtr
+) {
     static int ctr = 1;
     if (isResetCtr) ctr = 1;
 
     if (placemarkNode) {
-        xml::Node *placemarkName = placemarkNode->getFirstDescendantByName("name");
+        xml::Node *placemarkName = placemarkNode->getFirstChildByName("name");
 
         if (placemarkName) {
             std::cout << ctr << ") Placemark name ---> " << placemarkName->getInnerText() << std::endl;
@@ -271,7 +273,7 @@ void Placemark::logName(xml::Node *placemarkNode, bool isResetCtr) {
         else {
             xml::Node *folderNode = placemarkNode->getParent();
             if (folderNode) {
-                placemarkName = folderNode->getFirstDescendantByName("name");
+                placemarkName = folderNode->getFirstChildByName("name");
                 if (placemarkName) {
                     std::cout << ctr << ") Folder name ---> " << placemarkName->getInnerText() << std::endl;
                 }
@@ -291,7 +293,7 @@ std::string Placemark::getDataText(
     std::string dataStr = "";
 
     if (placemarkNode) {
-        xml::Node *placemarkData = placemarkNode->getFirstDescendantByName(dataNodeName);
+        xml::Node *placemarkData = placemarkNode->getFirstChildByName(dataNodeName);
 
         if (placemarkData) {
             dataStr = placemarkData->getInnerText();
