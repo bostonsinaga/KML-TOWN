@@ -4,8 +4,8 @@
 #include "scanner.h"
 
 /* Note:
-*   'yieldParseFunc.at(dateStrVec_flag)' and
-*   'yieldParseFunc.at(coorStrVec_flag)' size are certainly equal
+    'yieldParseFunc.at(dateStrVec_flag)' and
+    'yieldParseFunc.at(coorStrVec_flag)' size are certainly equal
 */
 
 ////////////////
@@ -16,9 +16,7 @@ xml::Node *Scanner::parsePins(
     std::string fileDir_in,
     std::string fileDir_out
 ) {
-    std::vector<std::vector<std::string>> yieldParseFunc = parse(
-        fileDir_in, fileDir_out, "pins"
-    );
+    std::vector<std::vector<std::string>> yieldParseFunc = parse(fileDir_in);
 
     if (yieldParseFunc.size() > 0) {
         std::string styleMapId;
@@ -40,37 +38,26 @@ xml::Node *Scanner::parsePins(
             dateVecCtr++;
         }
         
-        xml::Node *kmlNode = mainFolderNode->getRoot();
-        writeOut(fileDir_out, kmlNode);
-        return kmlNode;
+        // the 'kmlNode'
+        return mainFolderNode->getRoot();
     }
 
     return nullptr;
 }
 
-/////////////////
-// PATHS PARSE //
-/////////////////
-
-xml::Node *Scanner::parsePaths(
-    std::string fileDir_in,
-    std::string fileDir_out
-) {
-    std::cout
-        << "TXT-> Command warning. Scan into 'paths' is not available yet.\n"
-        << "      Scanning switched for 'pins'!\n";
-    return parsePins(fileDir_in, fileDir_out);
-}
+/*
+    HOW ABOUT PATHS?
+    Parse paths isn't available here (too complicated)
+    for the easier, it implemented at 'CONVERT TXT TO KML' section at 'main.cpp'
+    (it using 'call-briefer')
+*/
 
 ////////////////////
 // PARSE FUNCTION //
 ////////////////////
 
-std::vector<std::vector<std::string>> Scanner::parse(
-    std::string &fileDir_in,
-    std::string &fileDir_out,
-    std::string messageTypeName
-) {
+std::vector<std::vector<std::string>> Scanner::parse(std::string &fileDir_in) {
+
     std::ifstream readFile(fileDir_in);
     std::vector<std::string> textVector;
     std::string stringBuffer;
@@ -81,7 +68,7 @@ std::vector<std::vector<std::string>> Scanner::parse(
 
     if (textVector.size() == 0) {
         std::cerr
-            << "TXT-> Scanning for '"<< messageTypeName <<"' error. File named '"
+            << "TXT-> Scanning for pins error. File named '"
             << mini_tool::cutFileDirName(fileDir_in) <<"' not found or empty\n";
         
         // failed
@@ -211,7 +198,7 @@ std::vector<std::vector<std::string>> Scanner::parse(
 
     if (coorStrVector.size() == 0) {
         std::cerr
-            << "TXT-> Scanning for '" << messageTypeName << "' error. No coordinate found in file named '"
+            << "TXT-> Scanning for pins error. No coordinate found in file named '"
             << mini_tool::cutFileDirName(fileDir_in) << "'\n";
             
         // failed
@@ -219,7 +206,7 @@ std::vector<std::vector<std::string>> Scanner::parse(
     }
     else {
         std::cout
-            << "TXT-> Scan for '" << messageTypeName << "' from '"
+            << "TXT-> Scan for pins from '"
             << mini_tool::cutFileDirName(fileDir_in)
             << "' completed!\n";
     }

@@ -19,19 +19,17 @@ class Scanner {
             std::string fileDir_out = ""
         );
 
-        xml::Node *parsePaths(
-            std::string fileDir_in,
-            std::string fileDir_out = ""
-        );
+        /*
+            HOW ABOUT PATHS?
+            Parse paths isn't available here (too complicated)
+            for the easier, it implemented at 'CONVERT TXT TO KML' section at 'main.cpp'
+            (it using 'call-briefer')
+        */
 
     private:
         enum {dateStrVec_flag, coorStrVec_flag};
-
-        std::vector<std::vector<std::string>> parse(
-            std::string &fileDir_in,
-            std::string &fileDir_out,
-            std::string messageTypeName
-        );
+        
+        std::vector<std::vector<std::string>> parse(std::string &fileDir_in);
 
         xml::Node *getMainFolder(
             std::string &fileDir_out,
