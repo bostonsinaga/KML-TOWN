@@ -9,8 +9,6 @@
 *   (this using cropper)
 */
 
-/* ONLY AVAILABLE FOR PINS YET */
-
 void Sorter::printNotification(Menu &menu) {
     menu.setNotification(
         std::string("KML-TOWN-> Make sure to put a start point\n") +
@@ -18,46 +16,31 @@ void Sorter::printNotification(Menu &menu) {
     );
 }
 
-std::vector<xml::Node*> Sorter::orderPins(
-    /*
-    *   - basic (purely) use is just need single node for 'dualismVector'
-    *   -'dualismVector' may contains nodes for command that involves 'sorter'
-    */
-    std::vector<xml::Node*> dualismVector, /* count = 1: container, count > 1: cropped pins */
-    /******/
-    Point startPt, // decimal coordinate
-    bool isFolderInsertion // 'false' return nodes, 'true' return empty
+std::vector<xml::Node*> Sorter::orderApart(
+    std::vector<xml::Node*> &croppedPlacemarks,
+    Point &startPt,  // decimal coordinate
+    int typeFlag,
+    bool isFolderInsertion,  // 'false' returns nodes or empty, 'true' returns folder or empty
+    bool isIncludeFolders
 ) {
-    std::vector<xml::Node*>
-        pinNodes,     // parent // corresponding
-        pinCoorNodes; // child  // corresponding
-
-    xml::Node *pinsContainerNode = nullptr;
     General kmlGeneral;
+    Placemark kmlPlacemark;
 
-    if (dualismVector.size() == 1) {
-        pinsContainerNode = dualismVector.front();
-        
-        kmlGeneral.fillWithPlacemarks(
-            pinsContainerNode,
-            "Point",
-            pinNodes,
-            pinCoorNodes
+    std::vector<xml::Node*> placemarkCoorNodes;
+
+    xml::Node *placemarksContainerNode = kmlGeneral.searchMainFolder(
+        croppedPlacemarks.front()->getRoot()
+    );
+
+    for (auto &node : croppedPlacemarks) {
+        placemarkCoorNodes.push_back(
+            node->getFirstDescendantByName("coordinates")
         );
     }
-    else {
-        // contains vector of pin 'Placemark'
-        pinNodes = dualismVector;
-        for (auto &node : dualismVector) {
-            pinCoorNodes.push_back(
-                node->getFirstDescendantByName("coordinates")
-            );
-        }
-    }
 
     /*
-    *   sorting pins chaining from start point to nearest one
-    *   inside start to end point formed rectangular
+    *   sorting placemarks chaining from start point to nearest one
+    *   inside start to end point (selection rect)
     */
 
     xml::Node
@@ -67,60 +50,103 @@ std::vector<xml::Node*> Sorter::orderPins(
     // set 'point' into string form
     checkPointNode->setInnerText(startPt.stringify());
 
-    // used in new sorted pins folder (in sorted composing)
-    std::vector<xml::Node*> sortedPinNodes;
+    // used in new sorted placemarks folder (in sorted composing)
+    std::vector<xml::Node*> sortedPlacemarkNodes;
     
     // search for the nearest coordinate to start point
-    int sortCtr = pinCoorNodes.size();
+    int sortCtr = placemarkCoorNodes.size();
+
     for (int i = 0; i < sortCtr; i++) {
 
         // get sorted index orders of nearest to longest coordinates from checkpoint
-        std::vector<int> sortIndexes = sortCoordinates(pinCoorNodes, checkPointNode);
-
-        // new checkpoint from the nearest point as the next checkpoint too
-        checkPointNode = pinCoorNodes.at(sortIndexes.front());
-
-        // entered into new sorted pins folder
-        sortedPinNodes.push_back(pinNodes.at(sortIndexes.front()));
-
-        pinNodes.erase(
-            pinNodes.begin() + sortIndexes.front(),
-            pinNodes.begin() + sortIndexes.front() + 1
+        std::vector<int> sortIndexes = sortCoordinates(
+            placemarkCoorNodes,
+            checkPointNode,
+            typeFlag
         );
 
-        pinCoorNodes.erase(
-            pinCoorNodes.begin() + sortIndexes.front(),
-            pinCoorNodes.begin() + sortIndexes.front() + 1
+        // new checkpoint from the nearest point as the next checkpoint too
+        checkPointNode = placemarkCoorNodes.at(sortIndexes.front());
+
+        // entered into new sorted placemarks folder
+        sortedPlacemarkNodes.push_back(croppedPlacemarks.at(sortIndexes.front()));
+
+        croppedPlacemarks.erase(
+            croppedPlacemarks.begin() + sortIndexes.front(),
+            croppedPlacemarks.begin() + sortIndexes.front() + 1
+        );
+
+        placemarkCoorNodes.erase(
+            placemarkCoorNodes.begin() + sortIndexes.front(),
+            placemarkCoorNodes.begin() + sortIndexes.front() + 1
         );
     }
 
     delete firstCheckPointNode;
 
+    // insert into a special folder
     if (isFolderInsertion) {
-        // insert into a different folder
-        kmlGeneral.insertEditedPlacemarksIntoFolder(
-            pinsContainerNode,
-            Builder().createFolder(SORT_COMMAND_WORKING_FOLDER),
-            sortedPinNodes,
-            {"Sorting", "Sort"},
-            "pin"
-        );
-        
-        if (sortedPinNodes.size() > 0) {
-            return std::vector<xml::Node*>{sortedPinNodes.front()->getParent()};
-        }
-        else return std::vector<xml::Node*>{pinsContainerNode};
-    }
-    else { // logging
-        /* 'dualismVector' has multiple nodes */
 
+        // succeeded
+        if (sortedPlacemarkNodes.size() > 0) {
+
+            xml::Node *workingFolder = Builder().createFolder(
+                SORT_COMMAND_WORKING_FOLDER
+            );
+
+            if (isIncludeFolders) {
+                kmlGeneral.putOnTopFolder(
+                    placemarksContainerNode,
+                    {workingFolder}
+                );
+
+                for (int i = 0; i < sortedPlacemarkNodes.size(); i++) {
+                    kmlPlacemark.includeFolder(
+                        sortedPlacemarkNodes.at(i),
+                        workingFolder,
+                        0, i == 0
+                    );
+                }
+            }
+            else {
+                kmlGeneral.insertEditedPlacemarksIntoFolder(
+                    placemarksContainerNode,
+                    workingFolder,
+                    sortedPlacemarkNodes,
+                    {"Sorting", "Sort"},
+                    typeFlag == PIN_TYPE ? "pin" : "path"
+                );
+            }
+
+            if (isIncludeFolders) {
+                std::string typeStr = typeFlag == PIN_TYPE ? "pin" : "path";
+                std::cout << "KML-> Sort " << typeStr << "s inside '" << placemarksContainerNode->getName()
+                          << "' named '" << kmlPlacemark.getDataText(placemarksContainerNode, "name") << "' completed!\n";
+            }
+
+            return std::vector<xml::Node*>{workingFolder};
+        }
+        // failed
+        else {
+            kmlGeneral.logEditedPlacemarks(
+                typeFlag == PIN_TYPE ? "pin" : "path",
+                {"Sorting", "Sort"},
+                sortedPlacemarkNodes,
+                placemarksContainerNode
+            );
+
+            return std::vector<xml::Node*>{};
+        }
+    }
+    // logging
+    else {
         if (kmlGeneral.logEditedPlacemarks(
-            "pin",
+            typeFlag == PIN_TYPE ? "pin" : "path",
             {"Sorting", "Sort"},
-            sortedPinNodes,
-            pinsContainerNode
+            sortedPlacemarkNodes,
+            placemarksContainerNode
         )) { // succeeded
-            return sortedPinNodes;
+            return sortedPlacemarkNodes;
         }
         else { // failed
             return std::vector<xml::Node*>{};
@@ -130,15 +156,76 @@ std::vector<xml::Node*> Sorter::orderPins(
     return std::vector<xml::Node*>{};
 }
 
+// assumed that 'isFolderInsertion' is true
+std::vector<xml::Node*> Sorter::orderAll(
+    std::vector<xml::Node*> *sortedPlacemarks_arr,  // consist of cropped pins and paths
+    bool isIncludeFolders
+) {
+    // succeeded
+    if (sortedPlacemarks_arr[0].size() > 0 ||
+        sortedPlacemarks_arr[1].size() > 0
+    ) {
+        std::string typeNamesArr[2] = {"PINS", "PATHS"};
+
+        int startCt = sortedPlacemarks_arr[0].size() > 0 ? 0 : 1,
+            totalCt = sortedPlacemarks_arr[1].size() > 0 ? 2 : 1;
+
+        for (int i = startCt; i < totalCt; i++) {
+            xml::Node *plcFolder = Builder().createFolder(typeNamesArr[i]);
+
+            std::vector<xml::Node*> plcVec = sortedPlacemarks_arr[i].front()->getChildrenByName(
+                isIncludeFolders ? "Folder" : "Placemark"
+            );
+
+            General().insertEditedPlacemarksIntoFolder(
+                sortedPlacemarks_arr[startCt].front(),
+                plcFolder,
+                plcVec,
+                {"", ""},
+                ""
+            );
+
+            if (i == 1 && startCt == 0) {
+                sortedPlacemarks_arr[1].front()->removeFromParent(true);
+            }
+        }
+
+        if (totalCt == 2) {
+            int memberCount = sortedPlacemarks_arr[startCt].front()->getChildren()->size();
+            sortedPlacemarks_arr[startCt].front()->swapChildren(
+                memberCount - 1,
+                memberCount - 2
+            );
+        }
+
+        return sortedPlacemarks_arr[startCt];
+    }
+    // failed
+    else return std::vector<xml::Node*>{};
+}
+
 std::vector<int> Sorter::sortCoordinates(
-    std::vector<xml::Node*> &pinCoorNodes,
-    xml::Node *checkPointNode
+    std::vector<xml::Node*> &placemarkCoorNodes,
+    xml::Node *checkPointNode,
+    int typeFlag
 ) {
     Point cpPoint = Point(checkPointNode);
     std::vector<double> hypotenuses;
 
-    for (auto &pinCoor : pinCoorNodes) {
-        Point delta = Point(pinCoor) - cpPoint;
+    for (auto &placemarkCoor : placemarkCoorNodes) {
+        Point point;
+
+        if (typeFlag == PIN_TYPE) {
+            point = Point(placemarkCoor);
+        }
+        else if (typeFlag == PATH_TYPE) {
+            point = Point::getPathPointsFromString(
+                placemarkCoor->getInnerText()
+            ).front();
+        }
+
+        Point delta = point - cpPoint;
+
         hypotenuses.push_back(
             std::sqrt(std::pow(delta.x, 2) + std::pow(delta.y, 2))
         );
@@ -153,6 +240,7 @@ std::vector<int> Sorter::sortCoordinates(
     // sorting lowest to highest
     for (int i = 0; i < hypotenuses.size(); i++) {
         for (int j = 0; j < hypotenuses.size(); j++) {
+
             if (hypotenuses.at(i) < hypotenuses.at(j)) {
 
                 double bufferHypo = hypotenuses.at(i);
