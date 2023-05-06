@@ -172,7 +172,7 @@ void General::putOnTopFolder(
 }
 
 void General::insertEditedPlacemarksIntoFolder(
-    xml::Node *prevContainerNode,
+    xml::Node *existContainerNode,  // don't remove this node
     xml::Node *newContainerNode,
     std::vector<xml::Node*> &placemarks, // or any node
     const std::vector<std::string> &noticeFuncName,
@@ -180,7 +180,7 @@ void General::insertEditedPlacemarksIntoFolder(
 ) {
     // succeeded
     if (placemarks.size() > 0) {
-        putOnTopFolder(prevContainerNode, {newContainerNode});
+        putOnTopFolder(existContainerNode, {newContainerNode});
         
         // insert pins into the folder
         for (auto &plmrk : placemarks) {
@@ -195,7 +195,7 @@ void General::insertEditedPlacemarksIntoFolder(
             typeStr,
             noticeFuncName,
             placemarks,
-            prevContainerNode
+            existContainerNode
         );
     }
 }

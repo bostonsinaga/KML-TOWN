@@ -25,7 +25,7 @@ class General {
         );
 
         void insertEditedPlacemarksIntoFolder(
-            xml::Node *prevContainerNode,
+            xml::Node *existContainerNode,  // don't remove this node
             xml::Node *newContainerNode,
             std::vector<xml::Node*> &placemarks, // or any node
             const std::vector<std::string> &noticeFuncName,
