@@ -66,8 +66,11 @@ class Node {
 
         // NAME AND INNER TEXT //
 
-        void setName(std::string name_in);
-        void setInnerText(std::string text_in);
+        void setName(const std::string &name_in);
+        void setName(std::string &name_in);
+
+        void setInnerText(const std::string &text_in);
+        void setInnerText(std::string &text_in);
 
         // ATTRIBUTE //
 

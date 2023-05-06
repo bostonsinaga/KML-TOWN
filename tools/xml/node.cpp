@@ -153,11 +153,19 @@ void Node::setGender(int genderFlag_in) {
 
 // NAME AND INNER TEXT //
 
-void Node::setName(std::string name_in) {
+void Node::setName(const std::string &name_in) {
     name = name_in;
 }
 
-void Node::setInnerText(std::string text_in) {
+void Node::setName(std::string &name_in) {
+    name = name_in;
+}
+
+void Node::setInnerText(const std::string &text_in) {
+    innerText = text_in;
+}
+
+void Node::setInnerText(std::string &text_in) {
     innerText = text_in;
 }
 
@@ -177,11 +185,11 @@ void Node::setParent(
     bool isSwitchParent,
     int order
 ) {
-    parent = parent_in;
-
     if (isSwitchParent) {
         removeFromParent();
     }
+    
+    parent = parent_in;
 
     if (isParentAddChild && parent) {
         parent->addChild(this, order);
@@ -239,7 +247,9 @@ std::vector<Node*> Node::replaceChildren(std::vector<Node*> newChildren) {
 }
 
 void Node::swapChildren(int aDex, int bDex) {
-    if (aDex != -1 && aDex != -1) {
+    if (aDex != -1 && bDex != -1 && aDex != bDex &&
+        children.size() > aDex && children.size() > bDex 
+    ) {
         Node *buffer = children.at(aDex);
         children.at(aDex) = children.at(bDex);
         children.at(bDex) = buffer;
