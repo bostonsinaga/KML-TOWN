@@ -94,7 +94,12 @@ std::vector<std::string> Converter::convertCoor_decimalDegree(
         CTR++;
     }
 
-    swapCoorStringVector(&coorStrCouple, separateFlagIn, separateFlagOut);
+    swapCoorStringVector(
+        &coorStrCouple,
+        separateFlagIn,
+        separateFlagOut
+    );
+
     return coorStrCouple;
 }
 
@@ -128,7 +133,8 @@ std::vector<std::string> Converter::convertCoor_degreeDecimal(
                 sec_startCt = STR.size() - 1;
             }
             // error message
-            else if (deg_startCt == std::string::npos ||
+            else if (
+                deg_startCt == std::string::npos ||
                 min_startCt == std::string::npos ||
                 sec_startCt == std::string::npos
             ) {
@@ -231,7 +237,12 @@ std::vector<std::string> Converter::convertCoor_degreeDecimal(
         CTR++;
     }
 
-    swapCoorStringVector(&coorStrCouple, separateFlagIn, separateFlagOut);
+    swapCoorStringVector(
+        &coorStrCouple,
+        separateFlagIn,
+        separateFlagOut
+    );
+
     return coorStrCouple;
 }
 
