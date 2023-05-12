@@ -53,7 +53,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     toggleStringsVec[1].at(KML_CROP_FLAG) = {"include-folders"};
     toggleStringsVec[1].at(KML_SORT_FLAG) = {"include-folders"};
     toggleStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"info"};
-    toggleStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"include-folders"};
+    toggleStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"include-folders", "only-similar-style", "path-text-prioritize-first"};
     toggleStringsVec[1].at(KML_CLASSIFY_FLAG) = {"clean-folders", "include-folders"};
 
     // >>> PARAMETERS //
