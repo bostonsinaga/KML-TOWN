@@ -346,7 +346,9 @@ int main(int argc, char *argv[]) {
             type_paramStr = menu.getParameterString("type"),
             radius_paramStr = menu.getParameterString("radius");
 
-        bool includeFolders_toggleBool = menu.isToggleExist("include-folders");
+        bool includeFolders_toggleBool = menu.isToggleExist("include-folders"),
+             onlySimilarStyle_toggleBool = menu.isToggleExist("only-similar-style"),
+             pathTextPrioritizeFirst_toggleBool = menu.isToggleExist("path-text-prioritize-first");
 
         std::string fileDir_check = call_briefer::checkOverwrite(
             menu,
@@ -361,14 +363,6 @@ int main(int argc, char *argv[]) {
                 *kmlNode = kmlReader.fileParse(fileIn_paramStr),
                 *twinsCheckedFolder;
 
-            // invers ignore style
-            bool isOnlySimilarStyle = !mini_tool::isStringContains(type_paramStr, "ignore", true);
-
-            // if not ignore style, not necessarily a similar style check
-            if (isOnlySimilarStyle) {
-                isOnlySimilarStyle = mini_tool::isStringContains(type_paramStr, "style", true);
-            }
-
             if (kmlNode) {
 
                 twinsCheckedFolder = call_briefer::selectFunctionByType(
@@ -377,17 +371,30 @@ int main(int argc, char *argv[]) {
                     {
                         [=]()->xml::Node* {
                             return kml::TwinsChecker().findPins(
-                                kmlNode, radius_paramStr, false, includeFolders_toggleBool, isOnlySimilarStyle
+                                kmlNode,
+                                radius_paramStr,
+                                false,
+                                includeFolders_toggleBool,
+                                onlySimilarStyle_toggleBool
                             );
                         },
                         [=]()->xml::Node* {
                             return kml::TwinsChecker().findPaths(
-                                kmlNode, radius_paramStr, false, includeFolders_toggleBool, isOnlySimilarStyle
+                                kmlNode,
+                                radius_paramStr,
+                                false,
+                                includeFolders_toggleBool,
+                                onlySimilarStyle_toggleBool,
+                                pathTextPrioritizeFirst_toggleBool
                             );
                         },
                         [=]()->xml::Node* {
                             return kml::TwinsChecker().findAll(
-                                kmlNode, radius_paramStr, includeFolders_toggleBool, isOnlySimilarStyle
+                                kmlNode,
+                                radius_paramStr,
+                                includeFolders_toggleBool,
+                                onlySimilarStyle_toggleBool,
+                                pathTextPrioritizeFirst_toggleBool
                             );
                         }
                     }
