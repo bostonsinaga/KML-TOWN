@@ -2,6 +2,29 @@
 #define __KML_TWINS_CHECKER_H__
 
 class TwinsChecker {
+    private:
+        class Prioritize {
+            public:
+                static void testTextObtain(
+                    xml::Node *placemark,
+                    std::vector<std::string> &testStr_vec_in
+                );
+
+                static bool isChanged(
+                    std::vector<std::string> &testStr_A_vec_in,   // 'A' should be lose
+                    std::vector<std::string> &testStr_B_vec_in,   // 'B' should be win
+                    std::vector<std::string> &otherIgnoredStrings_in
+                );
+
+                static void printAboutMessage();
+
+            private:
+                static bool isNoname(
+                    std::string &testStr,
+                    std::vector<std::string> &otherIgnoredStrings_in
+                );
+        };
+
     public:
         TwinsChecker() {}
 
@@ -10,7 +33,8 @@ class TwinsChecker {
             std::string meterRadiusRateString,
             bool isParentFolderNamedAType,
             bool isIncludeFolders,
-            bool isOnlySimilarStyle
+            bool isOnlySimilarStyle,
+            bool isPrioritizePrintAboutMessage = true
         );
 
         xml::Node *findPaths(
@@ -18,14 +42,17 @@ class TwinsChecker {
             std::string meterRadiusRateString,
             bool isParentFolderNamedAType,
             bool isIncludeFolders,
-            bool isOnlySimilarStyle
+            bool isOnlySimilarStyle,
+            bool isPathTextPrioritizeFirst,
+            bool isPrioritizePrintAboutMessage = true
         );
 
         xml::Node *findAll(
             xml::Node *kmlNode,
             std::string meterRadiusRateString,
             bool isIncludeFolders,
-            bool isOnlySimilarStyle
+            bool isOnlySimilarStyle,
+            bool isPathTextPrioritizeFirst
         );
 
         xml::Node *insertFoundPlacemarks(

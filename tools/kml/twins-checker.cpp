@@ -9,7 +9,8 @@ xml::Node *TwinsChecker::findPins(
     std::string meterRadiusRateString,
     bool isParentFolderNamedAType,
     bool isIncludeFolders,
-    bool isOnlySimilarStyle
+    bool isOnlySimilarStyle,
+    bool isPrioritizePrintAboutMessage
 ) {
     double meterRadius = getLimitedMeterRadius(meterRadiusRateString);
 
@@ -35,35 +36,94 @@ xml::Node *TwinsChecker::findPins(
 
     // CHECK WHETHER INSIDE 'pointB' //
 
-    int ctrA = 0, ctrB = 0;
+    int ctrA = 0,
+        ctrB = 0,
+        *ctrC; // 'C' is prioritize
+
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<Point> pointVec_buffer = pointVec;
-
-    StyleStrings kmlStyleStrings;
     bool isFirstPlcItr = true;
 
+    std::vector<std::string>
+        testStr_A_vec,
+        testStr_B_vec,
+        *testStr_C_vec; // 'C' is prioritize
+
+    Point *pointC;
+    const Point farPoint_const = Point(std::pow(10, 9), std::pow(10, 9));
+
+    // special for pin
+    auto prioritizeUpdate = [&](
+        int &ctr_in,
+        std::vector<std::string> &testStr_in_vec,
+        Point &point_in
+    ) {
+        ctrC = &ctr_in;
+        Prioritize::testTextObtain(nodes.at(ctr_in), testStr_in_vec);
+        testStr_C_vec = &testStr_in_vec;
+        pointC = &point_in;
+    };
+
+    if (isPrioritizePrintAboutMessage) {
+        Prioritize::printAboutMessage();
+    }
+
     for (auto &pointA : pointVec) {
-        bool isMatched = false;
+        prioritizeUpdate(ctrA, testStr_A_vec, pointA);
         
         for (auto &pointB : pointVec_buffer) {
-            if (ctrA != ctrB &&
+            if (*ctrC != ctrB &&
+                !pointB.isEqualTo(farPoint_const) &&
                 pointA.x >= pointB.x - meterRadius &&
                 pointA.x <= pointB.x + meterRadius &&
                 pointA.y >= pointB.y - meterRadius &&
                 pointA.y <= pointB.y + meterRadius &&
                 (!isOnlySimilarStyle || (
                     isOnlySimilarStyle &&
-                    checkSimilarStyle(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                    checkSimilarStyle(nodes.at(*ctrC), nodes.at(ctrB), isFirstPlcItr)
                 ))
             ) {
-                isMatched = true;
-                matchedIndexes[1].push_back(ctrB);
+                /* using name/description completeness for priority */
+
+                Prioritize::testTextObtain(nodes.at(ctrB), testStr_B_vec);
+
+                std::vector<std::string> otherIgnoredStrings = {
+                    "Pin",
+                    "Penanda letak"
+                };
+
+                if (Prioritize::isChanged(
+                    *testStr_C_vec, testStr_B_vec, otherIgnoredStrings
+                )) {
+                    if (matchedIndexes[0].size() > 0 &&
+                        *ctrC == matchedIndexes[0].back()
+                    ) {
+                        matchedIndexes[0].pop_back();
+                    }
+
+                    matchedIndexes[1].push_back(*ctrC);
+                    *pointC = farPoint_const;
+
+                    matchedIndexes[0].push_back(ctrB);
+                    prioritizeUpdate(ctrB, testStr_B_vec, pointB);
+                }
+                else {
+                    if (matchedIndexes[0].size() == 0 ||
+                        (matchedIndexes[0].size() > 0 &&
+                        *ctrC != matchedIndexes[0].back())
+                    ) {
+                        matchedIndexes[0].push_back(*ctrC);
+                    }
+                    
+                    matchedIndexes[1].push_back(ctrB);
+                    pointB = farPoint_const;
+                }
             }
+
             ctrB++;
         }
 
-        if (isMatched) matchedIndexes[0].push_back(ctrA);
-        pointVec_buffer.at(ctrA) = Point(999999999, 999999999);
+        *pointC = farPoint_const;
         ctrA++;
         ctrB = 0;
     }
@@ -83,7 +143,9 @@ xml::Node *TwinsChecker::findPaths(
     std::string meterRadiusRateString,
     bool isParentFolderNamedAType,
     bool isIncludeFolders,
-    bool isOnlySimilarStyle
+    bool isOnlySimilarStyle,
+    bool isPathTextPrioritizeFirst,
+    bool isPrioritizePrintAboutMessage
 ) {
     std::cerr
         << "KML-> Twins checking attention. This will sanitize/remove\n"
@@ -136,73 +198,171 @@ xml::Node *TwinsChecker::findPaths(
 
     // CHECK WHETHER INSIDE VECTOR OF 'pointB' //
 
-    int ctrA = 0, ctrB = 0;
+    int ctrA = 0,
+        ctrB = 0,
+        *ctrC; // 'C' is prioritize
+
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
     std::vector<std::vector<Point>> pointVecVec_buffer = pointVecVec;
 
-    StyleStrings kmlStyleStrings;
+    std::vector<std::string>
+        testStr_A_vec,
+        testStr_B_vec,
+        *testStr_C_vec; // 'C' is prioritize
+
+    std::vector<Point> *pointVec_C; // 'C' is prioritize
     bool isFirstPlcItr = true;
+
+    // special for path
+    auto prioritizeUpdate = [&](
+        int &ctr_in,
+        std::vector<std::string> &testStr_in_vec,
+        std::vector<Point> &pointVec_in
+    ) {
+        Prioritize::testTextObtain(nodes.at(ctr_in), testStr_in_vec);
+        pointVec_C = &pointVec_in;
+        testStr_C_vec = &testStr_in_vec;
+        ctrC = &ctr_in;
+    };
+
+    // this will prioritize the 'B'
+    auto setPathPrioritizeByText = [&](
+        int &ctrB_in,
+        std::vector<std::string> &testStr_B_vec_in,
+        std::vector<Point> &pointVec_B_in
+    ) {
+        Prioritize::testTextObtain(nodes.at(ctrB_in), testStr_B_vec_in);
+
+        std::vector<std::string> otherIgnoredStrings = {
+            "Path",
+            "Jalur",
+            "Path Measure",
+            "Pengukuran Jalur",
+            "Line Measure",
+            "Pengukuran Garis"
+        };
+
+        if (Prioritize::isChanged(
+            *testStr_C_vec,
+            testStr_B_vec_in,
+            otherIgnoredStrings
+        )) {
+            if (matchedIndexes[0].size() > 0 &&
+                *ctrC == matchedIndexes[0].back()
+            ) {
+                matchedIndexes[0].pop_back();
+            }
+
+            matchedIndexes[1].push_back(*ctrC);
+            pointVec_C->clear();
+
+            matchedIndexes[0].push_back(ctrB_in);
+            prioritizeUpdate(ctrB_in, testStr_B_vec_in, pointVec_B_in);
+        }
+        else {
+            if (matchedIndexes[0].size() == 0 ||
+                (matchedIndexes[0].size() > 0 &&
+                *ctrC != matchedIndexes[0].back())
+            ) {
+                matchedIndexes[0].push_back(*ctrC);
+            }
+            
+            matchedIndexes[1].push_back(ctrB_in);
+            pointVec_B_in.clear();
+        }
+    };
+
+    if (isPrioritizePrintAboutMessage) {
+        Prioritize::printAboutMessage();
+    }
+
+    std::cout << "KML-> Twins checking for paths is more prioritizing\n"
+              << "      the length over the text data by default\n";
     
     for (auto &pointVec_A : pointVecVec) {
-        
-        bool isMatched = false, isStyleSimilar = false;
-        int whoIsOriginal = 0; // 'ctrA' or 'ctrB'
+
+        bool isStyleSimilar = false;
+        prioritizeUpdate(ctrA, testStr_A_vec, pointVec_A);
 
         for (auto &pointVec_B : pointVecVec_buffer) {
-            if (ctrA != ctrB && pointVec_B.size() > 0) {
+            if (*ctrC != ctrB && pointVec_B.size() > 0) {
 
                 if (isOnlySimilarStyle &&
-                    !checkSimilarStyle(nodes.at(ctrA), nodes.at(ctrB), isFirstPlcItr)
+                    !checkSimilarStyle(nodes.at(*ctrC), nodes.at(ctrB), isFirstPlcItr)
                 ) {
                     break;
                 }
 
                 std::vector<Point> *longestPointVec = (
-                    pointVec_A.size() >= pointVec_B.size() ?
-                    &pointVec_A : &pointVec_B
+                    pointVec_C->size() >= pointVec_B.size() ?
+                    pointVec_C : &pointVec_B
                 );
                 
                 int equalCount = 0;
 
                 for (int i = 0; i < longestPointVec->size(); i++) {
 
-                    if (i == pointVec_A.size() - 1 ||
+                    if (i == pointVec_C->size() - 1 ||
                         i == pointVec_B.size() - 1
                     ) {
-                        if (equalCount == pointVec_A.size() - 1 ||
+                        if (equalCount == pointVec_C->size() - 1 ||
                             equalCount == pointVec_B.size() - 1
                         ) {
-                            isMatched = true;
+                            /* using name/description completeness for priority */
+                            if (isPathTextPrioritizeFirst) {
+                                setPathPrioritizeByText(ctrB, testStr_B_vec, pointVec_B);
+                            }
+                            /* using path length for priority test */
+                            else if (pointVec_C->size() < pointVec_B.size()) {
 
-                            if (pointVec_A.size() < pointVec_B.size()) {
-                                matchedIndexes[1].push_back(ctrA);
-                                whoIsOriginal = ctrB;
+                                if (matchedIndexes[0].size() > 0 &&
+                                    *ctrC == matchedIndexes[0].back()
+                                ) {
+                                    matchedIndexes[0].pop_back();
+                                }
+
+                                matchedIndexes[1].push_back(*ctrC);
+                                pointVec_C->clear();
+
+                                matchedIndexes[0].push_back(ctrB);
+                                prioritizeUpdate(ctrB, testStr_B_vec, pointVec_B);
                             }
-                            else { // normal
+                            /* using path length for priority test */
+                            else if (pointVec_C->size() > pointVec_B.size()) { // normal
+
+                                if (matchedIndexes[0].size() == 0 ||
+                                    (matchedIndexes[0].size() > 0 &&
+                                    *ctrC != matchedIndexes[0].back())
+                                ) {
+                                    matchedIndexes[0].push_back(*ctrC);
+                                }
+
                                 matchedIndexes[1].push_back(ctrB);
-                                whoIsOriginal = ctrA;
+                                pointVec_B.clear();
                             }
+                            /*
+                                the lengths are equal and
+                                using name/description completeness for priority
+                            */
+                            else setPathPrioritizeByText(ctrB, testStr_B_vec, pointVec_B);
                         }
 
                         break;
                     }
 
-                    if (pointVec_A.at(i).x >= pointVec_B.at(i).x - meterRadius &&
-                        pointVec_A.at(i).x <= pointVec_B.at(i).x + meterRadius &&
-                        pointVec_A.at(i).y >= pointVec_B.at(i).y - meterRadius &&
-                        pointVec_A.at(i).y <= pointVec_B.at(i).y + meterRadius
+                    if (pointVec_C->at(i).x >= pointVec_B.at(i).x - meterRadius &&
+                        pointVec_C->at(i).x <= pointVec_B.at(i).x + meterRadius &&
+                        pointVec_C->at(i).y >= pointVec_B.at(i).y - meterRadius &&
+                        pointVec_C->at(i).y <= pointVec_B.at(i).y + meterRadius
                     ) {
                         equalCount++;
                     }
                 }
             }
 
-            if (isMatched) break;
             ctrB++;
         }
 
-        if (isMatched) matchedIndexes[0].push_back(whoIsOriginal);
-        pointVecVec_buffer.at(whoIsOriginal) = std::vector<Point>{};
         ctrA++;
         ctrB = 0;
     }
@@ -221,10 +381,29 @@ xml::Node *TwinsChecker::findAll(
     xml::Node *kmlNode,
     std::string meterRadiusRateString,
     bool isIncludeFolders,
-    bool isOnlySimilarStyle
+    bool isOnlySimilarStyle,
+    bool isPathTextPrioritizeFirst
 ) {
-    xml::Node *pinsFolder = findPins(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
-    xml::Node *pathsFolder = findPaths(kmlNode, meterRadiusRateString, true, isIncludeFolders, isOnlySimilarStyle);
+    Prioritize::printAboutMessage();
+
+    xml::Node *pinsFolder = findPins(
+        kmlNode,
+        meterRadiusRateString,
+        true,
+        isIncludeFolders,
+        isOnlySimilarStyle,
+        false
+    );
+
+    xml::Node *pathsFolder = findPaths(
+        kmlNode,
+        meterRadiusRateString,
+        true,
+        isIncludeFolders,
+        isOnlySimilarStyle,
+        isPathTextPrioritizeFirst,
+        false
+    );
 
     xml::Node *workingFolder = Builder().createFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
 
@@ -312,9 +491,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         std::cout
             << "----------------\n"
             << "Total matched:  " << matchedCtr
-            << (isParentFolderNamedAType ?
-                std::string("  (") + placemarksType + std::string(")") :
-                "")
+            << (isParentFolderNamedAType ? std::string("  (") + placemarksType + std::string(")") : "")
             << std::endl
             << "----------------\n"
             << "KML-> Twins check for '" << placemarksType
@@ -371,6 +548,76 @@ bool TwinsChecker::checkSimilarStyle(
         styleDataStr_B = kmlStyleStrings.getPlacemarkStyleData(placemark_B, false);
         return styleDataStr_A == styleDataStr_B;
     }
+}
+
+//////////////////////
+// PRIORITIZE STUFF //
+//////////////////////
+
+void TwinsChecker::Prioritize::testTextObtain(
+    xml::Node *placemark,
+    std::vector<std::string> &testStr_vec_in
+) {
+    Placemark kmlPlacemark;
+    testStr_vec_in.push_back(kmlPlacemark.getDataText(placemark, "name"));
+    testStr_vec_in.push_back(kmlPlacemark.getDataText(placemark, "description"));
+}
+
+bool TwinsChecker::Prioritize::isChanged(
+    std::vector<std::string> &testStr_A_vec_in,   // 'A' should be lose
+    std::vector<std::string> &testStr_B_vec_in,   // 'B' should be win
+    std::vector<std::string> &otherIgnoredStrings_in
+) {
+    enum {name_flg, desc_flg};
+
+    // description
+    if (testStr_A_vec_in.at(desc_flg).size() < testStr_B_vec_in.at(desc_flg).size()) {
+        return true;
+    }
+    // name
+    else if (
+        testStr_A_vec_in.at(desc_flg) != "" &&
+        !mini_tool::isOnlyContainsSpaces(testStr_A_vec_in.at(desc_flg)) &&
+        mini_tool::isStringEquals(testStr_A_vec_in.at(desc_flg), testStr_B_vec_in.at(desc_flg), true) &&
+        isNoname(testStr_A_vec_in.at(name_flg), otherIgnoredStrings_in) &&
+        !isNoname(testStr_B_vec_in.at(name_flg), otherIgnoredStrings_in)
+    ) {
+        return true;
+    }
+    // 'A' wins
+    else return false;
+}
+
+void TwinsChecker::Prioritize::printAboutMessage() {
+    std::cout << "KML-> Twins checking is prioritizing the more complete text data\n"
+              << "      for be the original (description is superior to name)\n";
+}
+
+bool TwinsChecker::Prioritize::isNoname(
+    std::string &testStr,
+    std::vector<std::string> &otherIgnoredStrings_in
+) {
+    std::vector<std::string> ignoredStrings = {
+        "Untitled",
+        "Tanpa Nama",
+        "Noname"
+    };
+
+    if (testStr == "") return true;
+
+    for (auto &str : ignoredStrings) {
+        if (mini_tool::isStringContains(testStr, str, true)) {
+            return true;
+        }
+    }
+
+    for (auto &str : otherIgnoredStrings_in) {
+        if (mini_tool::isStringEquals(testStr, str, true)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 #endif // __KML_TWINS_CHECKER_CPP__
