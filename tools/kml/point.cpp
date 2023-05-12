@@ -203,6 +203,13 @@ Point Point::operator/(LD val) {
     return Point(x / val, y / val);
 }
 
+bool Point::isEqualTo(Point ptIn) {
+    if (x == ptIn.x && y == ptIn.y) {
+        return true;
+    }
+    return false;
+}
+
 // expected input: '180,-90,0 -180,90,0'
 std::vector<Point> Point::getPathPointsFromString(std::string coorString) {
     

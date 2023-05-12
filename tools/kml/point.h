@@ -28,6 +28,8 @@ class Point {
         Point operator*(LD val);
         Point operator/(LD val);
 
+        bool isEqualTo(Point ptIn);
+
         static std::vector<Point> getPathPointsFromString(std::string coorString);
 
         static std::vector<std::string> stringifyVector(
