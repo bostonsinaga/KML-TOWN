@@ -25,15 +25,30 @@ namespace mini_tool {
     double filterStringDecimal(std::string strIn);
 
     bool isStringContains(
-        std::string containerStr,
+        std::string &containerStr,
         std::string testStr,
         bool isIgnoreCaseSensitive = false
     );
+
+    bool isStringEquals(
+        std::string &containerStr,
+        std::string testStr,
+        bool isIgnoreCaseSensitive = false
+    );
+
+    // empty string will return 'false'
+    bool isOnlyContainsSpaces(std::string &containerStr);
 
     enum {
         LOWER_CASE_FLAG,
         UPPER_CASE_FLAG
     };
+
+    void changeStringCase(
+        std::string *string_ptr,
+        int caseFlag,
+        int onlyCharDex = -1 // index of single character change
+    );
 
     std::string changeStringCase(
         std::string string_in,

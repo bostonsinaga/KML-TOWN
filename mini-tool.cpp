@@ -53,25 +53,13 @@ namespace mini_tool {
     }
 
     bool isStringContains(
-        std::string containerStr,
+        std::string &containerStr,
         std::string testStr,
         bool isIgnoreCaseSensitive
     ) {
         if (isIgnoreCaseSensitive) {
-            int aToADifference = CH_A_LOWER_CODE - CH_A_UPPER_CODE; // positive
-
-            // set to capital letter //
-
-            auto setToCapital = [&](std::string &str) {
-                for (auto &ch : str) {
-                    if (int(ch) >= CH_A_LOWER_CODE) { // smaller (lower)
-                        ch = char(int(ch) - aToADifference);
-                    }
-                }
-            };
-
-            setToCapital(containerStr);
-            setToCapital(testStr);
+            changeStringCase(&containerStr, UPPER_CASE_FLAG);
+            changeStringCase(&testStr, UPPER_CASE_FLAG);
         }
 
         if (containerStr.find(testStr) != std::string::npos) {
@@ -79,6 +67,36 @@ namespace mini_tool {
         }
         
         return false;
+    }
+
+    bool isStringEquals(
+        std::string &containerStr,
+        std::string testStr,
+        bool isIgnoreCaseSensitive
+    ) {
+        if (isIgnoreCaseSensitive) {
+            changeStringCase(&containerStr, UPPER_CASE_FLAG);
+            changeStringCase(&testStr, UPPER_CASE_FLAG);
+        }
+
+        if (containerStr == testStr) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    // empty string will return 'false'
+    bool isOnlyContainsSpaces(std::string &containerStr) {
+        if (containerStr == "") return false;
+
+        for (auto &ch : containerStr) {
+            if (ch != ' ') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     int getInStringCharCount(std::string str, char ch) {
@@ -97,8 +115,8 @@ namespace mini_tool {
         return count;
     }
 
-    std::string changeStringCase(
-        std::string string_in,
+    void changeStringCase(
+        std::string *string_ptr,
         int caseFlag,
         int onlyCharDex // index of single character change
     ) {
@@ -106,8 +124,8 @@ namespace mini_tool {
             startDex, borderDex;
 
         if (onlyCharDex != -1) {
-            if (onlyCharDex <= string_in.size() - 1 &&
-                isALetter(string_in.at(onlyCharDex))
+            if (onlyCharDex <= string_ptr->size() - 1 &&
+                isALetter(string_ptr->at(onlyCharDex))
             ) {
                 startDex = onlyCharDex;
                 borderDex = onlyCharDex + 1;
@@ -115,12 +133,12 @@ namespace mini_tool {
         }
         else {
             startDex = 0;
-            borderDex = string_in.size();
+            borderDex = string_ptr->size();
         }
 
         for (int i = startDex; i < borderDex; i++) {
             
-            int chCode = std::abs(int(string_in.at(i))),
+            int chCode = std::abs(int(string_ptr->at(i))),
                 diffSign = 0;
             
             // upper detected
@@ -138,10 +156,17 @@ namespace mini_tool {
             }
 
             if (diffSign != 0) {
-                string_in.at(i) = char(chCode + diffSign * aToADifference);
+                string_ptr->at(i) = char(chCode + diffSign * aToADifference);
             }
         }
+    }
 
+    std::string changeStringCase(
+        std::string string_in,
+        int caseFlag,
+        int onlyCharDex // index of single character change
+    ) {
+        changeStringCase(&string_in, caseFlag, onlyCharDex);
         return string_in;
     }
 
