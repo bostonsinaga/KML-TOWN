@@ -128,11 +128,23 @@ bool Builder::compose(
 
         // classify column type //
 
-        // using paths column
-        if (mini_tool::isStringContains(colNodeNames.back(), "PATH", true)  ||
-            mini_tool::isStringContains(colNodeNames.back(), "PATHS", true) ||
-            mini_tool::isStringContains(colNodeNames.back(), "JALUR", true)
-        ) {
+        std::vector<std::string> pathFolderNames = {
+            "PATH",
+            "PATHS",
+            "JALUR",
+            "KABEL"
+        };
+
+        bool isUsingPathsColumn = false;
+
+        for (auto &name : pathFolderNames) {
+            if (mini_tool::isStringContains(colNodeNames.back(), name, true)) {
+                isUsingPathsColumn = true;
+                break;
+            }
+        }
+
+        if (isUsingPathsColumn) {
             subColumnsCounts.push_back(5);
         }
         // using pins column
