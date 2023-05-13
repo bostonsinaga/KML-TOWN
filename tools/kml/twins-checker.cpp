@@ -38,10 +38,9 @@ xml::Node *TwinsChecker::findPins(
 
     int ctrA = 0,
         ctrB = 0,
-        *ctrC; // 'C' is prioritize
+        ctrC; // 'C' is prioritize
 
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
-    std::vector<Point> pointVec_buffer = pointVec;
     bool isFirstPlcItr = true;
 
     std::vector<std::string>
@@ -58,7 +57,7 @@ xml::Node *TwinsChecker::findPins(
         std::vector<std::string> &testStr_in_vec,
         Point &point_in
     ) {
-        ctrC = &ctr_in;
+        ctrC = ctr_in;
         Prioritize::testTextObtain(nodes.at(ctr_in), testStr_in_vec);
         testStr_C_vec = &testStr_in_vec;
         pointC = &point_in;
@@ -71,16 +70,18 @@ xml::Node *TwinsChecker::findPins(
     for (auto &pointA : pointVec) {
         prioritizeUpdate(ctrA, testStr_A_vec, pointA);
         
-        for (auto &pointB : pointVec_buffer) {
-            if (*ctrC != ctrB &&
+        for (auto &pointB : pointVec) {
+
+            if (ctrC != ctrB &&
                 !pointB.isEqualTo(farPoint_const) &&
-                pointA.x >= pointB.x - meterRadius &&
-                pointA.x <= pointB.x + meterRadius &&
-                pointA.y >= pointB.y - meterRadius &&
-                pointA.y <= pointB.y + meterRadius &&
+                !pointC->isEqualTo(farPoint_const) &&
+                pointC->x >= pointB.x - meterRadius &&
+                pointC->x <= pointB.x + meterRadius &&
+                pointC->y >= pointB.y - meterRadius &&
+                pointC->y <= pointB.y + meterRadius &&
                 (!isOnlySimilarStyle || (
                     isOnlySimilarStyle &&
-                    checkSimilarStyle(nodes.at(*ctrC), nodes.at(ctrB), isFirstPlcItr)
+                    checkSimilarStyle(nodes.at(ctrC), nodes.at(ctrB), isFirstPlcItr)
                 ))
             ) {
                 /* using name/description completeness for priority */
@@ -96,12 +97,12 @@ xml::Node *TwinsChecker::findPins(
                     *testStr_C_vec, testStr_B_vec, otherIgnoredStrings
                 )) {
                     if (matchedIndexes[0].size() > 0 &&
-                        *ctrC == matchedIndexes[0].back()
+                        ctrC == matchedIndexes[0].back()
                     ) {
                         matchedIndexes[0].pop_back();
                     }
 
-                    matchedIndexes[1].push_back(*ctrC);
+                    matchedIndexes[1].push_back(ctrC);
                     *pointC = farPoint_const;
 
                     matchedIndexes[0].push_back(ctrB);
@@ -110,9 +111,9 @@ xml::Node *TwinsChecker::findPins(
                 else {
                     if (matchedIndexes[0].size() == 0 ||
                         (matchedIndexes[0].size() > 0 &&
-                        *ctrC != matchedIndexes[0].back())
+                        ctrC != matchedIndexes[0].back())
                     ) {
-                        matchedIndexes[0].push_back(*ctrC);
+                        matchedIndexes[0].push_back(ctrC);
                     }
                     
                     matchedIndexes[1].push_back(ctrB);
@@ -127,7 +128,7 @@ xml::Node *TwinsChecker::findPins(
         ctrA++;
         ctrB = 0;
     }
-
+    
     return insertFoundPlacemarks(
         kmlNode,
         matchedIndexes,
@@ -200,10 +201,9 @@ xml::Node *TwinsChecker::findPaths(
 
     int ctrA = 0,
         ctrB = 0,
-        *ctrC; // 'C' is prioritize
+        ctrC; // 'C' is prioritize
 
     std::vector<int> matchedIndexes[2]; // {originals, duplicates}
-    std::vector<std::vector<Point>> pointVecVec_buffer = pointVecVec;
 
     std::vector<std::string>
         testStr_A_vec,
@@ -222,7 +222,7 @@ xml::Node *TwinsChecker::findPaths(
         Prioritize::testTextObtain(nodes.at(ctr_in), testStr_in_vec);
         pointVec_C = &pointVec_in;
         testStr_C_vec = &testStr_in_vec;
-        ctrC = &ctr_in;
+        ctrC = ctr_in;
     };
 
     // this will prioritize the 'B'
@@ -248,12 +248,12 @@ xml::Node *TwinsChecker::findPaths(
             otherIgnoredStrings
         )) {
             if (matchedIndexes[0].size() > 0 &&
-                *ctrC == matchedIndexes[0].back()
+                ctrC == matchedIndexes[0].back()
             ) {
                 matchedIndexes[0].pop_back();
             }
 
-            matchedIndexes[1].push_back(*ctrC);
+            matchedIndexes[1].push_back(ctrC);
             pointVec_C->clear();
 
             matchedIndexes[0].push_back(ctrB_in);
@@ -262,9 +262,9 @@ xml::Node *TwinsChecker::findPaths(
         else {
             if (matchedIndexes[0].size() == 0 ||
                 (matchedIndexes[0].size() > 0 &&
-                *ctrC != matchedIndexes[0].back())
+                ctrC != matchedIndexes[0].back())
             ) {
-                matchedIndexes[0].push_back(*ctrC);
+                matchedIndexes[0].push_back(ctrC);
             }
             
             matchedIndexes[1].push_back(ctrB_in);
@@ -284,11 +284,11 @@ xml::Node *TwinsChecker::findPaths(
         bool isStyleSimilar = false;
         prioritizeUpdate(ctrA, testStr_A_vec, pointVec_A);
 
-        for (auto &pointVec_B : pointVecVec_buffer) {
-            if (*ctrC != ctrB && pointVec_B.size() > 0) {
+        for (auto &pointVec_B : pointVecVec) {
+            if (ctrC != ctrB && pointVec_B.size() > 0) {
 
                 if (isOnlySimilarStyle &&
-                    !checkSimilarStyle(nodes.at(*ctrC), nodes.at(ctrB), isFirstPlcItr)
+                    !checkSimilarStyle(nodes.at(ctrC), nodes.at(ctrB), isFirstPlcItr)
                 ) {
                     break;
                 }
@@ -316,12 +316,12 @@ xml::Node *TwinsChecker::findPaths(
                             else if (pointVec_C->size() < pointVec_B.size()) {
 
                                 if (matchedIndexes[0].size() > 0 &&
-                                    *ctrC == matchedIndexes[0].back()
+                                    ctrC == matchedIndexes[0].back()
                                 ) {
                                     matchedIndexes[0].pop_back();
                                 }
 
-                                matchedIndexes[1].push_back(*ctrC);
+                                matchedIndexes[1].push_back(ctrC);
                                 pointVec_C->clear();
 
                                 matchedIndexes[0].push_back(ctrB);
@@ -332,9 +332,9 @@ xml::Node *TwinsChecker::findPaths(
 
                                 if (matchedIndexes[0].size() == 0 ||
                                     (matchedIndexes[0].size() > 0 &&
-                                    *ctrC != matchedIndexes[0].back())
+                                    ctrC != matchedIndexes[0].back())
                                 ) {
-                                    matchedIndexes[0].push_back(*ctrC);
+                                    matchedIndexes[0].push_back(ctrC);
                                 }
 
                                 matchedIndexes[1].push_back(ctrB);
@@ -350,7 +350,8 @@ xml::Node *TwinsChecker::findPaths(
                         break;
                     }
 
-                    if (pointVec_C->at(i).x >= pointVec_B.at(i).x - meterRadius &&
+                    if (pointVec_C->size() > 0 && pointVec_B.size() > 0 &&
+                        pointVec_C->at(i).x >= pointVec_B.at(i).x - meterRadius &&
                         pointVec_C->at(i).x <= pointVec_B.at(i).x + meterRadius &&
                         pointVec_C->at(i).y >= pointVec_B.at(i).y - meterRadius &&
                         pointVec_C->at(i).y <= pointVec_B.at(i).y + meterRadius
@@ -363,6 +364,7 @@ xml::Node *TwinsChecker::findPaths(
             ctrB++;
         }
 
+        pointVec_C->clear();
         ctrA++;
         ctrB = 0;
     }
@@ -558,9 +560,9 @@ void TwinsChecker::Prioritize::testTextObtain(
     xml::Node *placemark,
     std::vector<std::string> &testStr_vec_in
 ) {
-    Placemark kmlPlacemark;
-    testStr_vec_in.push_back(kmlPlacemark.getDataText(placemark, "name"));
-    testStr_vec_in.push_back(kmlPlacemark.getDataText(placemark, "description"));
+    testStr_vec_in.clear();
+    testStr_vec_in.push_back(Placemark::getDataText(placemark, "name"));
+    testStr_vec_in.push_back(Placemark::getDataText(placemark, "description"));
 }
 
 bool TwinsChecker::Prioritize::isChanged(
@@ -576,15 +578,13 @@ bool TwinsChecker::Prioritize::isChanged(
     }
     // name
     else if (
-        testStr_A_vec_in.at(desc_flg) != "" &&
-        !mini_tool::isOnlyContainsSpaces(testStr_A_vec_in.at(desc_flg)) &&
         mini_tool::isStringEquals(testStr_A_vec_in.at(desc_flg), testStr_B_vec_in.at(desc_flg), true) &&
         isNoname(testStr_A_vec_in.at(name_flg), otherIgnoredStrings_in) &&
         !isNoname(testStr_B_vec_in.at(name_flg), otherIgnoredStrings_in)
     ) {
         return true;
     }
-    // 'A' wins
+    // 'A' wins (even the descriptions are equal in size but different in definition)
     else return false;
 }
 
