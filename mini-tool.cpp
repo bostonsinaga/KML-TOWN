@@ -86,19 +86,6 @@ namespace mini_tool {
         return false;
     }
 
-    // empty string will return 'false'
-    bool isOnlyContainsSpaces(std::string &containerStr) {
-        if (containerStr == "") return false;
-
-        for (auto &ch : containerStr) {
-            if (ch != ' ') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     int getInStringCharCount(std::string str, char ch) {
         int count = 0;
 

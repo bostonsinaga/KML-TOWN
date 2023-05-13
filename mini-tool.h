@@ -36,9 +36,6 @@ namespace mini_tool {
         bool isIgnoreCaseSensitive = false
     );
 
-    // empty string will return 'false'
-    bool isOnlyContainsSpaces(std::string &containerStr);
-
     enum {
         LOWER_CASE_FLAG,
         UPPER_CASE_FLAG
