@@ -117,8 +117,15 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
     CTR = 0;
     for (auto &dmyInt : dateVector) {
 
+        std::string dayMonthZeroPrefix[2] = {
+            std::log10(dmyInt.at(0)) < 1 ? "0" : "",
+            std::log10(dmyInt.at(1)) < 1 ? "0" : ""
+        };
+
         std::string dateStr = (
+            dayMonthZeroPrefix[0] +
             std::to_string(dmyInt.at(0)) + std::string("/") +
+            dayMonthZeroPrefix[1] +
             std::to_string(dmyInt.at(1)) + std::string("/") +
             std::to_string(dmyInt.at(2))
         );
