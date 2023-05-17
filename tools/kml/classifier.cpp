@@ -12,9 +12,6 @@ void Classifier::rearrange(
         std::vector<std::string> styleDataStrVec;
         std::vector<xml::Node*> newFolderNodes;
 
-        General kmlGeneral;
-        Placemark kmlPlacemark;
-        Builder kmlBuilder;
         StyleStrings kmlStyleStrings;
 
         bool isFirstPlcItr = true;
@@ -51,12 +48,10 @@ void Classifier::rearrange(
                     folderName = "PINS " + styleDataStr;
                 }
 
-                newFolderNodes.push_back(
-                    kmlBuilder.createFolder(folderName)
-                );
+                newFolderNodes.push_back(Builder::createFolder(folderName));
 
                 if (isIncludeFolders) {
-                    kmlPlacemark.includeFolder(
+                    Placemark::includeFolder(
                         placemarkNode,
                         newFolderNodes.back(),
                         styleDataStrVec.size() - 1,
@@ -72,7 +67,7 @@ void Classifier::rearrange(
                 xml::Node *folderNode = newFolderNodes.at(styleDataStrVec_foundDex);
 
                 if (isIncludeFolders) {
-                    kmlPlacemark.includeFolder(
+                    Placemark::includeFolder(
                         placemarkNode,
                         folderNode,
                         styleDataStrVec_foundDex,
@@ -88,18 +83,18 @@ void Classifier::rearrange(
         // add the folders to a working folder //
 
         xml::Node
-            *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode),
-            *classifiedFolderNode = kmlBuilder.createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+            *mainFolderNode = General::searchMainFolder(kmlNode),
+            *classifiedFolderNode = Builder::createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
 
         if (isCleanFolders) {
-            kmlGeneral.cleanFolders(
+            General::cleanFolders(
                 mainFolderNode,
                 classifiedFolderNode,
                 newFolderNodes
             );
         }
         else {
-            kmlGeneral.insertEditedPlacemarksIntoFolder(
+            General::insertEditedPlacemarksIntoFolder(
                 mainFolderNode,
                 classifiedFolderNode,
                 newFolderNodes,
@@ -112,9 +107,7 @@ void Classifier::rearrange(
 
 bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
     if (kmlNode) {
-
         std::vector<xml::Node*> placemarks;
-        General kmlGeneral = General();
 
         for (auto &placemarkNode : kmlNode->getDescendantsByName("Placemark", true)) {
 
@@ -157,14 +150,14 @@ bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
         if (placemarks.size() > 0) {
             std::string folderName = FILTER_STRING_COMMAND_WORKING_FOLDER + std::string("  ") + frontWord;
 
-            xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
+            xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
             std::cout << "KML-> Found: " << placemarks.size() << "\n"
                       << "      Placed to folder named '" << folderName << "'\n"
                       << "      Filter string completed!\n";
 
-            kmlGeneral.insertEditedPlacemarksIntoFolder(
+            General::insertEditedPlacemarksIntoFolder(
                 mainFolderNode,
-                Builder().createFolder(folderName),
+                Builder::createFolder(folderName),
                 placemarks,
                 {"", ""},
                 ""
