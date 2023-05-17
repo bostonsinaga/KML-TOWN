@@ -23,12 +23,9 @@ std::vector<xml::Node*> Sorter::orderApart(
     bool isFolderInsertion,  // 'false' returns nodes or empty, 'true' returns folder or empty
     bool isIncludeFolders
 ) {
-    General kmlGeneral;
-    Placemark kmlPlacemark;
-
     std::vector<xml::Node*> placemarkCoorNodes;
 
-    xml::Node *placemarksContainerNode = kmlGeneral.searchMainFolder(
+    xml::Node *placemarksContainerNode = General::searchMainFolder(
         croppedPlacemarks.front()->getRoot()
     );
 
@@ -90,18 +87,18 @@ std::vector<xml::Node*> Sorter::orderApart(
         // succeeded
         if (sortedPlacemarkNodes.size() > 0) {
 
-            xml::Node *workingFolder = Builder().createFolder(
+            xml::Node *workingFolder = Builder::createFolder(
                 SORT_COMMAND_WORKING_FOLDER
             );
 
             if (isIncludeFolders) {
-                kmlGeneral.putOnTopFolder(
+                General::putOnTopFolder(
                     placemarksContainerNode,
                     {workingFolder}
                 );
 
                 for (int i = 0; i < sortedPlacemarkNodes.size(); i++) {
-                    kmlPlacemark.includeFolder(
+                    Placemark::includeFolder(
                         sortedPlacemarkNodes.at(i),
                         workingFolder,
                         0, i == 0
@@ -109,7 +106,7 @@ std::vector<xml::Node*> Sorter::orderApart(
                 }
             }
             else {
-                kmlGeneral.insertEditedPlacemarksIntoFolder(
+                General::insertEditedPlacemarksIntoFolder(
                     placemarksContainerNode,
                     workingFolder,
                     sortedPlacemarkNodes,
@@ -121,14 +118,14 @@ std::vector<xml::Node*> Sorter::orderApart(
             if (isIncludeFolders) {
                 std::string typeStr = typeFlag == PIN_TYPE ? "pin" : "path";
                 std::cout << "KML-> Sort " << typeStr << "s inside '" << placemarksContainerNode->getName()
-                          << "' named '" << kmlPlacemark.getDataText(placemarksContainerNode, "name") << "' completed!\n";
+                          << "' named '" << Placemark::getDataText(placemarksContainerNode, "name") << "' completed!\n";
             }
 
             return std::vector<xml::Node*>{workingFolder};
         }
         // failed
         else {
-            kmlGeneral.logEditedPlacemarks(
+            General::logEditedPlacemarks(
                 typeFlag == PIN_TYPE ? "pin" : "path",
                 {"Sorting", "Sort"},
                 sortedPlacemarkNodes,
@@ -140,7 +137,7 @@ std::vector<xml::Node*> Sorter::orderApart(
     }
     // logging
     else {
-        if (kmlGeneral.logEditedPlacemarks(
+        if (General::logEditedPlacemarks(
             typeFlag == PIN_TYPE ? "pin" : "path",
             {"Sorting", "Sort"},
             sortedPlacemarkNodes,
@@ -171,13 +168,13 @@ std::vector<xml::Node*> Sorter::orderAll(
             totalCt = sortedPlacemarks_arr[1].size() > 0 ? 2 : 1;
 
         for (int i = startCt; i < totalCt; i++) {
-            xml::Node *plcFolder = Builder().createFolder(typeNamesArr[i]);
+            xml::Node *plcFolder = Builder::createFolder(typeNamesArr[i]);
 
             std::vector<xml::Node*> plcVec = sortedPlacemarks_arr[i].front()->getChildrenByName(
                 isIncludeFolders ? "Folder" : "Placemark"
             );
 
-            General().insertEditedPlacemarksIntoFolder(
+            General::insertEditedPlacemarksIntoFolder(
                 sortedPlacemarks_arr[startCt].front(),
                 plcFolder,
                 plcVec,
