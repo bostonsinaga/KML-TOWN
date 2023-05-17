@@ -3,10 +3,10 @@
 
 class Reader {
     public:
-        Node *fileParse(std::string fileName, bool isNotify = true);
+        static Node *fileParse(std::string fileName, bool isNotify = true);
 
         // input must only has one root in text form
-        Node *parse(
+        static Node *parse(
             std::string text,
             std::string fileName = ".xml",
             bool isNotify = false

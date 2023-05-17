@@ -3,7 +3,7 @@
 
 class Writer {
     public:
-        void stringify(
+        static void stringify(
             std::string fileDir_out,
             Node *root,
             bool isWithRoot = true
@@ -11,8 +11,8 @@ class Writer {
 
     private:
 
-        std::string stringifyAttributes(std::vector<Attribute> *attributes);
-        std::string pullChildrenStrings(std::vector<Node*> *children);
+        static std::string stringifyAttributes(std::vector<Attribute> *attributes);
+        static std::string pullChildrenStrings(std::vector<Node*> *children);
 };
 
 #endif // __XML_WRITER_H__
