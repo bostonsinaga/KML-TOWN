@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
                         }
 
                         if (selectedPinNodes.size() > 0) {
-                            kml::Placemark().pinsPathSegments(
+                            kml::Placemark::pinsPathSegments(
                                 kmlNode_baby,
                                 selectedPinNodes,
                                 true
@@ -161,8 +161,7 @@ int main(int argc, char *argv[]) {
             fileIn_paramStr = menu.getParameterString("kml-in"),
             fileOut_paramStr = menu.getParameterString("csv-out");
 
-        xml::Reader kmlReader;
-        xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+        xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
 
         if (kmlNode) {
             std::string separatorSign = "|";
@@ -183,7 +182,7 @@ int main(int argc, char *argv[]) {
                 separatorSign = additionalInput;
             }
 
-            xml::Node *mainFolderNode = kml::General().searchMainFolder(kmlNode);
+            xml::Node *mainFolderNode = kml::General::searchMainFolder(kmlNode);
 
             if (mainFolderNode) {
                 csv::Builder csvBuilder;
@@ -227,8 +226,7 @@ int main(int argc, char *argv[]) {
 
         if (fileDir_check != "") {
 
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
             std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             if (call_briefer::cropPlacemarkFunc(
@@ -271,8 +269,7 @@ int main(int argc, char *argv[]) {
         
         if (fileDir_check != "") {
 
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
             std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             if (call_briefer::sortPlacemarksFunc(
@@ -312,8 +309,7 @@ int main(int argc, char *argv[]) {
         
         if (fileDir_check != "") {
 
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
             std::vector<std::string> selPtVec = {startPoint_paramStr, endPoint_paramStr};
 
             std::vector<xml::Node*> sortedPinNodes = call_briefer::sortPlacemarksFunc(
@@ -325,7 +321,7 @@ int main(int argc, char *argv[]) {
             );
 
             if (sortedPinNodes.size() > 0) {
-                kml::Placemark().pinsPath(
+                kml::Placemark::pinsPath(
                     kmlNode,
                     sortedPinNodes
                 );
@@ -357,10 +353,9 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
-            xml::Reader kmlReader;
 
             xml::Node
-                *kmlNode = kmlReader.fileParse(fileIn_paramStr),
+                *kmlNode = xml::Reader::fileParse(fileIn_paramStr),
                 *twinsCheckedFolder;
 
             if (kmlNode) {
@@ -435,11 +430,10 @@ int main(int argc, char *argv[]) {
         }
         
         if (fileDir_check != "" || info_toggleBool) {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
 
             if (kmlNode) {
-                if (kml::Placemark().setPathDistance(
+                if (kml::Placemark::setPathDistance(
                     kmlNode,
                     info_toggleBool
                 )) {
@@ -480,8 +474,7 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
 
             bool isProceed = false;
 
@@ -525,11 +518,39 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
+
+            if (kml::DateFolder().packNumeral(kmlNode)) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+            else std::cerr << "\n**FAILED**\n";
+        }
+    }
+
+    ////////////////////////
+    // KML DATE BY FOLDER //
+    ////////////////////////
+
+    else if (SELECTED_FLAG == KML_DATE_BY_FOLDER_FLAG) {
+        std::string
+            fileIn_paramStr = menu.getParameterString("date-by-folder"),
+            fileOut_paramStr = menu.getParameterString("out");
+
+        bool overrideDated_toggleBool = menu.isToggleExist("override-dated");
+
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            fileIn_paramStr,
+            fileOut_paramStr
+        );
+        
+        if (fileDir_check != "") {
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
             
-            kml::DateFolder().packNumeral(kmlNode);
-            call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            if (kml::DateFolder().spreadNumeral(kmlNode, overrideDated_toggleBool)) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+            else std::cerr << "\n**FAILED**\n";
         }
     }
 
@@ -551,8 +572,7 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
             
             if (kml::Classifier().filterString(kmlNode, text_paramStr)) {
                 call_briefer::writeFileFunc(kmlNode, fileDir_check);
@@ -590,10 +610,9 @@ int main(int argc, char *argv[]) {
         );
         
         if (fileDir_check != "") {
-            xml::Reader kmlReader;
-            xml::Node *kmlNode = kmlReader.fileParse(fileIn_paramStr);
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
 
-            kml::Placemark().removePathsByDistance(
+            kml::Placemark::removePathsByDistance(
                 kmlNode,
                 mini_tool::filterStringDecimal(distance_paramStr),
                 isOver_oppositeCode
