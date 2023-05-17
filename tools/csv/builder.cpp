@@ -80,9 +80,7 @@ bool Builder::compose(
     if (outsiderNodes.size() > 0) {
         isHasPlacemarks = true;
         rowNodesVector.push_back(outsiderNodes);
-
-        kml::Builder kmlBuilder;
-        columnNodes.push_back(kmlBuilder.createFolder("Others"));
+        columnNodes.push_back(kml::Builder::createFolder("Others"));
     }
 
     if (columnNodes.size() == 0) {
