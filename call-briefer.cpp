@@ -34,7 +34,7 @@ std::vector<xml::Node*> call_briefer::cropPlacemarkFunc(
     bool isSucceeded = true;
     
     if (kmlNode) {
-        xml::Node *mainFolderNode = kml::General().searchMainFolder(kmlNode);
+        xml::Node *mainFolderNode = kml::General::searchMainFolder(kmlNode);
 
         if (mainFolderNode) {
             repairAnomalyDegreeSign(axisStrVec);
@@ -104,7 +104,7 @@ std::vector<xml::Node*> call_briefer::cropPlacemarkFunc(
                 );
                 
                 if (croppedFolderNode) {
-                    if (kml::Placemark().getDataText(croppedFolderNode, "name")
+                    if (kml::Placemark::getDataText(croppedFolderNode, "name")
                         == CROP_COMMAND_WORKING_FOLDER
                     ) {
                         retContainerNode = croppedFolderNode; // 'croppedPlacemarkNodes' is single
@@ -223,10 +223,9 @@ void call_briefer::writeFileFunc(
 ) {
     if (kmlNode) {
         // set name of 'main folder' upto 'root' element as 'fileDir_out' name
-        kml::General().setKMLDocumentName(kmlNode, fileDir_out);
+        kml::General::setKMLDocumentName(kmlNode, fileDir_out);
 
-        xml::Writer xmlWriter;
-        xmlWriter.stringify(fileDir_out, kmlNode);
+        xml::Writer::stringify(fileDir_out, kmlNode);
         std::cout << "\n**SUCCEEDED**\n";
 
         delete kmlNode;
