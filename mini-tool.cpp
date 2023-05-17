@@ -107,6 +107,10 @@ namespace mini_tool {
         int caseFlag,
         int onlyCharDex // index of single character change
     ) {
+        if (string_ptr->size() == 0) {
+            return;
+        }
+
         int aToADifference = CH_A_LOWER_CODE - CH_A_UPPER_CODE, // positive
             startDex, borderDex;
 
