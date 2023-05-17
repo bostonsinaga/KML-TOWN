@@ -19,16 +19,15 @@ xml::Node *Scanner::parsePins(
     std::vector<std::vector<std::string>> yieldParseFunc = parse(fileDir_in);
 
     if (yieldParseFunc.size() > 0) {
+
         std::string styleMapId;
         xml::Node *mainFolderNode = getMainFolder(fileDir_out, &styleMapId, true);
-
-        kml::Builder kmlBuilder;
 
         int dateVecCtr = 0;
         for (auto &coorStr : yieldParseFunc.at(coorStrVec_flag)) {
             mainFolderNode->addChild(
-                kmlBuilder.createPin(
-                    kmlBuilder.COORSTR_ZERO_ADD_ALTITUDE,
+                kml::Builder::createPin(
+                    kml::Builder::COORSTR_ZERO_ADD_ALTITUDE,
                     styleMapId,
                     coorStr,
                     "",
@@ -227,33 +226,29 @@ xml::Node *Scanner::getMainFolder(
     std::string *styleMapId_hook,
     bool isPins
 ) {
-    // XML CREATION //
+    // BUILDER SETUP //
 
     std::string docName = mini_tool::cutFileDirName(fileDir_out);
-    kml::Builder kmlBuilder;
-
-    // BUILDER SETUP //
-    
-    xml::Node *kmlNode = kmlBuilder.createSkeleton(docName);
+    xml::Node *kmlNode = kml::Builder::createSkeleton(docName);
 
     if (isPins) {
         // determined as 'yellow_push_pin'
-        kmlBuilder.insertStyleMap(
+        kml::Builder::insertStyleMap(
             kmlNode,
-            kmlBuilder.createPinStyleMap(styleMapId_hook)
+            kml::Builder::createPinStyleMap(styleMapId_hook)
         );
     }
     else {
-        kmlBuilder.insertStyleMap(
+        kml::Builder::insertStyleMap(
             kmlNode,
-            kmlBuilder.createPathStyleMap(styleMapId_hook)
+            kml::Builder::createPathStyleMap(styleMapId_hook)
         );
     }
 
     // KML CREATION //
 
-    kmlBuilder.setTitle(kmlNode, docName);
-    return kml::General().searchMainFolder(kmlNode);
+    kml::Builder::setTitle(kmlNode, docName);
+    return kml::General::searchMainFolder(kmlNode);
 }
 
 #endif // __TXT_SCANNER_CPP__
