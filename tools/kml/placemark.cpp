@@ -7,34 +7,32 @@ void Placemark::pinsPath(
     xml::Node *kmlNode,
     std::vector<xml::Node*> &sortedPinNodes
 ) {
-    Builder kmlBuilder;
-
     std::string styleMapId;
-    kmlBuilder.insertStyleMap(
+
+    Builder::insertStyleMap(
         kmlNode,
-        kmlBuilder.createPathStyleMap(&styleMapId)
+        Builder::createPathStyleMap(&styleMapId)
     );
 
     std::vector<std::string> coorStrVec;
+
     for (auto &pinNode : sortedPinNodes) {
         coorStrVec.push_back(
             pinNode->getFirstDescendantByName("coordinates")->getInnerText()
         );
     }
 
-    std::vector<xml::Node*> pathNodes {kmlBuilder.createPath(
-        kmlBuilder.COORSTR_NO_ADD_ALTITUDE,
+    std::vector<xml::Node*> pathNodes {Builder::createPath(
+        Builder::COORSTR_NO_ADD_ALTITUDE,
         styleMapId,
         coorStrVec,
         "Path of Selected Pins",
         "Created with KML-TOWN"
     )};
 
-    General kmlGeneral;
-
-    kmlGeneral.insertEditedPlacemarksIntoFolder(
-        kmlGeneral.searchMainFolder(kmlNode),
-        Builder().createFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
+    General::insertEditedPlacemarksIntoFolder(
+        General::searchMainFolder(kmlNode),
+        Builder::createFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-path unifying", "Pins-path unify"},
         ""
@@ -46,15 +44,15 @@ void Placemark::pinsPathSegments(
     std::vector<xml::Node*> &sortedPinNodes,
     bool isFolderize
 ) {
-    Builder kmlBuilder;
-
     std::string styleMapId;
-    kmlBuilder.insertStyleMap(
+    
+    Builder::insertStyleMap(
         kmlNode,
-        kmlBuilder.createPathStyleMap(&styleMapId)
+        Builder::createPathStyleMap(&styleMapId)
     );
 
     std::vector<std::string> coorStrVec, dateStrVec;
+    
     for (auto &pinNode : sortedPinNodes) {
         coorStrVec.push_back(
             pinNode->getFirstDescendantByName("coordinates")->getInnerText()
@@ -74,8 +72,8 @@ void Placemark::pinsPathSegments(
         };
 
         pathNodes.push_back(
-            kmlBuilder.createPath(
-                kmlBuilder.COORSTR_NO_ADD_ALTITUDE,
+            Builder::createPath(
+                Builder::COORSTR_NO_ADD_ALTITUDE,
                 styleMapId,
                 coorStrPair,
                 "Path " + std::to_string(i + 1),
@@ -84,11 +82,9 @@ void Placemark::pinsPathSegments(
         );
     }
 
-    General kmlGeneral;
-
-    kmlGeneral.insertEditedPlacemarksIntoFolder(
-        kmlGeneral.searchMainFolder(kmlNode),
-        Builder().createFolder(PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
+    General::insertEditedPlacemarksIntoFolder(
+        General::searchMainFolder(kmlNode),
+        Builder::createFolder(PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-paths segmenting", "Pins-paths segmentation"},
         ""
@@ -303,6 +299,35 @@ std::string Placemark::getDataText(
     return dataStr;
 }
 
+void Placemark::setDataText(
+    xml::Node *placemarkNode,
+    std::string dataNodeName,
+    std::string valStr,
+    bool isAddingOnly,  // [default] replace data
+    bool isCreateNew    // [default] only process existing node
+) {
+    if (placemarkNode) {
+        xml::Node *placemarkData = placemarkNode->getFirstChildByName(dataNodeName);
+
+        if (isCreateNew && !placemarkData) {
+            xml::Node *newDescriptionNode = new xml::Node("description");
+            General::putOnTopFolder(placemarkNode, {newDescriptionNode});
+            placemarkData = newDescriptionNode;
+        }
+
+        if (placemarkData) {
+            if (isAddingOnly) {
+                placemarkData->setInnerText(
+                    placemarkData->getInnerText()
+                    + std::string("\n")
+                    + valStr
+                );
+            }
+            else placemarkData->setInnerText(valStr);
+        }
+    }
+}
+
 // used in method that need '--include-folders'
 void Placemark::includeFolder(
     xml::Node *placemarkNode,
@@ -340,7 +365,7 @@ void Placemark::includeFolder(
 
         // there isn't any yet
         if (includedFolderNameVecVec_foundDex == -1) {
-            includedNewFolder_node = Builder().createFolder(includedExistFolder_name);
+            includedNewFolder_node = Builder::createFolder(includedExistFolder_name);
             includedFolderNameVecVec.back().push_back(includedExistFolder_name);
             includedExistFolder_name = "";
         }

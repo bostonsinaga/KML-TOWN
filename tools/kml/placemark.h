@@ -3,14 +3,12 @@
 
 class Placemark {
     public:
-        Placemark() {}
-        
-        void pinsPath(
+        static void pinsPath(
             xml::Node *kmlNode,
             std::vector<xml::Node*> &sortedPinNodes
         );
 
-        void pinsPathSegments(
+        static void pinsPathSegments(
             xml::Node *kmlNode,
             std::vector<xml::Node*> &sortedPinNodes,
             bool isFolderize
@@ -18,19 +16,19 @@ class Placemark {
 
         template<typename TYPE_T>
 
-        LD getHaversineDistance(
+        static LD getHaversineDistance(
             TYPE_T startPt,
             TYPE_T endPt
         );
 
-        int getPathDistance(std::vector<Point> &points);
+        static int getPathDistance(std::vector<Point> &points);
         
-        bool setPathDistance(
+        static bool setPathDistance(
             xml::Node *kmlNode,
             bool isOnlyGetInfo
         );
 
-        void removePathsByDistance(
+        static void removePathsByDistance(
             xml::Node *kmlNode,
             LD limitDistance,
             bool isOverDistance
@@ -51,15 +49,23 @@ class Placemark {
             std::string dataNodeName
         );
 
+        static void setDataText(
+            xml::Node *placemarkNode,
+            std::string dataNodeName,
+            std::string valStr,
+            bool isAddingOnly = false,  // [default] replace data
+            bool isCreateNew = false    // [default] only process existing node
+        );
+
         // used in method that need '--include-folders'
-        void includeFolder(
+        static void includeFolder(
             xml::Node *placemarkNode,
             xml::Node *folderNode,
             int testIndex = 0,
             bool isResetStatic = false
         );
 
-        Point convertDegreeToMeterPoint(Point &ptIn);
+        static Point convertDegreeToMeterPoint(Point &ptIn);
 };
 
 #endif // __KML_PLACEMARK_H__
