@@ -16,7 +16,7 @@ xml::Node *Builder::createFolder(
         << "<open>" << std::to_string(isOpen) << "</open>"
         << "</Folder>";
 
-    return xmlReader.parse(
+    return xml::Reader::parse(
         placemark_strStream.str(),
         "Folder [in runtime element]"
     );
@@ -67,20 +67,20 @@ xml::Node *Builder::createPinStyleMap(
         case styleStrings.PUSHPIN_PIN_TYPE_FLAG: {
             normalScale = pushpinScaleNormal;
             highlightScale = pushpinScaleHighlight;
-            hotspotPos[0] = pushpinHotspotPos[0];
-            hotspotPos[1] = pushpinHotspotPos[1];
+            hotspotPos[0] = pushpinHotspotPosVec.at(0);
+            hotspotPos[1] = pushpinHotspotPosVec.at(1);
         break;}
         case styleStrings.PADDLE_PIN_TYPE_FLAG: {
             normalScale = paddleScaleNormal;
             highlightScale = paddleScaleHighlight;
-            hotspotPos[0] = paddleHotspotPos[0];
-            hotspotPos[1] = paddleHotspotPos[1];
+            hotspotPos[0] = paddleHotspotPosVec.at(0);
+            hotspotPos[1] = paddleHotspotPosVec.at(1);
         break;}
         case styleStrings.SHAPES_PIN_TYPE_FLAG: {
             normalScale = shapesScaleNormal;
             highlightScale = shapesScaleHighlight;
-            hotspotPos[0] = shapesHotspotPos[0];
-            hotspotPos[1] = shapesHotspotPos[1];
+            hotspotPos[0] = shapesHotspotPosVec.at(0);
+            hotspotPos[1] = shapesHotspotPosVec.at(1);
         break;}
     }
 
@@ -141,7 +141,7 @@ xml::Node *Builder::createPinStyleMap(
         << "</StyleMap>"
         << "</StyleSet>";
 
-    return xmlReader.parse(
+    return xml::Reader::parse(
         styleMap_strStream.str(),
         "StyleSet [in runtime element]"
     );
@@ -209,7 +209,7 @@ xml::Node *Builder::createPathStyleMap(
         << "</StyleMap>"
         << "</StyleSet>";
     
-    return xmlReader.parse(
+    return xml::Reader::parse(
         styleMap_strStream.str(),
         "StyleSet [in runtime element]"
     );
@@ -241,7 +241,7 @@ xml::Node *Builder::createPin(
         << "</Point>"
         <<" </Placemark>";
 
-    return xmlReader.parse(
+    return xml::Reader::parse(
         placemark_strStream.str(),
         "Placemark [in runtime element]"
     );
@@ -297,7 +297,7 @@ xml::Node *Builder::createPath(
         << "</LineString>"
         <<" </Placemark>";
 
-    return xmlReader.parse(
+    return xml::Reader::parse(
         placemark_strStream.str(),
         "Placemark [in runtime element]"
     );
@@ -324,15 +324,14 @@ xml::Node *Builder::createSkeleton(std::string &docName) {
         << "</Document>"
         << "</kml>";
     
-    return xmlReader.parse(
+    return xml::Reader::parse(
         placemark_strStream.str(),
         "kml [in runtime element]"
     );
 }
 
 void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
-    General kmlGeneral;
-    xml::Node *docNode = kmlGeneral.getRootDocument(kmlNode);
+    xml::Node *docNode = General::getRootDocument(kmlNode);
 
     if (docNode) {
         xml::Node *nameNode = docNode->getFirstChildByName("name");
@@ -342,7 +341,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
         nameNode->setInnerText(docName);
     }
 
-    xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
+    xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
 
     if (mainFolderNode) {
         xml::Node *nameNode = mainFolderNode->getFirstChildByName("name");
@@ -355,7 +354,7 @@ void Builder::setTitle(xml::Node *kmlNode, std::string &docName) {
 
 void Builder::insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode) {
 
-    xml::Node *docNode = General().getRootDocument(kmlNode);
+    xml::Node *docNode = General::getRootDocument(kmlNode);
     int childCtr = 0;
 
     for (auto &child : *docNode->getChildren()) {
@@ -398,5 +397,20 @@ std::string Builder::getAltitudeAddition(
 
     return "";
 }
+
+StyleStrings Builder::styleStrings = StyleStrings();
+
+std::vector<std::string>
+    Builder::pushpinHotspotPosVec = {"20", "2"},
+    Builder::paddleHotspotPosVec = {"32", "1"},
+    Builder::shapesHotspotPosVec = {"0.5", "0"};
+
+std::string
+    Builder::pushpinScaleNormal = "1.1",
+    Builder::pushpinScaleHighlight = "1.3",
+    Builder::paddleScaleNormal = "1.1",
+    Builder::paddleScaleHighlight = "1.3",
+    Builder::shapesScaleNormal = "1.2",
+    Builder::shapesScaleHighlight = "1.4";
 
 #endif // __KML_BUILDER_CPP__

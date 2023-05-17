@@ -3,22 +3,20 @@
 
 class Builder {
     public:
-        Builder() {}
-        
-        xml::Node *createFolder(
+        static xml::Node *createFolder(
             std::string name = "",
             bool isOpen = false
         );
 
         // return one style map set of pins
-        xml::Node *createPinStyleMap(
+        static xml::Node *createPinStyleMap(
             std::string *styleMapId_hook,
             std::string pinIconNamed = "",
             std::string pinIconScaleStr = "1.0"
         );
 
         // return one style map set of path
-        xml::Node *createPathStyleMap(
+        static xml::Node *createPathStyleMap(
             std::string *styleMapId_hook,
             std::string pathColorNamed = "",
             std::string pathThicknessStr = "2.0"
@@ -30,7 +28,7 @@ class Builder {
             COORSTR_NO_ADD_ALTITUDE
         };
 
-        xml::Node *createPin(
+        static xml::Node *createPin(
             int altitudeAdditionFlag,
             std::string styleMapId,
             std::string decimalCoorStr,
@@ -38,7 +36,7 @@ class Builder {
             std::string description = ""
         );
 
-        xml::Node *createPath(
+        static xml::Node *createPath(
             int altitudeAdditionFlag,
             std::string styleMapId,
             std::vector<std::string> coorStrVec,
@@ -46,28 +44,27 @@ class Builder {
             std::string description = ""
         );
 
-        xml::Node *createSkeleton(std::string &docName);
-        void setTitle(xml::Node *kmlNode, std::string &docName);
-        void insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode);
+        static xml::Node *createSkeleton(std::string &docName);
+        static void setTitle(xml::Node *kmlNode, std::string &docName);
+        static void insertStyleMap(xml::Node *kmlNode, xml::Node *styleSetNode);
 
     private:
-        std::string getAltitudeAddition(
+        static std::string getAltitudeAddition(
             int altitudeAdditionFlag,
             std::string coorStrAuto = ""
         );
 
-        xml::Reader xmlReader;
-        StyleStrings styleStrings;
+        static StyleStrings styleStrings;
 
-        std::string
-            pushpinHotspotPos[2] = {"20", "2"},
-            paddleHotspotPos[2] = {"32", "1"},
-            shapesHotspotPos[2] = {"0.5", "0"};
+        static std::vector<std::string>
+            pushpinHotspotPosVec,
+            paddleHotspotPosVec,
+            shapesHotspotPosVec;
 
-        std::string
-            pushpinScaleNormal = "1.1", pushpinScaleHighlight = "1.3",
-            paddleScaleNormal = "1.1", paddleScaleHighlight = "1.3",
-            shapesScaleNormal = "1.2", shapesScaleHighlight = "1.4";
+        static std::string
+            pushpinScaleNormal, pushpinScaleHighlight,
+            paddleScaleNormal, paddleScaleHighlight,
+            shapesScaleNormal, shapesScaleHighlight;
 };
 
 #endif // __KML_BUILDER_H__
