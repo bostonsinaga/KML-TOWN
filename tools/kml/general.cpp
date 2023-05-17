@@ -123,29 +123,36 @@ void General::fillWithPlacemarks(
 
 void General::putOnTopFolder(
     xml::Node *containerFolder,
-    std::vector<xml::Node*> nodeVec
+    std::vector<xml::Node*> nodeVec,
+    std::vector<std::string> additionalPriorityNameList  // multiple appearance
 ) {
     /* 'priorityFolderCount' index as a limit to top placement */
 
     int priorityFolderCount = 0;
-    std::string priorityNameList[5] = {
+    std::vector<std::string> priorityNameList {
         // single appearance
         "name", "visibility", "open",
         // multiple appearance
         "Style", "StyleMap" // if parent a document
     };
 
+    priorityNameList.insert(
+        priorityNameList.end(),
+        additionalPriorityNameList.begin(),
+        additionalPriorityNameList.end()
+    );
+
     // single appearance
     for (int i = 0; i < 3; i++) {
-        if (containerFolder->getFirstChildByName(priorityNameList[i])) {
+        if (containerFolder->getFirstChildByName(priorityNameList.at(i))) {
             priorityFolderCount++;
         }
     }
 
     // multiple appearance
     if (containerFolder->getName() == "Document") {
-        for (int i = 3; i < 5; i++) {
-            std::vector<xml::Node*> multiAppearanceVec = containerFolder->getChildrenByName(priorityNameList[i]);
+        for (int i = 3; i < priorityNameList.size(); i++) {
+            std::vector<xml::Node*> multiAppearanceVec = containerFolder->getChildrenByName(priorityNameList.at(i));
             priorityFolderCount += multiAppearanceVec.size();
         }
     }
@@ -206,7 +213,7 @@ bool General::logEditedPlacemarks(
     std::vector<std::string> noticeFuncName, // [error, correct]
     std::vector<xml::Node*> &placemarks,
     xml::Node *containerNode
-) {     
+) {
     // set folder name //
     std::string folderName = "noname";
     bool isFolderNaming = true;
@@ -231,7 +238,8 @@ bool General::logEditedPlacemarks(
 
     // evaluate //
 
-    if (placemarks.size() == 0) { // failed
+    // failed
+    if (placemarks.size() == 0) {
         std::string taskName = noticeFuncName.at(1);
 
         // task name lower case
@@ -260,7 +268,8 @@ bool General::logEditedPlacemarks(
 
         return false;
     }
-    else { // succeeded
+    // succeeded
+    else {
         std::cout
             << "KML-> "
             << noticeFuncName.at(1) << " "
