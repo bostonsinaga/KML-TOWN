@@ -3,20 +3,37 @@
 
 #include "date-folder.h"
 
-/* called as 'folder-by-date' */
+/*
+    called as 'folder-by-date' (will pack placemarks by their date in name or description)
+    (available only for 'dd/mm/yyyy' numeric format)
+*/
 
-/* for now the pattern is 'dd/mm/yyyy' */
-
-void DateFolder::packNumeral(xml::Node *kmlNode) {
+/*
+    -pack placemarks into one folder of their date
+    -the undated placemark will be inserted into 'NO DATE' folder inside working folder
+*/
+bool DateFolder::packNumeral(xml::Node *kmlNode) {
 
     int CTR = 0;
-    General kmlGeneral;
     std::vector<std::vector<int>> dateVector;
-    xml::Node *mainFolderNode = kmlGeneral.searchMainFolder(kmlNode);
+    xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
+    std::vector<xml::Node*> placemarkNodes;
 
-    std::vector<xml::Node*> placemarkNodes = (
-        mainFolderNode->getDescendantsByName("Placemark", true)
-    );
+    if (mainFolderNode) {
+        placemarkNodes = mainFolderNode->getDescendantsByName("Placemark", true);
+    }
+
+    if (placemarkNodes.size() == 0) {
+
+        General::logEditedPlacemarks(
+            "placemark",
+            {"Foldering by date", !mainFolderNode ? "" : "Folder by date"},
+            placemarkNodes,
+            mainFolderNode
+        );
+
+        return false;
+    }
 
     // search dates //
 
@@ -35,7 +52,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             testStr = nameNode->getInnerText();
             dmyInt = testNumeralDate(testStr);
 
-            if (dmyInt.size() > 0) {
+            if (dmyInt.size() == 3) {
                 dateVector.push_back(dmyInt);
                 isContinue = false;
             }
@@ -46,7 +63,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             testStr = descNode->getInnerText();
             dmyInt = testNumeralDate(testStr);
 
-            if (dmyInt.size() > 0) {
+            if (dmyInt.size() == 3) {
                 dateVector.push_back(dmyInt);
                 isContinue = false;
             }
@@ -71,10 +88,13 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
         );
     }
 
-    // smaller-bigger (descending) bubble sort
+    // smaller-bigger (descending) bubble sort //
+
     CTR = 0;
+
     for (int i = 0; i < dateRates.size(); i++) {
         for (int j = 1; j < dateRates.size(); j++) {
+
             if (dateRates.at(CTR) <= dateRates.at(j)) {
                 CTR = j;
             }
@@ -92,6 +112,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
                 placemarkNodes.at(j) = bufferNode;
             }
         }
+
         CTR = 0;
     }
 
@@ -115,20 +136,10 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
     };
 
     CTR = 0;
+
     for (auto &dmyInt : dateVector) {
 
-        std::string dayMonthZeroPrefix[2] = {
-            std::log10(dmyInt.at(0)) < 1 ? "0" : "",
-            std::log10(dmyInt.at(1)) < 1 ? "0" : ""
-        };
-
-        std::string dateStr = (
-            dayMonthZeroPrefix[0] +
-            std::to_string(dmyInt.at(0)) + std::string("/") +
-            dayMonthZeroPrefix[1] +
-            std::to_string(dmyInt.at(1)) + std::string("/") +
-            std::to_string(dmyInt.at(2))
-        );
+        std::string dateStr = convertDMYVectorToString(dmyInt);
 
         if (dateStr == "31/12/9999") {
             dateStr = "NO DATE";
@@ -142,7 +153,7 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
             }
 
             dateStrVec.push_back(dateStr);
-            newFolderNodes.push_back(Builder().createFolder(dateStr, false));
+            newFolderNodes.push_back(Builder::createFolder(dateStr, false));
             insideDex = dateStrVec.size() - 1;
             bufferItemsCount = 0;
         }
@@ -157,15 +168,120 @@ void DateFolder::packNumeral(xml::Node *kmlNode) {
 
     // finishing //
 
-    kmlGeneral.insertEditedPlacemarksIntoFolder(
+    General::insertEditedPlacemarksIntoFolder(
         mainFolderNode,
-        Builder().createFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
+        Builder::createFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
         newFolderNodes,
-        {"Date foldering", "Folder by date"},
+        {"Foldering by date", "Folder by date"},
         "placemark"
     );
+
+    return true;
 }
 
+/*
+    -spread folder date string to undated placemark description
+    -doesn't need to insert into new working folder
+*/
+bool DateFolder::spreadNumeral(xml::Node *kmlNode, bool isOverrideDated) {
+
+    xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
+    bool isAbleToDate = false;
+    std::vector<xml::Node*> datedPlacemarkNodes;
+
+    if (!mainFolderNode) {
+        
+        General::logEditedPlacemarks(
+            "placemark",
+            {"Dating by folder", ""},
+            datedPlacemarkNodes,
+            nullptr
+        );
+
+        return false;
+    }
+
+    auto spreadDate_lambda = [&](xml::Node *folder_in, std::vector<int> &dmyIntVec_in) {
+        for (auto &placemark : folder_in->getChildrenByName("Placemark")) {
+            bool isSetData = false;
+            
+            /* only for placemark description */
+
+            if (!isOverrideDated) {
+
+                /* there is must no date in name and description */
+
+                std::vector<int> dmyIntVec_existed = testNumeralDate(
+                    Placemark::getDataText(placemark, "name")
+                );
+
+                if (dmyIntVec_existed.size() == 0) {
+                    dmyIntVec_existed = testNumeralDate(
+                        Placemark::getDataText(placemark, "description")
+                    );
+                }
+
+                if (dmyIntVec_existed.size() == 0) {
+                    isSetData = true;
+                }
+            }
+            else isSetData = true;
+
+            if (isSetData) {
+                if (!isAbleToDate) isAbleToDate = true;
+                std::string dateStr = convertDMYVectorToString(dmyIntVec_in);
+                Placemark::setDataText(placemark, "description", dateStr, true, true);
+                datedPlacemarkNodes.push_back(placemark);
+            }
+        }
+    };
+
+    std::function<void(xml::Node*)> recursiveLambda;
+
+    recursiveLambda = [&](xml::Node *folder_in) {
+
+        std::vector<int> dmyIntVec = testNumeralDate(
+            Placemark::getDataText(folder_in, "name")
+        );
+
+        if (dmyIntVec.size() == 0) {
+            dmyIntVec = testNumeralDate(
+                Placemark::getDataText(folder_in, "description")
+            );
+        }
+
+        std::vector<xml::Node*> subFolders = folder_in->getChildrenByName("Folder");
+
+        if (subFolders.size() == 0) {
+            if (dmyIntVec.size() == 3) {
+                spreadDate_lambda(folder_in, dmyIntVec);
+            }
+        }
+        else {
+            for (auto &sub : subFolders) {
+                recursiveLambda(sub);
+            }
+
+            if (dmyIntVec.size() == 3) {
+                spreadDate_lambda(folder_in, dmyIntVec);
+            }
+        }
+    };
+
+    recursiveLambda(mainFolderNode);
+
+    General::logEditedPlacemarks(
+        "placemark",
+        {"Dating by folder", "Date by folder"},
+        datedPlacemarkNodes,
+        mainFolderNode
+    );
+
+    if (isAbleToDate) return true;
+    else return false;
+}
+
+// returns day, month, year in integers vector
 std::vector<int> DateFolder::testNumeralDate(std::string testStr) {
 
     std::vector<std::string> dmyStr(3, "");
@@ -187,13 +303,13 @@ std::vector<int> DateFolder::testNumeralDate(std::string testStr) {
         }
     }
 
-    std::vector<int> retDmyInt;
+    std::vector<int> retDmyIntVec;
     int blankCount = 0;
 
     for (auto &str : dmyStr) {
         if (str == "") blankCount++;
         else {
-            retDmyInt.push_back(
+            retDmyIntVec.push_back(
                 int(mini_tool::filterStringDecimal(str))
             );
         }
@@ -204,13 +320,14 @@ std::vector<int> DateFolder::testNumeralDate(std::string testStr) {
     }
 
     // handle year
-    if (int(std::log10(retDmyInt.back())) == 1) {
-        retDmyInt.back() += 2000;
+    if (int(std::log10(retDmyIntVec.back())) == 1) {
+        retDmyIntVec.back() += 2000;
     }
 
-    return retDmyInt;
+    return retDmyIntVec;
 }
 
+// returns day counts of given decimal month
 int DateFolder::convertMonthInDaysCount(int month) {
     int retCount = 0;
     
@@ -223,6 +340,31 @@ int DateFolder::convertMonthInDaysCount(int month) {
     }
 
     return retCount;
+}
+
+// convert DMY vector to string
+std::string DateFolder::convertDMYVectorToString(
+    std::vector<int> &dmyIntVec_in
+) {
+    std::string dateStr = "";
+
+    if (dmyIntVec_in.size() == 3) {
+
+        std::string dayMonthZeroPrefix[2] = {
+            std::log10(dmyIntVec_in.at(0)) < 1 ? "0" : "",
+            std::log10(dmyIntVec_in.at(1)) < 1 ? "0" : ""
+        };
+
+        dateStr = (
+            dayMonthZeroPrefix[0] +
+            std::to_string(dmyIntVec_in.at(0)) + std::string("/") +
+            dayMonthZeroPrefix[1] +
+            std::to_string(dmyIntVec_in.at(1)) + std::string("/") +
+            std::to_string(dmyIntVec_in.at(2))
+        );
+    }
+
+    return dateStr;
 }
 
 #endif // __KML_DATE_FOLDER_CPP__
