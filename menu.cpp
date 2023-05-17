@@ -24,6 +24,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     toggleStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_CLASSIFY_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_DATE_BY_FOLDER_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"kml"};
     toggleStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"csv"};
@@ -39,6 +40,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"measure-paths"};
     parameterStringsVec[0].at(KML_CLASSIFY_FLAG) = {"classify"};
     parameterStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"folder-by-date"};
+    parameterStringsVec[0].at(KML_DATE_BY_FOLDER_FLAG) = {"date-by-folder"};
     parameterStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"filter-string", "text"};
     parameterStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"remove-paths"};
     parameterStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"change-separator", "old-sign", "new-sign"};
@@ -55,6 +57,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     toggleStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"info"};
     toggleStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"include-folders", "only-similar-style", "path-text-prioritize-first"};
     toggleStringsVec[1].at(KML_CLASSIFY_FLAG) = {"clean-folders", "include-folders"};
+    toggleStringsVec[1].at(KML_DATE_BY_FOLDER_FLAG) = {"override-dated"};
 
     // >>> PARAMETERS //
 
@@ -65,6 +68,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_CLASSIFY_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_FOLDER_BY_DATE_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_DATE_BY_FOLDER_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_FILTER_STRING_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_REMOVE_PATHS_FLAG) = {"out", "over-distance", "under-distance"};
     parameterStringsVec[1].at(CSV_CHANGE_SEPARATOR_FLAG) = {"out"};
