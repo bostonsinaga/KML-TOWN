@@ -136,7 +136,9 @@ bool Builder::compose(
         bool isUsingPathsColumn = false;
 
         for (auto &name : pathFolderNames) {
-            if (mini_tool::isStringContains(colNodeNames.back(), name, true)) {
+            std::string containsName = colNodeNames.back();
+            
+            if (mini_tool::isStringContains(containsName, name, true)) {
                 isUsingPathsColumn = true;
                 break;
             }
