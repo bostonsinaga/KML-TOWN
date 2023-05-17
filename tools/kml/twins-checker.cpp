@@ -30,7 +30,7 @@ xml::Node *TwinsChecker::findPins(
                 pointNode->getFirstDescendantByName("coordinates")->getInnerText()
             ));
 
-            pointVec.back() = Placemark().convertDegreeToMeterPoint(pointVec.back());
+            pointVec.back() = Placemark::convertDegreeToMeterPoint(pointVec.back());
         }
     }
 
@@ -189,7 +189,7 @@ xml::Node *TwinsChecker::findPaths(
 
             for (auto &point : pointVecVec.back()) {
                 pointVec_buffer.push_back(
-                    Placemark().convertDegreeToMeterPoint(point)
+                    Placemark::convertDegreeToMeterPoint(point)
                 );
             }
 
@@ -407,16 +407,15 @@ xml::Node *TwinsChecker::findAll(
         false
     );
 
-    xml::Node *workingFolder = Builder().createFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
+    xml::Node *workingFolder = Builder::createFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
 
     if (pinsFolder) workingFolder->addChild(pinsFolder);
     if (pathsFolder) workingFolder->addChild(pathsFolder);
 
     // connect to 'kmlNode'
     if (pinsFolder || pathsFolder) {
-        General kmlGeneral;
-        kmlGeneral.putOnTopFolder(
-            kmlGeneral.getRootDocument(kmlNode),
+        General::putOnTopFolder(
+            General::getRootDocument(kmlNode),
             {workingFolder}
         );
         return workingFolder;
@@ -435,22 +434,20 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
     bool isParentFolderNamedAType,
     bool isIncludeFolders
 ) {
-    General kmlGeneral;
-    std::string kmlNameString = kmlGeneral.getRootDocumentName(kmlNode);
+    std::string kmlNameString = General::getRootDocumentName(kmlNode);
 
     if (matchedIndexes[0].size() > 0) {
-        Builder kmlBuilder;
 
-        xml::Node *returnFolder = kmlBuilder.createFolder(
+        xml::Node *returnFolder = Builder::createFolder(
             isParentFolderNamedAType ?
             mini_tool::changeStringCase(placemarksType, mini_tool::UPPER_CASE_FLAG) :
             TWINS_CHECK_COMMAND_WORKING_FOLDER
         );
 
-        xml::Node *folderOri = kmlBuilder.createFolder(std::string("ORIGINALS"));
+        xml::Node *folderOri = Builder::createFolder(std::string("ORIGINALS"));
         returnFolder->addChild(folderOri);
 
-        xml::Node *folderDupl = kmlBuilder.createFolder(std::string("DUPLICATES"));
+        xml::Node *folderDupl = Builder::createFolder(std::string("DUPLICATES"));
         returnFolder->addChild(folderDupl);
 
         int matchedCtr = 0;
@@ -475,7 +472,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                 else twinsDivFolder = folderDupl;
 
                 if (isIncludeFolders) {
-                    Placemark().includeFolder(
+                    Placemark::includeFolder(
                         placemarkNodes.at(index),
                         twinsDivFolder,
                         i,
@@ -502,8 +499,8 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         if (isParentFolderNamedAType) return returnFolder;
         else {
             // connect to 'kmlNode'
-            xml::Node *rootDoc = kmlGeneral.getRootDocument(kmlNode);
-            kmlGeneral.putOnTopFolder(rootDoc, {returnFolder});
+            xml::Node *rootDoc = General::getRootDocument(kmlNode);
+            General::putOnTopFolder(rootDoc, {returnFolder});
             return returnFolder;
         }
     }
