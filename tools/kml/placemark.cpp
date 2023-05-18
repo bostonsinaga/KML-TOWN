@@ -189,7 +189,8 @@ bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
     return false;
 }
 
-void Placemark::removePathsByDistance(
+// return 'true' if a path removed
+bool Placemark::removePathsByDistance(
     xml::Node *kmlNode,
     LD limitDistance,
     bool isOverDistance
@@ -225,7 +226,15 @@ void Placemark::removePathsByDistance(
             << "----------------------\n"
             << "Total removed paths:  " << totalRemoved << "\n"
             << "----------------------\n";
+
+        if (totalRemoved > 0) return true;
+        else {
+            std::cerr << "KML-> Placemark utility warning. No path to remove\n";
+            return false;
+        }
     }
+
+    return false;
 }
 
 // get placemark name or its folder name (closest parent)

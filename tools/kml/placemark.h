@@ -28,7 +28,8 @@ class Placemark {
             bool isOnlyGetInfo
         );
 
-        static void removePathsByDistance(
+        // return 'true' if a path removed
+        static bool removePathsByDistance(
             xml::Node *kmlNode,
             LD limitDistance,
             bool isOverDistance
