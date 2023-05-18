@@ -40,9 +40,9 @@ This really help me. And I hope this can help you too. Thank you.</br>
 
 # COMMANDS
 
-****************************************************************
+*******************
 **INPUT MANDATORY**
-****************************************************************
+*******************
 
 -- TOGGLES --
 
@@ -79,9 +79,9 @@ KML_FILTER_STRING_FLAG = "filter-string", "text"<br>
 KML_REMOVE_PATHS_FLAG = "remove-paths"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
 
-****************************************************************
+******************
 **INPUT OPTIONAL**
-****************************************************************
+******************
 
 -- TOGGLES --
 
