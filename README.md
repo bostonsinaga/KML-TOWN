@@ -1,5 +1,7 @@
 # KML-TOWN v1.0.0 2023-05-18
+****************************************************************
 *Previously from v0.10.4 ALPHA 2023-03-22*
+****************************************************************
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -38,9 +40,9 @@ This really help me. And I hope this can help you too. Thank you.</br>
 
 # COMMANDS
 
-*********************
-** INPUT MANDATORY **
-*********************
+****************************************************************
+INPUT MANDATORY
+****************************************************************
 
 -- TOGGLES --
 
@@ -77,9 +79,9 @@ KML_FILTER_STRING_FLAG = "filter-string", "text"<br>
 KML_REMOVE_PATHS_FLAG = "remove-paths"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
 
-********************
-** INPUT OPTIONAL **
-********************
+****************************************************************
+INPUT OPTIONAL
+****************************************************************
 
 -- TOGGLES --
 
