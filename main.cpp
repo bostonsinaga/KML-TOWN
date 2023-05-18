@@ -594,7 +594,7 @@ int main(int argc, char *argv[]) {
 
         // expected integer are '1' or '2'
         int isOver_oppositeCode = menu.checkOppositeParameterString(
-            "over-distance", "under-distance", &distance_paramStr
+            "under-distance", "over-distance", &distance_paramStr
         );
 
         // directly end
@@ -615,7 +615,7 @@ int main(int argc, char *argv[]) {
             kml::Placemark::removePathsByDistance(
                 kmlNode,
                 mini_tool::filterStringDecimal(distance_paramStr),
-                isOver_oppositeCode
+                isOver_oppositeCode - 1
             );
 
             call_briefer::writeFileFunc(kmlNode, fileDir_check);
