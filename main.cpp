@@ -612,13 +612,16 @@ int main(int argc, char *argv[]) {
         if (fileDir_check != "") {
             xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
 
-            kml::Placemark::removePathsByDistance(
+            bool isPathRemoved = kml::Placemark::removePathsByDistance(
                 kmlNode,
                 mini_tool::filterStringDecimal(distance_paramStr),
                 isOver_oppositeCode - 1
             );
 
-            call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            if (isPathRemoved) {
+                call_briefer::writeFileFunc(kmlNode, fileDir_check);
+            }
+            else std::cerr << "\n**FAILED**\n";
         }
     }
 
