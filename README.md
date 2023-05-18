@@ -1,4 +1,5 @@
-# KML-TOWN v0.10.4 ALPHA 2023-03-22
+# KML-TOWN v1.0.0 2023-05-18
+*Previously from v0.10.4 ALPHA 2023-03-22*
 
 Hello there,</br>
 I've created software named **KML-TOWN**.</br>
@@ -6,23 +7,19 @@ A simple and useful **Google Earth** *'.kml'* editor program.</br>
 I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **WHAT THINGS YOU CAN DO WITH THIS ARE:**</br>
--- **scan** and **convert** into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their date</br>
+-- **convert** into *'.kml'* from *'.txt'* exported **WhatsApp** chat of share locations with their date</br>
+-- **convert** *'.kml'* into *'.csv'* with folders as *columns* and data as *rows*</br>
 -- **manipulate** *'.kml'* such as:</br>
------- *collapse* paths into pins **[under development]**</br>
 ------ *unite* pins into path</br>
------- *merge* paths into one path **[under development]**</br>
------- *slice* paths into path fractions **[under development]**</br>
------- *split* points of paths **[under development]**</br>
------- *crop* pins and paths</br>
------- *sort* pins and paths inside selected rectangular area (you can number them as well)</br>
------- *change* pins icon and paths color with a bunch of predefined styles (you can select desired area) **[under development]**</br>
------- *check* twin of pins and paths (you can perform some after process commands)</br>
+------ *crop* placemarks</br>
+------ *sort* placemarks</br>
+------ *check* twin of placemarks</br>
 ------ *measure* paths distance</br>
------- *filter* types of data:</br>
----------- classify by type</br>
----------- classify by date</br>
----------- classify by text from name or description</br>
--- **convert** *'.kml'* into *'.csv'* with folders as *columns* and data as *rows* (you can specify the separator)
+------ *classify* placemarks by their similar style</br>
+------ *folder* placemarks by their date<br>
+------ *date* placemarks by their folder's date</br>
+------ *filter* placemarks by text from their name or description</br>
+------ *remove* paths by maximum/minimum distance
 
 **HOW TO INSTALL:**</br>
 -- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
