@@ -56,6 +56,7 @@ KML_TWINS_CHECK_FLAG = "kml"<br>
 KML_MEASURE_PATHS_FLAG = "kml"<br>
 KML_CLASSIFY_FLAG = "kml"<br>
 KML_FOLDER_BY_DATE_FLAG = "kml"<br>
+KML_DATE_BY_FOLDER_FLAG = "kml"<br>
 KML_FILTER_STRING_FLAG = "kml"<br>
 KML_REMOVE_PATHS_FLAG = "kml"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "csv"
@@ -64,13 +65,14 @@ CSV_CHANGE_SEPARATOR_FLAG = "csv"
 
 CONVERT_TXT_KML_FLAG = "txt-in", "kml-out", "type"<br>
 CONVERT_KML_CSV_FLAG = "kml-in", "csv-out"<br>
-KML_CROP_FLAG = "crop", "start-point", "end-point"<br>
-KML_SORT_FLAG = "sort", "start-point", "end-point"<br>
+KML_CROP_FLAG = "crop", "start-point", "end-point", "type"<br>
+KML_SORT_FLAG = "sort", "start-point", "end-point", "type"<br>
 KML_PINS_PATH_FLAG = "pins-path", "start-point", "end-point"<br>
 KML_TWINS_CHECK_FLAG = "twins-check", "type", "radius"<br>
 KML_MEASURE_PATHS_FLAG = "measure-paths"<br>
 KML_CLASSIFY_FLAG = "classify"<br>
 KML_FOLDER_BY_DATE_FLAG = "folder-by-date"<br>
+KML_DATE_BY_FOLDER_FLAG = "date-by-folder"<br>
 KML_FILTER_STRING_FLAG = "filter-string", "text"<br>
 KML_REMOVE_PATHS_FLAG = "remove-paths"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
@@ -81,9 +83,13 @@ CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
 
 -- TOGGLES --
 
+CONVERT_TXT_KML_FLAG = "sort"<br>
+KML_CROP_FLAG = "include-folders"<br>
+KML_SORT_FLAG = "include-folders"<br>
 KML_MEASURE_PATHS_FLAG = "info"<br>
-KML_TWINS_CHECK_FLAG = "include-folders"<br>
-KML_CLASSIFY_FLAG = "clean-folders", "include-folders"
+KML_TWINS_CHECK_FLAG = "include-folders", "only-similar-style", "path-text-prioritize-first"<br>
+KML_CLASSIFY_FLAG = "clean-folders", "include-folders"<br>
+KML_DATE_BY_FOLDER_FLAG = "override-dated"
 
 -- PARAMETERS --
 
@@ -94,6 +100,7 @@ KML_TWINS_CHECK_FLAG = "out"<br>
 KML_MEASURE_PATHS_FLAG = "out"<br>
 KML_CLASSIFY_FLAG = "out"<br>
 KML_FOLDER_BY_DATE_FLAG = "out"<br>
+KML_DATE_BY_FOLDER_FLAG = "out"<br>
 KML_FILTER_STRING_FLAG = "out"<br>
 KML_REMOVE_PATHS_FLAG = "out", "over-distance", "under-distance"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "out"
