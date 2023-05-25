@@ -57,6 +57,9 @@ xml::Node *Scanner::parsePins(
 
 std::vector<std::vector<std::string>> Scanner::parse(std::string &fileDir_in) {
 
+    std::cerr << "TXT-> Coordinate input attention. The 'txt' file expected format are\n"
+              << "      'x.xxx,y.yyy' or 'x.xxx y.yyy' [NO MULTIPLE ',' OR ' ' OR BOTH COMBINED]\n";
+
     std::ifstream readFile(fileDir_in);
     std::vector<std::string> textVector;
     std::string stringBuffer;
