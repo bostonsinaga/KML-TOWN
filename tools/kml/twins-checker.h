@@ -64,6 +64,17 @@ class TwinsChecker {
             bool isIncludeFolders
         );
 
+        /*
+            -clean copies of icon urls or color codes that contained inside separate 'StyleMap'
+             to reduce size of 'kml' file and also rename the 'styleUrl' to templated names
+             (note that this operation will rewrite previous tidied styles)
+
+            -this won't keep the previous pins or paths size but will use default size
+
+            -command: 'tidy-up-styles'
+        */
+        bool tidyUpStyles(xml::Node *kmlNode);
+
     private:
         /* limited from 0 to 100 meters */
         double getLimitedMeterRadius(std::string meterRadiusRateString);

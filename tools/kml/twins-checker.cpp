@@ -148,9 +148,8 @@ xml::Node *TwinsChecker::findPaths(
     bool isPathTextPrioritizeFirst,
     bool isPrioritizePrintAboutMessage
 ) {
-    std::cerr
-        << "KML-> Twins checking attention. This will sanitize/remove\n"
-        << "      zero path (single coordinate) or empty path\n";
+    std::cerr << "KML-> Twins checking attention. This will sanitize/remove\n"
+              << "      zero path (single coordinate) or empty path\n";
 
     double meterRadius = getLimitedMeterRadius(meterRadiusRateString);
     std::vector<xml::Node*> nodes;
@@ -505,9 +504,9 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         }
     }
     else {
-        std::cerr
-            << "KML-> Twins checking warning. No '" << placemarksType << "' twins inside '"
-            << kmlNameString << "' document\n";
+        std::cerr << "KML-> Twins checking warning. No '"
+                  << placemarksType << "' twins inside '"
+                  << kmlNameString << "' document\n";
         return nullptr;
     }
 }
@@ -612,6 +611,161 @@ bool TwinsChecker::Prioritize::isNoname(
         if (mini_tool::isStringEquals(testStr, str, true)) {
             return true;
         }
+    }
+
+    return false;
+}
+
+/*
+    -clean copies of icon urls or color codes that contained inside separate 'StyleMap'
+     to reduce size of 'kml' file and also rename the 'styleUrl' to templated names
+     (note that this operation will rewrite previous tidied styles)
+
+    -this won't keep the previous pins or paths size but will use default size
+
+    -command: 'tidy-up-styles'
+*/
+bool TwinsChecker::tidyUpStyles(xml::Node *kmlNode) {
+    if (kmlNode) {
+
+        /* Array:
+            index '0' is pins
+            index '1' is paths
+        */
+
+        bool isFirstPlcItr = true;
+        StyleStrings kmlStyleStrings;
+        
+        std::vector<std::string> styleUrlVec[2];
+        std::vector<xml::Node*> placemarkNodesVec[2];
+
+        placemarkNodesVec[0] = kmlNode->getDescendantsByName("Point", true);
+        placemarkNodesVec[1] = kmlNode->getDescendantsByName("LineString", true);
+
+        if (placemarkNodesVec[0].size() == 0 &&
+            placemarkNodesVec[1].size() == 0
+        ) {
+            std::cerr << "KML-> Tidy up styles error. Placemark not found\n";
+            return false;
+        }
+
+        bool styleExistanceHook, isStyleExist = false;
+
+        for (int i = 0; i < 2; i++) {
+            for (auto &placemarkNode : placemarkNodesVec[i]) {
+                placemarkNode = placemarkNode->getParent();
+
+                styleUrlVec[i].push_back(
+                    kmlStyleStrings.getPlacemarkStyleData(
+                        placemarkNode, isFirstPlcItr, &styleExistanceHook
+                    )
+                );
+
+                if (!isStyleExist && styleExistanceHook) {
+                    isStyleExist = true;
+                }
+
+                if (isFirstPlcItr) isFirstPlcItr = false;
+            }
+        }
+
+        if (!isStyleExist) {
+            std::cerr << "KML-> Tidy up styles error. Style data not found\n";
+            return false;
+        }
+
+        // delete existing 'StyleMap' and 'Style' nodes //
+
+        std::vector<std::string> deletedNames {"StyleMap", "Style"};
+
+        for (auto &name : deletedNames) {
+            for (auto &node : kmlNode->getDescendantsByName(name, true)) {
+                node->removeFromParent();
+                delete node;
+            }
+        }
+
+        // get clean 'styleUrlVec' from duplications //
+
+        std::vector<std::string> cleanedStyleUrlVec[2];
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < styleUrlVec[i].size(); j++) {
+                int cleanedLatestDex;
+
+                int oriDex = mini_tool::isPrimitiveInsideVector<std::string>(
+                    cleanedStyleUrlVec[i], styleUrlVec[i].at(j)
+                );
+
+                if ((cleanedStyleUrlVec[i].size() > 0 && oriDex == -1) ||
+                    cleanedStyleUrlVec[i].size() == 0
+                ) {
+                    cleanedStyleUrlVec[i].push_back(styleUrlVec[i].at(j));
+                    cleanedLatestDex = cleanedStyleUrlVec[i].size() - 1;
+                }
+                else cleanedLatestDex = oriDex;
+
+                xml::Node *styleUrlNode = (
+                    placemarkNodesVec[i].at(j)->getFirstChildByName("styleUrl")
+                );
+
+                if (styleUrlNode) {
+                    styleUrlNode->setInnerText("#msn_" + cleanedStyleUrlVec[i].at(cleanedLatestDex));
+                }
+                // no 'styleUrl' node
+                else {
+                    styleUrlNode = new xml::Node("styleUrl");
+
+                    General::putOnTopFolder(
+                        placemarkNodesVec[i].at(j),
+                        {styleUrlNode},
+                        {"description", "LookAt"}
+                    );
+
+                    styleUrlNode->setInnerText("#msn_" + styleUrlVec[i].at(j));
+                }
+            }
+        }
+
+        // set new 'StyleMap' and 'Style' nodes //
+
+        std::vector<xml::Node*> styleSetNodes[2];
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < cleanedStyleUrlVec[i].size(); j++) {
+
+                styleSetNodes[i].push_back(
+                    i == 0 ?
+                    Builder::createPinStyleMap(nullptr, cleanedStyleUrlVec[i].at(j)) :
+                    Builder::createPathStyleMap(nullptr, cleanedStyleUrlVec[i].at(j))
+                );
+            }
+        }
+
+        // remove 'StyleSet' node as parent of 'StyleMap' and 'Style' nodes to reveal them //
+
+        std::vector<xml::Node*> revealedStyleSetNodes;
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < styleSetNodes[i].size(); j++) {
+
+                for (int k = 0; k < 3; k++) {
+                    revealedStyleSetNodes.push_back(styleSetNodes[i].at(j)->getChildren()->at(k));
+                }
+
+                styleSetNodes[i].at(j)->releaseChildren();
+                delete styleSetNodes[i].at(j);
+            }
+        }
+
+        xml::Node *docNode = General::getRootDocument(kmlNode);
+        std::string kmlNameString = General::getRootDocumentName(kmlNode);
+        General::putOnTopFolder(docNode, revealedStyleSetNodes);
+
+        std::cout << "KML-> Tidy up styles for placemarks inside '"
+                  << kmlNameString << "' document completed!\n";
+
+        return true;
     }
 
     return false;
