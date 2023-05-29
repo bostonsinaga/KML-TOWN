@@ -2,13 +2,12 @@
 #define __KML_STYLE_STRINGS_H__
 
 class StyleStrings {
-    private:
+    public:
+        StyleStrings() {}
+
         static const int
             pinIconUrlArray_count = 170,
             colorCodeArray_count = 12;
-
-    public:
-        StyleStrings() {}
 
         enum {
             PUSHPIN_PIN_TYPE_FLAG,
@@ -230,20 +229,21 @@ class StyleStrings {
         /////////////
 
         int getPinIconNamedIndex(std::string &pinIconNamed);
-        std::string getPinIconNamedUrl(std::string &pinIconNamed);
+        std::string getPinIconNamedUrl(std::string pinIconNamed);
         int getPinTyleFlag(std::string &pinIconNamed);
 
         // identifiers
-        bool isAnIconUrl(std::string &testStr);
+        bool isAnIconUrl(std::string testStr);
         bool isAColorCode(std::string &testStr);
 
         // path's color codes from name
         std::string getPathColorCode(std::string pathColorNamed);
 
-        // get style string data (pin with 'hrev', path with 'color-code')
+        // get style string data of pin 'href' or path 'color-code'
         std::string getPlacemarkStyleData(
             xml::Node *placemark,
-            bool isRefreshStaticData
+            bool isRefreshStaticData,
+            bool *styleExistanceHook = nullptr
         );
 };
 
