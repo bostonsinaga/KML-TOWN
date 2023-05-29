@@ -1,4 +1,4 @@
-# KML-TOWN v1.0.0 2023-05-18
+# KML-TOWN v1.1.0 2023-05-29
 ****************************************************************
 *Departure from v0.10.4 ALPHA 2023-03-22*
 ****************************************************************
@@ -55,6 +55,7 @@ KML_CROP_FLAG = "kml"<br>
 KML_SORT_FLAG = "kml"<br>
 KML_PINS_PATH_FLAG = "kml"<br>
 KML_TWINS_CHECK_FLAG = "kml"<br>
+KML_TIDY_UP_STYLES = "kml"<br>
 KML_MEASURE_PATHS_FLAG = "kml"<br>
 KML_CLASSIFY_FLAG = "kml"<br>
 KML_FOLDER_BY_DATE_FLAG = "kml"<br>
@@ -71,6 +72,7 @@ KML_CROP_FLAG = "crop", "start-point", "end-point", "type"<br>
 KML_SORT_FLAG = "sort", "start-point", "end-point", "type"<br>
 KML_PINS_PATH_FLAG = "pins-path", "start-point", "end-point"<br>
 KML_TWINS_CHECK_FLAG = "twins-check", "type", "radius"<br>
+KML_TIDY_UP_STYLES = "tidy-up-styles"<br>
 KML_MEASURE_PATHS_FLAG = "measure-paths"<br>
 KML_CLASSIFY_FLAG = "classify"<br>
 KML_FOLDER_BY_DATE_FLAG = "folder-by-date"<br>
@@ -99,6 +101,7 @@ KML_CROP_FLAG = "out"<br>
 KML_SORT_FLAG = "out"<br>
 KML_PINS_PATH_FLAG = "out"<br>
 KML_TWINS_CHECK_FLAG = "out"<br>
+KML_TIDY_UP_STYLES = "out"<br>
 KML_MEASURE_PATHS_FLAG = "out"<br>
 KML_CLASSIFY_FLAG = "out"<br>
 KML_FOLDER_BY_DATE_FLAG = "out"<br>
