@@ -21,6 +21,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     toggleStringsVec[0].at(KML_SORT_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_PINS_PATH_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_TWINS_CHECK_FLAG) = {"kml"};
+    toggleStringsVec[0].at(KML_TIDY_UP_STYLES) = {"kml"};
     toggleStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_CLASSIFY_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"kml"};
@@ -37,6 +38,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[0].at(KML_SORT_FLAG) = {"sort", "start-point", "end-point", "type"};
     parameterStringsVec[0].at(KML_PINS_PATH_FLAG) = {"pins-path", "start-point", "end-point"};
     parameterStringsVec[0].at(KML_TWINS_CHECK_FLAG) = {"twins-check", "type", "radius"};
+    parameterStringsVec[0].at(KML_TIDY_UP_STYLES) = {"tidy-up-styles"};
     parameterStringsVec[0].at(KML_MEASURE_PATHS_FLAG) = {"measure-paths"};
     parameterStringsVec[0].at(KML_CLASSIFY_FLAG) = {"classify"};
     parameterStringsVec[0].at(KML_FOLDER_BY_DATE_FLAG) = {"folder-by-date"};
@@ -65,6 +67,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[1].at(KML_SORT_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_PINS_PATH_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_TWINS_CHECK_FLAG) = {"out"};
+    parameterStringsVec[1].at(KML_TIDY_UP_STYLES) = {"out"};
     parameterStringsVec[1].at(KML_MEASURE_PATHS_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_CLASSIFY_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_FOLDER_BY_DATE_FLAG) = {"out"};
