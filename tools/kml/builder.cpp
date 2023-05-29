@@ -12,7 +12,7 @@ xml::Node *Builder::createFolder(
     std::stringstream placemark_strStream;
     placemark_strStream
         << "<Folder>"
-        << "<name>" << name  << "</name>"
+        << "<name>" << name << "</name>"
         << "<open>" << std::to_string(isOpen) << "</open>"
         << "</Folder>";
 
@@ -25,9 +25,10 @@ xml::Node *Builder::createFolder(
 // return one style map set of pins
 xml::Node *Builder::createPinStyleMap(
     std::string *styleMapId_hook,
-    std::string pinIconNamed,
-    std::string pinIconScaleStr
+    std::string pinIconNamed
 ) {
+    /* scale cannot be changed (only using default rate) */
+
     std::string
         normalId, highlightId,
         normalScale, highlightScale,
@@ -59,7 +60,8 @@ xml::Node *Builder::createPinStyleMap(
     normalId = "sn_" + pinIconNamed;
     highlightId = "sh_" + pinIconNamed;
     styleMapId = "msn_" + pinIconNamed;
-    *styleMapId_hook =  styleMapId;
+
+    if (styleMapId_hook) *styleMapId_hook = styleMapId;
 
     pinIconTypeFlag = styleStrings.getPinTyleFlag(pinIconNamed);
 
@@ -83,24 +85,6 @@ xml::Node *Builder::createPinStyleMap(
             hotspotPos[1] = shapesHotspotPosVec.at(1);
         break;}
     }
-
-    // mutliply string's float value
-    auto multStrFlt = [=](
-        std::string *defSclStr,
-        std::string *cusSclStr
-    ) {
-        *defSclStr = std::to_string(
-            std::stof(*defSclStr) *
-            std::stof(*cusSclStr)
-        );
-        
-        *defSclStr = defSclStr->substr(
-            0, defSclStr->find('.') + 3 // takes only two digits behind decimal point
-        );
-    };
-
-    multStrFlt(&normalScale, &pinIconScaleStr);
-    multStrFlt(&highlightScale, &pinIconScaleStr);
     
     styleMap_strStream
         << "<StyleSet>"
@@ -159,26 +143,33 @@ xml::Node *Builder::createPathStyleMap(
         styleMapId;
         
     std::stringstream styleMap_strStream;
+    std::string pathColorCode;
 
     if (pathColorNamed == "") {
         pathColorNamed = "white";
+        pathColorCode = styleStrings.getPathColorCode(pathColorNamed);
+        pathColorNamed += "-path";
     }
-
-    std::string pathColorCode = (
-        styleStrings.getPathColorCode(pathColorNamed)
-    );
-
-    /*
-    *   if the name no matched pre-defined color's (but not empty)
-    *   (eg. 'foo')
-    *   the result id would be 'foo-path'
-    */
-    pathColorNamed += "-path";
+    else {
+        for (int i = 0; i < StyleStrings::colorCodeArray_count; i++) {
+            // 'pathColorNamed' as code
+            if (styleStrings.colorCodeArray[i] == pathColorNamed) {
+                pathColorCode = pathColorNamed;
+                break;
+            }
+            // 'pathColorNamed' as name or other
+            else if (i == StyleStrings::colorCodeArray_count - 1) {
+                pathColorCode = styleStrings.getPathColorCode(pathColorNamed);
+                pathColorNamed += "-path";
+            }
+        }
+    }
 
     normalId = "sn_" + pathColorNamed;
     highlightId = "sh_" + pathColorNamed;
     styleMapId = "msn_" + pathColorNamed;
-    *styleMapId_hook =  styleMapId;
+
+    if (styleMapId_hook) *styleMapId_hook = styleMapId;
     
     styleMap_strStream
         << "<StyleSet>"

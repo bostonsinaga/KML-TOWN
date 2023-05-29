@@ -10,14 +10,13 @@ class Builder {
 
         // return one style map set of pins
         static xml::Node *createPinStyleMap(
-            std::string *styleMapId_hook,
-            std::string pinIconNamed = "",
-            std::string pinIconScaleStr = "1.0"
+            std::string *styleMapId_hook = nullptr,
+            std::string pinIconNamed = ""
         );
 
         // return one style map set of path
         static xml::Node *createPathStyleMap(
-            std::string *styleMapId_hook,
+            std::string *styleMapId_hook = nullptr,
             std::string pathColorNamed = "",
             std::string pathThicknessStr = "2.0"
         );
