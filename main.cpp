@@ -407,6 +407,38 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    ////////////////////////
+    // KML TIDY UP STYLES //
+    ////////////////////////
+
+    else if (SELECTED_FLAG == KML_TIDY_UP_STYLES) {
+
+        std::string
+            fileIn_paramStr = menu.getParameterString("tidy-up-styles"),
+            fileOut_paramStr = menu.getParameterString("out");
+
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            fileIn_paramStr,
+            fileOut_paramStr
+        );
+        
+        if (fileDir_check != "") {
+            xml::Node *kmlNode = xml::Reader::fileParse(fileIn_paramStr);
+
+            if (kmlNode) {
+                if (kml::TwinsChecker().tidyUpStyles(kmlNode)) {
+                    call_briefer::writeFileFunc(kmlNode, fileDir_check);
+                }
+                else {
+                    delete kmlNode;
+                    std::cerr << "\n**FAILED**\n";
+                }
+            }
+            else std::cerr << "\n**FAILED**\n";
+        }
+    }
+
     ///////////////////////
     // KML MEASURE PATHS //
     ///////////////////////
