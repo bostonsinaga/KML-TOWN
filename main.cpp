@@ -512,7 +512,7 @@ int main(int argc, char *argv[]) {
 
             if ((cleanFolders_toggleBool &&
                 menu.setAlert(
-                    std::string("KML-> Classify warning. This will remove empty or previous folders.\n") +
+                    std::string("KML-> Classifying warning. This will remove empty or previous folders.\n") +
                     std::string("      Keep proceeding?\n")
                 )) ||
                 !cleanFolders_toggleBool
