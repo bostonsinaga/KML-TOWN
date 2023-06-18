@@ -387,6 +387,7 @@ void Placemark::includeFolder(
     if (includedNewFolder_node) {
         includedNewFolder_node->addChild(placemarkNode);
         folderNode->addChild(includedNewFolder_node);
+        return;
     }
     else if (includedExistFolder_name != "") {
         
@@ -394,14 +395,13 @@ void Placemark::includeFolder(
             if (includedExistFolder_name == getName(includedExistFolder_node)) {
 
                 includedExistFolder_node->addChild(placemarkNode);
-                break;
+                return;
             }
         }
     }
+
     // 'placemarkNode' has no parent (rare)
-    else {
-        folderNode->addChild(placemarkNode);
-    }
+    folderNode->addChild(placemarkNode);
 }
 
 Point Placemark::convertDegreeToMeterPoint(Point &ptIn) {
