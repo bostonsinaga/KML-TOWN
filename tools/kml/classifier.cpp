@@ -9,6 +9,10 @@ void Classifier::rearrange(
     bool isIncludeFolders
 ) {
     if (kmlNode) {
+
+        std::cout << "KML-> Classifying attention. Action may have to be repeated\n"
+                  << "      if there are duplicate folders in '--include-folders' mode\n";
+
         std::vector<std::string> styleDataStrVec;
         std::vector<xml::Node*> newFolderNodes;
 
