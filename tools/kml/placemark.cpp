@@ -119,15 +119,19 @@ LD Placemark::getHaversineDistance(
 }
 
 int Placemark::getPathDistance(std::vector<Point> &points) {
-    LD accumulateDistance = 0;
-    Point prevPoint = points.front();
+    if (points.size() > 0) {
 
-    for (int i = 1; i < points.size(); i++) {
-        accumulateDistance += getHaversineDistance<Point&>(prevPoint, points.at(i));
-        prevPoint = points.at(i);
+        LD accumulateDistance = 0;
+        Point prevPoint = points.front();
+
+        for (int i = 1; i < points.size(); i++) {
+            accumulateDistance += getHaversineDistance<Point&>(prevPoint, points.at(i));
+            prevPoint = points.at(i);
+        }
+
+        return int(std::round(accumulateDistance));
     }
-
-    return int(std::round(accumulateDistance));
+    else return 0;
 }
 
 bool Placemark::setPathDistance(xml::Node *kmlNode, bool isOnlyGetInfo) {
