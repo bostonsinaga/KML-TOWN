@@ -68,8 +68,7 @@ std::vector<xml::Node*> Cropper::cutPins(
                 for (int i = 0; i < croppedPinNodes.size(); i++) {
                     Placemark::includeFolder(
                         croppedPinNodes.at(i),
-                        workingFolder,
-                        0, i == 0
+                        workingFolder
                     );
                 }
             }
@@ -345,8 +344,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
                 for (int i = 0; i < croppedPathNodes.size(); i++) {
                     Placemark::includeFolder(
                         croppedPathNodes.at(i),
-                        workingFolder,
-                        0, i == 0
+                        workingFolder
                     );
                 }
             }

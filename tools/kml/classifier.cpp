@@ -57,9 +57,7 @@ void Classifier::rearrange(
                 if (isIncludeFolders) {
                     Placemark::includeFolder(
                         placemarkNode,
-                        newFolderNodes.back(),
-                        styleDataStrVec.size() - 1,
-                        true
+                        newFolderNodes.back()
                     );
                 }
                 else {
@@ -73,9 +71,7 @@ void Classifier::rearrange(
                 if (isIncludeFolders) {
                     Placemark::includeFolder(
                         placemarkNode,
-                        folderNode,
-                        styleDataStrVec_foundDex,
-                        false
+                        folderNode
                     );
                 }
                 else folderNode->addChild(placemarkNode);

@@ -450,7 +450,6 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         returnFolder->addChild(folderDupl);
 
         int matchedCtr = 0;
-        bool isIncludeFolderStaticRefresh = true;
 
         for (int i = 0; i < 2; i++) {
             for (auto &index : matchedIndexes[i]) {
@@ -473,16 +472,10 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
                 if (isIncludeFolders) {
                     Placemark::includeFolder(
                         placemarkNodes.at(index),
-                        twinsDivFolder,
-                        i,
-                        isIncludeFolderStaticRefresh
+                        twinsDivFolder
                     );
                 }
                 else twinsDivFolder->addChild(placemarkNodes.at(index));
-
-                if (isIncludeFolderStaticRefresh) {
-                    isIncludeFolderStaticRefresh = false;
-                }
             }
         }
 

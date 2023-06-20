@@ -100,8 +100,7 @@ std::vector<xml::Node*> Sorter::orderApart(
                 for (int i = 0; i < sortedPlacemarkNodes.size(); i++) {
                     Placemark::includeFolder(
                         sortedPlacemarkNodes.at(i),
-                        workingFolder,
-                        0, i == 0
+                        workingFolder
                     );
                 }
             }
