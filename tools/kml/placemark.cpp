@@ -340,68 +340,37 @@ void Placemark::setDataText(
 // used in method that need '--include-folders'
 void Placemark::includeFolder(
     xml::Node *placemarkNode,
-    xml::Node *folderNode,
-    int testIndex,
-    bool isResetStatic
+    xml::Node *newFolderNode  // in 'classify' this will be a folder named 'type-style'
 ) {
-    static std::vector<std::vector<std::string>> includedFolderNameVecVec;
-    static std::vector<int> existIndexes;
-
-    if (isResetStatic) {
-        includedFolderNameVecVec.clear();
-        existIndexes.clear();
-    }
-
-    xml::Node *includedNewFolder_node = nullptr;   // !nullptr -> not exist
-    std::string includedExistFolder_name = "";     // !"" -> exist
-
-    // include folders check
-    if (placemarkNode->getParent()) {
-
-        int includedFolderNameVecVec_foundDex = -1;
-        includedExistFolder_name = getName(placemarkNode->getParent());
-        int existIndex = mini_tool::isPrimitiveInsideVector<int>(existIndexes, testIndex);
-
-        if (existIndexes.size() == 0 || existIndex == -1) {
-            existIndexes.push_back(testIndex);
-            includedFolderNameVecVec.push_back(std::vector<std::string>{});
-        }
-        else {
-            includedFolderNameVecVec_foundDex = mini_tool::isPrimitiveInsideVector<std::string>(
-                includedFolderNameVecVec.at(existIndex), includedExistFolder_name
-            );
-        }
-
-        // there isn't any yet
-        if (includedFolderNameVecVec_foundDex == -1) {
-            includedNewFolder_node = Builder::createFolder(includedExistFolder_name);
-            includedFolderNameVecVec.back().push_back(includedExistFolder_name);
-            includedExistFolder_name = "";
-        }
-    }
-    
-    // add to new folder //
+    xml::Node *prevFolderNode = placemarkNode->getParent();
+    std::string prevFolderName = getDataText(prevFolderNode, "name");
+    std::string newFolderName = getDataText(newFolderNode, "name");
 
     placemarkNode->removeFromParent();
 
-    if (includedNewFolder_node) {
-        includedNewFolder_node->addChild(placemarkNode);
-        folderNode->addChild(includedNewFolder_node);
-        return;
-    }
-    else if (includedExistFolder_name != "") {
-        
-        for (auto &includedExistFolder_node : *folderNode->getChildren()) {
-            if (includedExistFolder_name == getName(includedExistFolder_node)) {
-
-                includedExistFolder_node->addChild(placemarkNode);
+    if (prevFolderNode) {
+        for (auto &folderNode : newFolderNode->getChildrenByName("Folder")) {
+            
+            // parent registered
+            if (getDataText(folderNode, "name") == prevFolderName) {
+                folderNode->addChild(placemarkNode);
                 return;
             }
         }
-    }
 
-    // 'placemarkNode' has no parent (rare)
-    folderNode->addChild(placemarkNode);
+        // parent not registered
+        if (prevFolderName != newFolderName) {
+            xml::Node *newSubFolderNode = Builder::createFolder(prevFolderName);
+            newSubFolderNode->addChild(placemarkNode);
+            newFolderNode->addChild(newSubFolderNode);
+        }
+        else { // previous parent name similar to classified folder name ('newFolderName')
+            newFolderNode->addChild(placemarkNode);
+        }
+    }
+    else { // have no parent
+        newFolderNode->addChild(placemarkNode);
+    }
 }
 
 Point Placemark::convertDegreeToMeterPoint(Point &ptIn) {

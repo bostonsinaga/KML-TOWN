@@ -61,9 +61,7 @@ class Placemark {
         // used in method that need '--include-folders'
         static void includeFolder(
             xml::Node *placemarkNode,
-            xml::Node *folderNode,
-            int testIndex = 0,
-            bool isResetStatic = false
+            xml::Node *newFolderNode  // in 'classify' this will be a folder named 'type-style'
         );
 
         static Point convertDegreeToMeterPoint(Point &ptIn);
