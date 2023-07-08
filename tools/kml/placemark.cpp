@@ -324,7 +324,7 @@ void Placemark::setDataText(
 
         if (isCreateNew && !placemarkData) {
             xml::Node *newDescriptionNode = new xml::Node("description");
-            General::putOnTopFolder(placemarkNode, {newDescriptionNode});
+            General::putOnTopFolder(placemarkNode, newDescriptionNode);
             placemarkData = newDescriptionNode;
         }
 

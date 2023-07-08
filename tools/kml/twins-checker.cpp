@@ -415,7 +415,7 @@ xml::Node *TwinsChecker::findAll(
     if (pinsFolder || pathsFolder) {
         General::putOnTopFolder(
             General::getRootDocument(kmlNode),
-            {workingFolder}
+            workingFolder
         );
         return workingFolder;
     }
@@ -492,7 +492,7 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         else {
             // connect to 'kmlNode'
             xml::Node *rootDoc = General::getRootDocument(kmlNode);
-            General::putOnTopFolder(rootDoc, {returnFolder});
+            General::putOnTopFolder(rootDoc, returnFolder);
             return returnFolder;
         }
     }
@@ -711,7 +711,7 @@ bool TwinsChecker::tidyUpStyles(xml::Node *kmlNode) {
 
                     General::putOnTopFolder(
                         placemarkNodesVec[i].at(j),
-                        {styleUrlNode},
+                        styleUrlNode,
                         {"description", "LookAt"}
                     );
 

@@ -94,7 +94,7 @@ std::vector<xml::Node*> Sorter::orderApart(
             if (isIncludeFolders) {
                 General::putOnTopFolder(
                     placemarksContainerNode,
-                    {workingFolder}
+                    workingFolder
                 );
 
                 for (int i = 0; i < sortedPlacemarkNodes.size(); i++) {

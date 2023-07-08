@@ -62,7 +62,7 @@ std::vector<xml::Node*> Cropper::cutPins(
 
                 General::putOnTopFolder(
                     pinsContainerNode,
-                    {workingFolder}
+                    workingFolder
                 );
 
                 for (int i = 0; i < croppedPinNodes.size(); i++) {
@@ -338,7 +338,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
                 General::putOnTopFolder(
                     pathsContainerNode,
-                    {workingFolder}
+                    workingFolder
                 );
 
                 for (int i = 0; i < croppedPathNodes.size(); i++) {
@@ -445,7 +445,7 @@ std::vector<xml::Node*> Cropper::cutAll(
 
         General::putOnTopFolder(
             placemarksContainerNode,
-            {workingFolder}
+            workingFolder
         );
 
         return std::vector<xml::Node*>{workingFolder};
