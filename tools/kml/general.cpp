@@ -121,14 +121,13 @@ void General::fillWithPlacemarks(
     }
 }
 
-void General::putOnTopFolder(
+int General::putOnTopFolder_getPriorityFolderCount(
     xml::Node *containerFolder,
-    std::vector<xml::Node*> nodeVec,
-    std::vector<std::string> additionalPriorityNameList  // multiple appearance
+    std::vector<std::string> &additionalPriorityNameList  // multiple appearance
 ) {
     /* 'priorityFolderCount' index as a limit to top placement */
-
     int priorityFolderCount = 0;
+
     std::vector<std::string> priorityNameList {
         // single appearance
         "name", "visibility", "open",
@@ -152,24 +151,61 @@ void General::putOnTopFolder(
     // multiple appearance
     if (containerFolder->getName() == "Document") {
         for (int i = 3; i < priorityNameList.size(); i++) {
-            std::vector<xml::Node*> multiAppearanceVec = containerFolder->getChildrenByName(priorityNameList.at(i));
+
+            std::vector<xml::Node*> multiAppearanceVec = {
+                containerFolder->getChildrenByName(priorityNameList.at(i))
+            };
+
             priorityFolderCount += multiAppearanceVec.size();
         }
     }
 
-    std::vector<xml::Node*> *containerExistChildren = containerFolder->getChildren();
+    return priorityFolderCount;
+}
+
+void General::putOnTopFolder(
+    xml::Node *containerFolder,
+    xml::Node *node_in,
+    std::vector<std::string> additionalPriorityNameList  // multiple appearance
+) {
+    int priorityFolderCount = putOnTopFolder_getPriorityFolderCount(
+        containerFolder, additionalPriorityNameList
+    );
+
+    // firstly append new folder
+    containerFolder->addChild(node_in);
+    
+    for (int i = containerFolder->getChildren()->size() - 2;
+        i >= priorityFolderCount;
+        i--
+    ) {
+        containerFolder->swapChildren(
+            containerFolder->getChildren()->at(i),
+            node_in
+        );
+    }
+}
+
+void General::putOnTopFolder(
+    xml::Node *containerFolder,
+    std::vector<xml::Node*> nodeVec,
+    std::vector<std::string> additionalPriorityNameList  // multiple appearance
+) {
+    int priorityFolderCount = putOnTopFolder_getPriorityFolderCount(
+        containerFolder, additionalPriorityNameList
+    );
 
     for (auto &node : nodeVec) {
         
         // firstly append new folder
         containerFolder->addChild(node);
         
-        for (int i = containerExistChildren->size() - 2;
+        for (int i = containerFolder->getChildren()->size() - 2;
              i >= priorityFolderCount;
              i--
         ) {
             containerFolder->swapChildren(
-                containerExistChildren->at(i),
+                containerFolder->getChildren()->at(i),
                 node
             );
         }
@@ -187,7 +223,7 @@ void General::insertEditedPlacemarksIntoFolder(
 ) {
     // succeeded
     if (placemarks.size() > 0) {
-        putOnTopFolder(existContainerNode, {newContainerNode});
+        putOnTopFolder(existContainerNode, newContainerNode);
         
         // insert pins into the folder
         for (auto &plmrk : placemarks) {
@@ -290,7 +326,7 @@ void General::setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out) {
         xml::Node *nameNode = mainFolder->getFirstChildByName("name");
         if (!nameNode) {
             nameNode = new xml::Node("name", mainFolder);
-            putOnTopFolder(mainFolder, {nameNode});
+            putOnTopFolder(mainFolder, nameNode);
         }
         nameNode->setInnerText(mini_tool::cutFileDirName(fileDir_out));
 
@@ -304,34 +340,52 @@ void General::setKMLDocumentName(xml::Node *kmlNode, std::string fileDir_out) {
     }
 }
 
+// folders expected to be empty and all items has released and moved to 'newFolderVec'
 void General::cleanFolders(
     xml::Node *mainFolder,
     xml::Node *classifiedFolder,
     std::vector<xml::Node*> &newFolderVec
 ) {
-    std::vector<xml::Node*>
-        *mainFolderChildrenPtr = mainFolder->getChildren(),
-        savedNodes;
+    // get main folder 'name', 'description' and 'open' node //
 
-    for (auto &node : *mainFolderChildrenPtr) {
-        std::string nodeName = node->getName();
+    xml::Node
+        *mainNameNode = mainFolder->getFirstChildByName("name"),
+        *mainDescNode = mainFolder->getFirstChildByName("description"),
+        *mainOpenNode = mainFolder->getFirstChildByName("open");
 
-        if (nodeName != "StyleMap" &&
-            nodeName != "Style" &&
-            nodeName != "name" &&
-            nodeName != "description" &&
-            nodeName != "open"
-        ) {
-            delete node;
-            node = nullptr;
-        }
-        else savedNodes.push_back(node);
+    std::vector<xml::Node*> mainInfoNodes;
+    if (mainNameNode) mainInfoNodes.push_back(mainNameNode);
+    if (mainDescNode) mainInfoNodes.push_back(mainDescNode);
+    if (mainOpenNode) mainInfoNodes.push_back(mainOpenNode);
+
+    // release nodes from parent
+    for (auto &node : mainInfoNodes) {
+        node->removeFromParent();
     }
 
-    // alternative for 'removeFromParent()'
-    mainFolderChildrenPtr->clear();
-    *mainFolderChildrenPtr = savedNodes;
+    // 'StyleMap' and 'Style' node
+    std::vector<xml::Node*> stylingNodeArr[2] = {
+        mainFolder->getDescendantsByName("StyleMap"),
+        mainFolder->getDescendantsByName("Style")
+    };
 
+    // style nodes switching parent (lifted up as document children)
+    for (int i = 0; i < 2; i++) {
+        for (auto &node : stylingNodeArr[i]) {
+            node->removeFromParent();
+        }
+        putOnTopFolder(mainFolder->getParent(), stylingNodeArr[i]);
+    }
+
+    // release memory of the rest nodes
+    for (auto &node : *mainFolder->getChildren()) {
+        if (node) delete node;
+    }
+
+    mainFolder->getChildren()->clear();
+    mainFolder->addChildren(mainInfoNodes);
+
+    // set 'newFolderVec' nodes as children of classifiedFolder
     for (auto &folderNode : newFolderVec) {
         classifiedFolder->addChild(folderNode);
     }

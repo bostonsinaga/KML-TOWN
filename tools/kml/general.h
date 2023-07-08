@@ -17,6 +17,19 @@ class General {
             std::vector<xml::Node*> &pinsCoorNodeVec    // should be empty
         );
 
+    private:
+        static int putOnTopFolder_getPriorityFolderCount(
+            xml::Node *containerFolder,
+            std::vector<std::string> &additionalPriorityNameList  // multiple appearance
+        );
+
+    public:
+        static void putOnTopFolder(
+            xml::Node *containerFolder,
+            xml::Node *node_in,
+            std::vector<std::string> additionalPriorityNameList = {}  // multiple appearance
+        );
+
         static void putOnTopFolder(
             xml::Node *containerFolder,
             std::vector<xml::Node*> nodeVec,
