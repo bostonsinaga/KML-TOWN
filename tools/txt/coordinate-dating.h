@@ -8,11 +8,16 @@ public:
     // BASED ON WHATSAPP'S EXPORTED TXT //
     //////////////////////////////////////
 
+    /**
+     * Coordinates that do not have a date
+     * will use the date from the row above.
+     */
+
     CoordinateDating() {}
 
     void complete(
         std::string fileDir_in,
-        std::string fileDir_out
+        std::string fileDir_out = ""
     );
 };
 
