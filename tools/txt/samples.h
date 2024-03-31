@@ -3,7 +3,10 @@
 
 class Samples {
     public:
-        std::string testDateTemplate(std::string &textLine);
+        std::string testDateTemplate(
+            std::string &textLine,
+            const std::string &century = "20"
+        );
         std::string testGoogleMapsTemplate(std::string &textLine);
 
         // sample: [ 10°20'30.4"S 40°30'20.1"E ]

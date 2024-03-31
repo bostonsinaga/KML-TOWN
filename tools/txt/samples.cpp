@@ -3,8 +3,10 @@
 
 #include "samples.h"
 
-std::string Samples::testDateTemplate(std::string &textLine) {
-
+std::string Samples::testDateTemplate(
+    std::string &textLine,
+    const std::string &century
+) {
     int slashCtr = 0;
     std::string day = "", month = "", year = "", *timePtr = &day;
 
@@ -36,7 +38,7 @@ std::string Samples::testDateTemplate(std::string &textLine) {
                     return day + "/" + month + "/" + year;
                 }
                 else if (year.size() == 2 && slashCtr == 2) { // 2 digits
-                    return day + "/" + month + "/20" + year;
+                    return day + "/" + month + "/" + century + year;
                 }
 
                 // reset
