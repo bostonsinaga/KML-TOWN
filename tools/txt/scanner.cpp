@@ -55,8 +55,7 @@ xml::Node *Scanner::parsePins(
 // PARSE FUNCTION //
 ////////////////////
 
-std::vector<std::vector<std::string>> Scanner::parse(std::string &fileDir_in) {
-
+std::vector<std::string> Scanner::readText(std::string &fileDir_in) {
     std::cerr << "TXT-> Coordinate input attention. The 'txt' file expected format are\n"
               << "      'x.xxx,y.yyy' or 'x.xxx y.yyy' [NO MULTIPLE ',' OR ' ' OR BOTH COMBINED]\n";
 
@@ -72,10 +71,16 @@ std::vector<std::vector<std::string>> Scanner::parse(std::string &fileDir_in) {
         std::cerr
             << "TXT-> Scanning for pins error. File named '"
             << mini_tool::cutFileDirName(fileDir_in) <<"' not found or empty\n";
-        
-        // failed
-        return std::vector<std::vector<std::string>>{};
+        return std::vector<std::string>{};
     }
+
+    return textVector;
+}
+
+std::vector<std::vector<std::string>> Scanner::parse(std::string &fileDir_in) {
+
+    std::vector<std::string> textVector = readText(fileDir_in);
+    if (textVector.size() == 0) return std::vector<std::vector<std::string>>{};
 
     Samples txtSamples;
     kml::Converter kmlConverter;

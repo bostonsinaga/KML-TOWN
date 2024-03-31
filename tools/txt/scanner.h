@@ -19,6 +19,8 @@ class Scanner {
             std::string fileDir_out = ""
         );
 
+        std::vector<std::string> readText(std::string &fileDir_in);
+
         /*
             HOW ABOUT PATHS?
             Parse paths isn't available here (too complicated)
