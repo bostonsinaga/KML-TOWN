@@ -63,6 +63,7 @@ KML_DATE_BY_FOLDER_FLAG = "kml"<br>
 KML_FILTER_STRING_FLAG = "kml"<br>
 KML_REMOVE_PATHS_FLAG = "kml"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "csv"
+TXT_COMPLETE_DATE_FLAG = "txt"
 
 -- PARAMETERS --
 
@@ -80,6 +81,7 @@ KML_DATE_BY_FOLDER_FLAG = "date-by-folder"<br>
 KML_FILTER_STRING_FLAG = "filter-string", "text"<br>
 KML_REMOVE_PATHS_FLAG = "remove-paths"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "change-separator", "old-sign", "new-sign"
+TXT_COMPLETE_DATE_FLAG = "complete-date"
 
 ******************
 **INPUT OPTIONAL**
@@ -109,6 +111,7 @@ KML_DATE_BY_FOLDER_FLAG = "out"<br>
 KML_FILTER_STRING_FLAG = "out"<br>
 KML_REMOVE_PATHS_FLAG = "out", "over-distance", "under-distance"<br>
 CSV_CHANGE_SEPARATOR_FLAG = "out"
+TXT_COMPLETE_DATE_FLAG = "out"
 
 
 # SCREENSHOTS
