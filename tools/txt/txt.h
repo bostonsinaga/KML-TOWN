@@ -4,6 +4,7 @@
 namespace txt {
     #include "samples.cpp"
     #include "scanner.cpp"
+    #include "coordinate-dating.cpp"
 }
 
 #endif // __TXT_H__
