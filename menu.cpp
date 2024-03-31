@@ -29,6 +29,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     toggleStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"kml"};
     toggleStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"kml"};
     toggleStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"csv"};
+    toggleStringsVec[0].at(TXT_COMPLETE_DATE_FLAG) = {"txt"};
 
     // >>> PARAMETERS //
 
@@ -46,6 +47,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[0].at(KML_FILTER_STRING_FLAG) = {"filter-string", "text"};
     parameterStringsVec[0].at(KML_REMOVE_PATHS_FLAG) = {"remove-paths"};
     parameterStringsVec[0].at(CSV_CHANGE_SEPARATOR_FLAG) = {"change-separator", "old-sign", "new-sign"};
+    parameterStringsVec[0].at(TXT_COMPLETE_DATE_FLAG) = {"complete-date"};
 
     ////////////////////
     // INPUT OPTIONAL //
@@ -75,6 +77,7 @@ Menu::Menu(std::vector<std::string> *inputStrings_ptrIn) {
     parameterStringsVec[1].at(KML_FILTER_STRING_FLAG) = {"out"};
     parameterStringsVec[1].at(KML_REMOVE_PATHS_FLAG) = {"out", "over-distance", "under-distance"};
     parameterStringsVec[1].at(CSV_CHANGE_SEPARATOR_FLAG) = {"out"};
+    parameterStringsVec[1].at(TXT_COMPLETE_DATE_FLAG) = {"out"};
 }
 
 /*
