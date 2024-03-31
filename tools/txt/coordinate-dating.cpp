@@ -5,7 +5,7 @@
 
 void CoordinateDating::complete(
     std::string fileDir_in,
-    std::string fileDir_out = ""
+    std::string fileDir_out
 ) {
     Samples txtSamples;
     Scanner txtScanner;
