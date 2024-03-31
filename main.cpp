@@ -686,6 +686,27 @@ int main(int argc, char *argv[]) {
             );
         }
     }
+
+    ///////////////////////
+    // TXT COMPLETE DATE //
+    ///////////////////////
+
+    else if (SELECTED_FLAG == TXT_COMPLETE_DATE_FLAG) {
+
+        std::string
+            fileIn_paramStr = menu.getParameterString("complete-date"),
+            fileOut_paramStr = menu.getParameterString("out");
+
+        std::string fileDir_check = call_briefer::checkOverwrite(
+            menu,
+            fileIn_paramStr,
+            fileOut_paramStr
+        );
+        
+        if (fileDir_check != "") {
+            txt::CoordinateDating().complete(fileIn_paramStr, fileDir_check);
+        }
+    }
     
     return 0;
 }
