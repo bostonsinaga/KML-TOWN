@@ -11,7 +11,6 @@ void Writer::stringify(
     /* the 'root' is not include to write */
 
     std::cout << "XML-> Writing '" + fileDir_out + "'...\n";
-
     Node *includedRoot;
 
     if (isWithRoot) {
@@ -21,13 +20,13 @@ void Writer::stringify(
     }
 
     /* write into 'fileDir_out' */
-    
+
     std::ofstream writeFile(fileDir_out);
 
     std::string text = (
         XML_TOPPER + std::string("\n") + pullChildrenStrings(root->getChildren())
     );
-    
+
     writeFile << text;
     writeFile.close();
 

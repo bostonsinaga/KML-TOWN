@@ -10,7 +10,6 @@ class Writer {
         );
 
     private:
-
         static std::string stringifyAttributes(std::vector<Attribute> *attributes);
         static std::string pullChildrenStrings(std::vector<Node*> *children);
 };
