@@ -1,1 +1,0 @@
-cd bin/windows/ & kml-town.exe --help & cd ../..
