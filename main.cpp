@@ -8,6 +8,8 @@
 #include <functional>
 #include <algorithm>
 
+#include <ctime>
+
 #define X 0
 #define Y 1
 
@@ -33,6 +35,8 @@ typedef long double LD;
 #include "call-briefer.cpp"
 
 int main(int argc, char *argv[]) {
+
+    double startTime = std::time(0);
 
     // convert 'argv' to vector start from index 1
     std::vector<std::string> inputStrings;
@@ -707,6 +711,8 @@ int main(int argc, char *argv[]) {
             txt::CoordinateDating().complete(fileIn_paramStr, fileDir_check);
         }
     }
+
+    std::cout << "\nProcessing time: " << std::time(0) - startTime << std::endl;
     
     return 0;
 }
