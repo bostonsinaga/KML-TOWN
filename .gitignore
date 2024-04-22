@@ -1,3 +1,2 @@
-bin/linux
-bin/linux/kml-town
+build/*
 bin/windows/kml-town.exe
