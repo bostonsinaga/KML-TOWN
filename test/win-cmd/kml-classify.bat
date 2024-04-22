@@ -1,1 +1,0 @@
-kml-town --kml -classify ../measured.kml -out ../classified.kml --include-folders --clean-folders
