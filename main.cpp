@@ -26,13 +26,13 @@
 
 typedef long double LD;
 
-#include "mini-tool.cpp"
-#include "menu.cpp"
+#include "wrappers/mini-tool.cpp"
+#include "wrappers/menu.cpp"
 #include "tools/xml/xml.h"
 #include "tools/kml/kml.h"
 #include "tools/txt/txt.h"
 #include "tools/csv/csv.h"
-#include "call-briefer.cpp"
+#include "wrappers/call-briefer.cpp"
 
 int main(int argc, char *argv[]) {
 
