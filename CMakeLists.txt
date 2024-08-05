@@ -8,7 +8,7 @@ if (NOT MSVC)
   set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif ()
 
-add_executable (${PROJECT_NAME} example-Geodesic-small.cpp)
+add_executable (${PROJECT_NAME} test.cpp)
 target_link_libraries (${PROJECT_NAME} ${GeographicLib_LIBRARIES})
 
 if (MSVC)
