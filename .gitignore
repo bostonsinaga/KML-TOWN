@@ -1,3 +1,3 @@
 build/*
 bin/windows/kml-town.exe
-test/bin*
+test-bin/*
