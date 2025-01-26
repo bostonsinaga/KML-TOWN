@@ -3,6 +3,8 @@
 
 #include "reader.h"
 
+namespace xml {
+
 Node *Reader::fileParse(std::string fileName, bool isNotify) {
 
     std::ifstream readFile(fileName);
@@ -317,6 +319,7 @@ Node *Reader::parse(
     }
 
     return retNode;
+}
 }
 
 #endif // __XML_READER_CPP__

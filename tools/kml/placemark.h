@@ -1,6 +1,10 @@
 #ifndef __KML_PLACEMARK_H__
 #define __KML_PLACEMARK_H__
 
+#include "builder.h"
+
+namespace kml {
+
 class Placemark {
     public:
         static void pinsPath(
@@ -14,11 +18,11 @@ class Placemark {
             bool isFolderize
         );
 
-        template<typename TYPE_T>
+        // template<typename TYPE_T>
 
-        static LD getHaversineDistance(
-            TYPE_T startPt,
-            TYPE_T endPt
+        static double getHaversineDistance(
+            Point &startPt,
+            Point &endPt
         );
 
         static int getPathDistance(std::vector<Point> &points);
@@ -66,5 +70,6 @@ class Placemark {
 
         static Point convertDegreeToMeterPoint(Point &ptIn);
 };
+}
 
 #endif // __KML_PLACEMARK_H__

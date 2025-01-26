@@ -3,11 +3,7 @@
 
 #include "sorter.h"
 
-/*
-*   SORT LIKE A CHAINS
-*   started with nearest placemark from start point
-*   (this using cropper)
-*/
+namespace kml {
 
 void Sorter::printNotification(Menu &menu) {
     menu.setNotification(
@@ -88,7 +84,7 @@ std::vector<xml::Node*> Sorter::orderApart(
         if (sortedPlacemarkNodes.size() > 0) {
 
             xml::Node *workingFolder = Builder::createFolder(
-                SORT_COMMAND_WORKING_FOLDER
+              definitions::SORT_COMMAND_WORKING_FOLDER
             );
 
             if (isIncludeFolders) {
@@ -233,24 +229,47 @@ std::vector<int> Sorter::sortCoordinates(
         retIndexes.push_back(i);
     }
 
-    // sorting lowest to highest
-    for (int i = 0; i < hypotenuses.size(); i++) {
-        for (int j = 0; j < hypotenuses.size(); j++) {
+    // // sorting lowest to highest
+    // for (int i = 0; i < hypotenuses.size(); i++) {
+    //     for (int j = 0; j < hypotenuses.size(); j++) {
 
-            if (hypotenuses.at(i) < hypotenuses.at(j)) {
+    //         if (hypotenuses.at(i) < hypotenuses.at(j)) {
 
-                double bufferHypo = hypotenuses.at(i);
-                hypotenuses.at(i) = hypotenuses.at(j);
-                hypotenuses.at(j) = bufferHypo;
+    //             double bufferHypo = hypotenuses.at(i);
+    //             hypotenuses.at(i) = hypotenuses.at(j);
+    //             hypotenuses.at(j) = bufferHypo;
 
-                int bufferIndex = retIndexes.at(i);
-                retIndexes.at(i) = retIndexes.at(j);
-                retIndexes.at(j) = bufferIndex;
+    //             int bufferIndex = retIndexes.at(i);
+    //             retIndexes.at(i) = retIndexes.at(j);
+    //             retIndexes.at(j) = bufferIndex;
+    //         }
+    //     }
+    // }
+
+    // COMB SORT //
+
+    int gap = hypotenuses.size();
+    bool swapped = true, ascending = true;
+
+    while (gap != 1 || swapped) {
+        gap = (gap * 10) / 13;
+
+        if (gap < 1) gap = 1;
+        swapped = false;
+
+        for (int i = 0; i < hypotenuses.size() - gap; i++) {
+            if ((ascending && hypotenuses.at(i) > hypotenuses.at(i + gap)) ||
+                (!ascending && hypotenuses.at(i) < hypotenuses.at(i + gap))
+            ) {
+                std::swap(hypotenuses.at(i), hypotenuses.at(i + gap));
+                std::swap(retIndexes.at(i), retIndexes.at(i + gap));
+                swapped = true;
             }
         }
     }
 
     return retIndexes;
+}
 }
 
 #endif // __KML_SORTER_CPP__

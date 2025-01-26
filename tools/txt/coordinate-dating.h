@@ -1,6 +1,10 @@
 #ifndef __TXT_COORDINATE_DATING_H__
 #define __TXT_COORDINATE_DATING_H__
 
+#include "scanner.h"
+
+namespace txt {
+
 class CoordinateDating {
 public:
 
@@ -20,5 +24,6 @@ public:
         std::string fileDir_out = ""
     );
 };
+}
 
 #endif // __TXT_COORDINATE_DATING_H__

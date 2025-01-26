@@ -1,6 +1,10 @@
 #ifndef __KML_BUILDER_H__
 #define __KML_BUILDER_H__
 
+#include "point.h"
+
+namespace kml {
+
 class Builder {
     public:
         static xml::Node *createFolder(
@@ -65,5 +69,6 @@ class Builder {
             paddleScaleNormal, paddleScaleHighlight,
             shapesScaleNormal, shapesScaleHighlight;
 };
+}
 
 #endif // __KML_BUILDER_H__

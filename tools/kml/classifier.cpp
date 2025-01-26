@@ -3,6 +3,8 @@
 
 #include "classifier.h"
 
+namespace kml {
+
 void Classifier::rearrange(
     xml::Node *kmlNode,
     bool isCleanFolders,
@@ -84,7 +86,7 @@ void Classifier::rearrange(
 
         xml::Node
             *mainFolderNode = General::searchMainFolder(kmlNode),
-            *classifiedFolderNode = Builder::createFolder(CLASSIFY_COMMAND_WORKING_FOLDER);
+            *classifiedFolderNode = Builder::createFolder(definitions::CLASSIFY_COMMAND_WORKING_FOLDER);
 
         if (isCleanFolders) {
             General::cleanFolders(
@@ -148,7 +150,10 @@ bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
         }
 
         if (placemarks.size() > 0) {
-            std::string folderName = FILTER_STRING_COMMAND_WORKING_FOLDER + std::string("  ") + frontWord;
+            std::string folderName = (
+                definitions::FILTER_STRING_COMMAND_WORKING_FOLDER
+                + std::string("  ") + frontWord
+            );
 
             xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
             std::cout << "KML-> Found: " << placemarks.size() << "\n"
@@ -172,6 +177,7 @@ bool Classifier::filterString(xml::Node *kmlNode, std::string searchStr) {
     }
 
     return false;
+}
 }
 
 #endif // __CLASSIFIER_CPP__

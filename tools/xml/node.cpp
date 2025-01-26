@@ -3,6 +3,8 @@
 
 #include "node.h"
 
+namespace xml {
+
 Node::Node(std::string name_in, Node *parent_in) {
   name = name_in;
   if (parent_in) {
@@ -313,6 +315,7 @@ void Node::printChildNotFoundMessage(std::string searchName) {
     << "XML-> Node warning. No child named '"
     << searchName << "' in '"
     << name << "' node\n";
+}
 }
 
 #endif // __XML_NODE_CPP__

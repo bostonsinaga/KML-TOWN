@@ -1,6 +1,10 @@
 #ifndef __TXT_SAMPLES_H__
 #define __TXT_SAMPLES_H__
 
+#include "../kml/kml.h"
+
+namespace txt {
+
 class Samples {
     public:
         std::string testDateTemplate(
@@ -18,5 +22,6 @@ class Samples {
         // sample: [ -1.234,5.678 ]
         std::string testDecimalTemplate(std::string &textLine);
 };
+}
 
 #endif // __TXT_SAMPLES_H__

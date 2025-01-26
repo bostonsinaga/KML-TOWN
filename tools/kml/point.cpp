@@ -3,10 +3,7 @@
 
 #include "point.h"
 
-/*
-*   POINT IN DEGREE (°)
-*   -but not limited for distance as meter
-*/
+namespace kml {
 
 Point::Point(LD x_in, LD y_in) {
     x = x_in;
@@ -292,6 +289,7 @@ std::string Point::to_string_with_precision(LD &axis) {
     
     out << std::fixed << axis;
     return std::move(out).str();
+}
 }
 
 #endif // __KML_POINT_CPP__

@@ -3,6 +3,8 @@
 
 #include "twins-checker.h"
 
+namespace kml {
+
 // return working folder node
 xml::Node *TwinsChecker::findPins(
     xml::Node *kmlNode,
@@ -406,7 +408,9 @@ xml::Node *TwinsChecker::findAll(
         false
     );
 
-    xml::Node *workingFolder = Builder::createFolder(TWINS_CHECK_COMMAND_WORKING_FOLDER);
+    xml::Node *workingFolder = Builder::createFolder(
+        definitions::TWINS_CHECK_COMMAND_WORKING_FOLDER
+    );
 
     if (pinsFolder) workingFolder->addChild(pinsFolder);
     if (pathsFolder) workingFolder->addChild(pathsFolder);
@@ -440,13 +444,13 @@ xml::Node *TwinsChecker::insertFoundPlacemarks(
         xml::Node *returnFolder = Builder::createFolder(
             isParentFolderNamedAType ?
             mini_tool::changeStringCase(placemarksType, mini_tool::UPPER_CASE_FLAG) :
-            TWINS_CHECK_COMMAND_WORKING_FOLDER
+            definitions::TWINS_CHECK_COMMAND_WORKING_FOLDER
         );
 
-        xml::Node *folderOri = Builder::createFolder(std::string("ORIGINALS"));
+        xml::Node *folderOri = Builder::createFolder("ORIGINALS");
         returnFolder->addChild(folderOri);
 
-        xml::Node *folderDupl = Builder::createFolder(std::string("DUPLICATES"));
+        xml::Node *folderDupl = Builder::createFolder("DUPLICATES");
         returnFolder->addChild(folderDupl);
 
         int matchedCtr = 0;
@@ -762,6 +766,7 @@ bool TwinsChecker::tidyUpStyles(xml::Node *kmlNode) {
     }
 
     return false;
+}
 }
 
 #endif // __KML_TWINS_CHECKER_CPP__

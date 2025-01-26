@@ -1,6 +1,10 @@
 #ifndef __KML_TWINS_CHECKER_H__
 #define __KML_TWINS_CHECKER_H__
 
+#include "placemark.h"
+
+namespace kml {
+
 class TwinsChecker {
     private:
         class Prioritize {
@@ -86,5 +90,6 @@ class TwinsChecker {
             bool &isFirstPlcItr
         );
 };
+}
 
 #endif // __KML_TWINS_CHECKER_H__

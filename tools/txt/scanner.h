@@ -1,6 +1,10 @@
 #ifndef __TXT_SCANNER_H__
 #define __TXT_SCANNER_H__
 
+#include "samples.h"
+
+namespace txt {
+
 class Scanner {
     public:
 
@@ -46,5 +50,6 @@ class Scanner {
             }
         }
 };
+}
 
 #endif // __TXT_SCANNER_H__

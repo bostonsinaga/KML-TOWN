@@ -3,14 +3,18 @@
 
 #include "scanner.h"
 
-/* Note:
-    'yieldParseFunc.at(dateStrVec_flag)' and
-    'yieldParseFunc.at(coorStrVec_flag)' size are certainly equal
-*/
+/**
+ * Note:
+ * The 'yieldParseFunc.at(dateStrVec_flag)'
+ * and 'yieldParseFunc.at(coorStrVec_flag)'
+ * size are certainly equal.
+ */
 
 ////////////////
 // PINS PARSE //
 ////////////////
+
+namespace txt {
 
 xml::Node *Scanner::parsePins(
     std::string fileDir_in,
@@ -257,6 +261,7 @@ xml::Node *Scanner::getMainFolder(
 
     kml::Builder::setTitle(kmlNode, docName);
     return kml::General::searchMainFolder(kmlNode);
+}
 }
 
 #endif // __TXT_SCANNER_CPP__

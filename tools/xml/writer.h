@@ -1,6 +1,10 @@
 #ifndef __XML_WRITER_H__
 #define __XML_WRITER_H__
 
+#include "node.h"
+
+namespace xml {
+
 class Writer {
     public:
         static void stringify(
@@ -13,5 +17,6 @@ class Writer {
         static std::string stringifyAttributes(std::vector<Attribute> *attributes);
         static std::string pullChildrenStrings(std::vector<Node*> *children);
 };
+}
 
 #endif // __XML_WRITER_H__

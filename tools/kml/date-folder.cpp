@@ -3,17 +3,9 @@
 
 #include "date-folder.h"
 
-/*
-    called as 'folder-by-date' (will pack placemarks by their date in name or description)
-    (available only for 'dd/mm/yyyy' numeric format)
-*/
+namespace kml {
 
-/*
-    -pack placemarks into one folder of their date
-    -the undated placemark will be inserted into 'NO DATE' folder inside working folder
-*/
 bool DateFolder::packNumeral(xml::Node *kmlNode) {
-
     int CTR = 0;
     std::vector<std::vector<int>> dateVector;
     xml::Node *mainFolderNode = General::searchMainFolder(kmlNode);
@@ -170,7 +162,9 @@ bool DateFolder::packNumeral(xml::Node *kmlNode) {
 
     General::insertEditedPlacemarksIntoFolder(
         mainFolderNode,
-        Builder::createFolder(FOLDER_BY_DATE_COMMAND_WORKING_FOLDER),
+        Builder::createFolder(
+          definitions::FOLDER_BY_DATE_COMMAND_WORKING_FOLDER
+        ),
         newFolderNodes,
         {"Foldering by date", "Folder by date"},
         "placemark"
@@ -365,6 +359,7 @@ std::string DateFolder::convertDMYVectorToString(
     }
 
     return dateStr;
+}
 }
 
 #endif // __KML_DATE_FOLDER_CPP__

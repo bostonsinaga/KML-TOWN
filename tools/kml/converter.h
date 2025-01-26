@@ -1,11 +1,16 @@
 #ifndef __KML_CONVERTER_H__
 #define __KML_CONVERTER_H__
 
-/* NOTE:
-*   This class is not a '.txt' to '.kml' converter
-*   please use 'txt/scanner' and 'kml/builder' instead
-*   this class just for coordinate converter from 'degree' to 'decimal' and vice versa
-*/
+#include "style-strings.h"
+
+/**
+ * Note:
+ * This class is not a '.txt' to '.kml' converter
+ * please use 'txt/scanner' and 'kml/builder' instead
+ * this class just for coordinate converter from 'degree' to 'decimal' and vice versa
+ */
+
+namespace kml {
 
 class Converter {
     public:
@@ -43,5 +48,6 @@ class Converter {
             int separateFlagOut
         );        
 };
+}
 
 #endif // __KML_CONVERTER_H__

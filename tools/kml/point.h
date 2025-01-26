@@ -1,11 +1,14 @@
 #ifndef __KML_POINT_H__
 #define __KML_POINT_H__
 
-/*
-*   POINT IN DEGREE (°)
-*   -but not limited for distance as meter
-*/
+#include "converter.h"
 
+namespace kml {
+
+/**
+ * Point in degree (°).
+ * But not limited for distance as meter.
+ */
 class Point {
     public:
         /* '0,0' point is in near Central Africa */
@@ -51,5 +54,6 @@ class Point {
         // keep value precision
         std::string to_string_with_precision(LD &axis);
 };
+}
 
 #endif // __KML_POINT_H__

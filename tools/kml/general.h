@@ -1,7 +1,14 @@
 #ifndef __KML_GENERAL_H__
 #define __KML_GENERAL_H__
 
-/* REUSABLE FUNCTIONS FOR ALL KML TOOLS */
+/** REUSABLE FUNCTIONS FOR ALL KML TOOLS */
+
+#include "../xml/xml.h"
+
+namespace kml {
+
+// indexes to access a 2 member coordinate array
+enum {X, Y};
 
 class General {
     public:
@@ -60,5 +67,6 @@ class General {
             std::vector<xml::Node*> &newFolderVec
         );
 };
+}
 
 #endif // __KML_GENERAL_H__

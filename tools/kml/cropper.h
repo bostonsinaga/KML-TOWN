@@ -1,7 +1,14 @@
 #ifndef __KML_CROPPER_H__
 #define __KML_CROPPER_H__
 
-// CROPPING BY RECTANGULAR AREA FROM START TO END POINT //
+#include "placemark.h"
+
+/**
+ * Cropping by rectangular area
+ * from start to end point.
+ */
+
+namespace kml {
 
 class Cropper {
     public:
@@ -84,5 +91,6 @@ class Cropper {
             std::function<bool(LineEquation&, Point*)> intersect[4];
         } selRect;
 };
+}
 
 #endif // __KML_CROPPER_H__

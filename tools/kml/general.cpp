@@ -3,7 +3,9 @@
 
 #include "general.h"
 
-/* REUSABLE FUNCTIONS FOR ALL KML TOOLS */
+/** REUSABLE FUNCTIONS FOR ALL KML TOOLS */
+
+namespace kml {
 
 int General::checkCompass(std::string axisStr) {
 
@@ -391,6 +393,7 @@ void General::cleanFolders(
     }
 
     mainFolder->addChild(classifiedFolder);
+}
 }
 
 #endif // __KML_GENERAL_CPP__

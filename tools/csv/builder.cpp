@@ -1,13 +1,16 @@
-#ifndef __TXT_BUILDER_CPP__
-#define __TXT_BUILDER_CPP__
+#ifndef __CSV_BUILDER_CPP__
+#define __CSV_BUILDER_CPP__
 
 #include "builder.h"
 
-/* NOTE:
-*  the columns are the first list of folders from main folder
-*  the folders inside each of them are ignored
-*  (directly to the placemarks)
-*/
+/**
+ * Note:
+ * The columns are the first list of folders from main folder.
+ * The folders inside each of them are ignored.
+ * Go directly to the placemarks.
+ */
+
+namespace csv {
 
 bool Builder::compose(
     std::string fileDir_out,
@@ -441,5 +444,6 @@ std::vector<xml::Node*> Builder::pullRowNodes(xml::Node *parent) {
 
     return retNodes;
 }
+}
 
-#endif // __TXT_BUILDER_CPP__
+#endif // __CSV_BUILDER_CPP__

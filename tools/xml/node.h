@@ -1,6 +1,13 @@
 #ifndef __XML_NODE_H__
 #define __XML_NODE_H__
 
+#define XML_TOPPER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+#define XML_TOPPER_COUNT 38
+
+#include "../../wrappers/menu.h"
+
+namespace xml {
+
 class Attribute {
 public:
   Attribute(std::string name_in, std::string value_in) {
@@ -97,5 +104,6 @@ private:
   std::vector<Node*> children;
   std::vector<Attribute> attributes;
 };
+}
 
 #endif // __XML_NODE_H__

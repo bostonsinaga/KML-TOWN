@@ -106,7 +106,7 @@ std::vector<xml::Node*> call_briefer::cropPlacemarkFunc(
 
         if (croppedFolderNode) {
           if (kml::Placemark::getDataText(croppedFolderNode, "name")
-            == CROP_COMMAND_WORKING_FOLDER
+            == definitions::CROP_COMMAND_WORKING_FOLDER
           ) {
             retContainerNode = croppedFolderNode; // 'croppedPlacemarkNodes' is single
           }

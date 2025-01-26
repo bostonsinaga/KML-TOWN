@@ -3,6 +3,8 @@
 
 #include "writer.h"
 
+namespace xml {
+
 void Writer::stringify(
     std::string fileDir_out,
     Node *root,
@@ -121,6 +123,7 @@ std::string Writer::pullChildrenStrings(std::vector<Node*> *children) {
     }
 
     return retTxt;
+}
 }
 
 #endif // __XML_WRITER_CPP__

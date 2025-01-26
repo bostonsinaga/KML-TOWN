@@ -3,6 +3,8 @@
 
 #include "samples.h"
 
+namespace txt {
+
 std::string Samples::testDateTemplate(
     std::string &textLine,
     const std::string &century
@@ -448,6 +450,7 @@ std::string Samples::testDecimalTemplate(std::string &textLine) {
     }
 
     return retCoor;
+}
 }
 
 #endif // __TXT_SAMPLES_CPP__

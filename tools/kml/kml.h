@@ -1,23 +1,21 @@
 #ifndef __KML_H__
 #define __KML_H__
 
-/* NOTE:
-*   there's only be one element as child of 'kml' element
-*   otherwise, the Google Earth will reject it 
-*/
-
-namespace kml {
-    #include "general.cpp"
-    #include "style-strings.cpp"
-    #include "converter.cpp"
-    #include "point.cpp"
-    #include "builder.cpp"
-    #include "placemark.cpp"
-    #include "cropper.cpp"
-    #include "sorter.cpp"
-    #include "twins-checker.cpp"
-    #include "classifier.cpp"
-    #include "date-folder.cpp"
-}
+/**
+ * Note:
+ * There's only be one element as child of 'kml' element.
+ * Otherwise the Google Earth will reject it.
+ */
+#include "general.h"
+#include "style-strings.h"
+#include "converter.h"
+#include "point.h"
+#include "builder.h"
+#include "placemark.h"
+#include "cropper.h"
+#include "sorter.h"
+#include "twins-checker.h"
+#include "classifier.h"
+#include "date-folder.h"
 
 #endif // __KML_H__

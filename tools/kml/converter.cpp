@@ -3,13 +3,19 @@
 
 #include "converter.h"
 
-/* NOTE:
-*   This class is not a '.txt' to '.kml' converter
-*   please use 'txt/scanner' and 'kml/builder' instead
-*   this class just for coordinate converter from 'degree' to 'decimal' and vice versa
-*/
+/**
+ * Notes:
+ *
+ * This class is not a '.txt' to '.kml' converter.
+ * Please use 'txt/scanner' and 'kml/builder' instead.
+ * This class just for coordinate converter from 'degree'
+ * to 'decimal' and vice versa.
+ *
+ * The tool functions take
+ * only two stringified axis.
+ */
 
-/* note: the tool functions take only two stringified axis */
+namespace kml {
 
 std::vector<std::string> Converter::separateCoordinate(
     std::string coorStr,
@@ -260,6 +266,7 @@ void Converter::swapCoorStringVector(
         coorStrCouple_ptr->at(0) = coorStrCouple_ptr->at(1);
         coorStrCouple_ptr->at(1) = buffer;
     }
+}
 }
 
 #endif // __KML_CONVERTER_CPP__

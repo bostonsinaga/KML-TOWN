@@ -1,38 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <cstring>
-#include <sstream>
-#include <cmath>
-#include <functional>
-#include <algorithm>
-
 #include <ctime>
-
-#define X 0
-#define Y 1
-
-/** Degree sign input in literal (°) reformatted with 2 characters */
-#define DEG_INT_CHAR_PT1 -62 // normal degree sign
-#define DEG_INT_CHAR_PT2 -80 // ...
-
-/**
- * Degree sign anomaly may appear when
- * receiving degree coordinate parameter from '.bat' or '.sh' file.
- */
-#define ANM_DEG_INT_CHAR_PT1 45 // anomaly degree sign
-#define ANM_DEG_INT_CHAR_PT2 166 // ...
-
-typedef long double LD;
-
-#include "wrappers/mini-tool.cpp"
-#include "wrappers/menu.cpp"
-#include "tools/xml/xml.h"
-#include "tools/kml/kml.h"
-#include "tools/txt/txt.h"
-#include "tools/csv/csv.h"
-#include "wrappers/call-briefer.cpp"
+#include "wrappers/call-briefer.h"
 
 int main(int argc, char *argv[]) {
 
@@ -179,7 +146,7 @@ int main(int argc, char *argv[]) {
         "CSV-> Do you want to change columns separator? (default is '|')\n",
         false
       )) {
-        csv::singleCharacterInputNotify(menu, false);
+        csv::Util::singleCharacterInputNotify(menu, false);
         std::string additionalInput = menu.setAdditionalInput(
           "CSV-> Set columns separator sign:  "
         );
@@ -679,9 +646,9 @@ int main(int argc, char *argv[]) {
     );
     
     if (fileDir_check != "") {
-      csv::singleCharacterInputNotify(menu, true);
+      csv::Util::singleCharacterInputNotify(menu, true);
 
-      csv::changeCSVSeparator(
+      csv::Util::changeCSVSeparator(
         fileIn_paramStr,
         fileDir_check,
         oldSign_paramStr,

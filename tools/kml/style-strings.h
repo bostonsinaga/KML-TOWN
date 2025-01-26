@@ -1,6 +1,10 @@
 #ifndef __KML_STYLE_STRINGS_H__
 #define __KML_STYLE_STRINGS_H__
 
+#include "general.h"
+
+namespace kml {
+
 class StyleStrings {
     public:
         StyleStrings() {}
@@ -246,5 +250,6 @@ class StyleStrings {
             bool *styleExistanceHook = nullptr
         );
 };
+}
 
 #endif // __KML_STYLE_STRINGS_H__

@@ -1,6 +1,10 @@
 #ifndef __CLASSIFIER_H__
 #define __CLASSIFIER_H__
 
+#include "placemark.h"
+
+namespace kml {
+
 class Classifier {
     public:
         Classifier() {}
@@ -13,5 +17,6 @@ class Classifier {
 
         bool filterString(xml::Node *kmlNode, std::string searchStr);
 };
+}
 
 #endif // __CLASSIFIER_H__

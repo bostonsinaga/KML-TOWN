@@ -1,12 +1,14 @@
 #ifndef __KML_SORTER_H__
 #define __KML_SORTER_H__
 
-/*
-*   SORT LIKE A CHAINS
-*   started with nearest placemark from start point
-*   (this using cropper)
-*/
+#include "placemark.h"
 
+namespace kml {
+
+/**
+ * SORT LIKE A CHAINS
+ * Started with nearest placemark from start point.
+ */
 class Sorter {
     public:
         Sorter() {}
@@ -36,5 +38,6 @@ class Sorter {
 
         enum {PIN_TYPE, PATH_TYPE, ALL_TYPE};
 };
+}
 
 #endif // __KML_SORTER_H__

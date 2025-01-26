@@ -3,6 +3,8 @@
 
 #include "style-strings.h"
 
+namespace kml {
+
 int StyleStrings::getPinIconNamedIndex(std::string &pinIconNamed) {
     for (int i = 0;
         i < sizeof(pinIconUrlArray) / sizeof(std::string);
@@ -207,6 +209,7 @@ std::string StyleStrings::getPlacemarkStyleData(
     // path
     if (styleExistanceHook) *styleExistanceHook = false;
     return "ffffffff";
+}
 }
 
 #endif // __KML_STYLE_STRINGS_CPP__

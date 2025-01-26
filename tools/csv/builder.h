@@ -1,5 +1,9 @@
-#ifndef __TXT_BUILDER_H__
-#define __TXT_BUILDER_H__
+#ifndef __CSV_BUILDER_H__
+#define __CSV_BUILDER_H__
+
+#include "util.h"
+
+namespace csv {
 
 class Builder {
     public:
@@ -17,5 +21,6 @@ class Builder {
     private:
         std::vector<xml::Node*> pullRowNodes(xml::Node *parent);
 };
+}
 
 #endif // __TXT_BUILDER_H__

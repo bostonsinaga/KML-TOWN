@@ -1,26 +1,30 @@
 #ifndef __KML_DATE_FOLDER_H__
 #define __KML_DATE_FOLDER_H__
 
-/*
-    'packNumeral' called as 'folder-by-date'
-    'spreadNumeral' called as 'date-by-folder'
-    **(available only for 'dd/mm/yyyy' numeric format)
-*/
+#include "placemark.h"
+
+/**
+ * The 'packNumeral' called as 'folder-by-date'.
+ * The 'spreadNumeral' called as 'date-by-folder'.
+ * These available only for 'dd/mm/yyyy' numeric format.
+ */
+
+namespace kml {
 
 class DateFolder {
     public:
         DateFolder() {}
 
-        /*
-            -pack placemarks into one folder of their date
-            -the undated placemark will be inserted into 'NO DATE' folder inside working folder
-        */
+        /**
+         * Pack placemarks into one folder of their date
+         * The undated placemark will be inserted into 'NO DATE' folder inside working folder
+         */
         bool packNumeral(xml::Node *kmlNode);
 
-        /*
-            -spread folder date string to undated placemark description
-            -doesn't need to insert into new working folder
-        */
+        /**
+         * Spread folder date string to undated placemark description.
+         * Doesn't need to insert into new working folder.
+         */
         bool spreadNumeral(xml::Node *kmlNode, bool isOverrideDated = false);
 
     private:
@@ -33,5 +37,6 @@ class DateFolder {
         // convert DMY vector to string
         std::string convertDMYVectorToString(std::vector<int> &dmyIntVec_in);
 };
+}
 
 #endif // __KML_DATE_FOLDER_H__

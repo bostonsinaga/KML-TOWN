@@ -3,6 +3,8 @@
 
 #include "builder.h"
 
+namespace kml {
+
 xml::Node *Builder::createFolder(
     std::string name,
     bool isOpen
@@ -403,5 +405,6 @@ std::string
     Builder::paddleScaleHighlight = "1.3",
     Builder::shapesScaleNormal = "1.2",
     Builder::shapesScaleHighlight = "1.4";
+}
 
 #endif // __KML_BUILDER_CPP__

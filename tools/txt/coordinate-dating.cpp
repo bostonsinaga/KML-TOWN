@@ -3,6 +3,8 @@
 
 #include "coordinate-dating.h"
 
+namespace txt {
+
 void CoordinateDating::complete(
     std::string fileDir_in,
     std::string fileDir_out
@@ -52,6 +54,7 @@ void CoordinateDating::complete(
         std::cout << "TXT-> No change occurred to '" + fileDir_in + "'\n";
         std::cout << "\n**COMPLETED**\n";
     }
+}
 }
 
 #endif // __TXT_COORDINATE_DATING_CPP__

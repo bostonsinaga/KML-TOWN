@@ -1,6 +1,10 @@
 #ifndef __XML_READER_H__
 #define __XML_READER_H__
 
+#include "node.h"
+
+namespace xml {
+
 class Reader {
     public:
         static Node *fileParse(std::string fileName, bool isNotify = true);
@@ -12,5 +16,6 @@ class Reader {
             bool isNotify = false
         );
 };
+}
 
 #endif // __XML_READER_H__

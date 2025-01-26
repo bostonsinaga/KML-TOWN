@@ -3,9 +3,9 @@
 
 #include "cropper.h"
 
-// CROPPING BY RECTANGULAR AREA FROM START TO END POINT //
+/** ONLY AVAILABLE FOR PINS YET */
 
-/* ONLY AVAILABLE FOR PINS YET */
+namespace kml {
 
 void Cropper::printNotification(Menu &menu) {
     menu.setNotification(
@@ -55,7 +55,7 @@ std::vector<xml::Node*> Cropper::cutPins(
 
             xml::Node *workingFolder = Builder::createFolder(
                 isParentFolderNamedAType ?
-                "PINS" : CROP_COMMAND_WORKING_FOLDER
+                "PINS" : definitions::CROP_COMMAND_WORKING_FOLDER
             );
 
             if (isIncludeFolders) {
@@ -331,7 +331,7 @@ std::vector<xml::Node*> Cropper::cutPaths(
 
             xml::Node *workingFolder = Builder::createFolder(
                 isParentFolderNamedAType ?
-                "PATHS" : CROP_COMMAND_WORKING_FOLDER
+                "PATHS" : definitions::CROP_COMMAND_WORKING_FOLDER
             );
 
             if (isIncludeFolders) {
@@ -421,7 +421,9 @@ std::vector<xml::Node*> Cropper::cutAll(
         true
     );
 
-    xml::Node *workingFolder = Builder::createFolder(CROP_COMMAND_WORKING_FOLDER);
+    xml::Node *workingFolder = Builder::createFolder(
+        definitions::CROP_COMMAND_WORKING_FOLDER
+    );
 
     bool isPinsExist = false,
          isPathsExist = false;
@@ -725,6 +727,7 @@ bool Cropper::isSegmentIntersectsSelectionRect(
     }
     
     return false;
+}
 }
 
 #endif // __KML_CROPPER_CPP__
