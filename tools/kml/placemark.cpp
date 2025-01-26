@@ -1,7 +1,10 @@
 #ifndef __KML_PLACEMARK_CPP__
 #define __KML_PLACEMARK_CPP__
 
+#include <GeographicLib/Geodesic.hpp>
 #include "placemark.h"
+
+namespace kml {
 
 void Placemark::pinsPath(
     xml::Node *kmlNode,
@@ -32,7 +35,7 @@ void Placemark::pinsPath(
 
     General::insertEditedPlacemarksIntoFolder(
         General::searchMainFolder(kmlNode),
-        Builder::createFolder(PINS_PATH_COMMAND_WORKING_FOLDER),
+        Builder::createFolder(definitions::PINS_PATH_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-path unifying", "Pins-path unify"},
         ""
@@ -84,38 +87,52 @@ void Placemark::pinsPathSegments(
 
     General::insertEditedPlacemarksIntoFolder(
         General::searchMainFolder(kmlNode),
-        Builder::createFolder(PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
+        Builder::createFolder(definitions::PINS_PATH_SEGMENTS_COMMAND_WORKING_FOLDER),
         pathNodes,
         {"Pins-paths segmenting", "Pins-paths segmentation"},
         ""
     );
 }
 
-template<typename TYPE_T>
+// template<typename TYPE_T>
 
 // using 'haversine' formula (returns distance in meters)
-LD Placemark::getHaversineDistance(
-    TYPE_T startPt,
-    TYPE_T endPt
+double Placemark::getHaversineDistance(
+    Point &startPt,
+    Point &endPt
 ) {
-    LD lat1 = startPt.x,
-       lat2 = endPt.x,
-       lon1 = startPt.y,
-       lon2 = endPt.y;
+    // LD lat1 = startPt.x,
+    //    lat2 = endPt.x,
+    //    lon1 = startPt.y,
+    //    lon2 = endPt.y;
 
-    LD radian1 = lat1 * M_PI / 180.0;
-    LD radian2 = lat2 * M_PI / 180.0;
-    LD deltaRadian1 = (lat2 - lat1) * M_PI / 180.0;
-    LD deltaRadian2 = (lon2 - lon1) * M_PI / 180.0;
+    // LD radian1 = lat1 * M_PI / 180.0;
+    // LD radian2 = lat2 * M_PI / 180.0;
+    // LD deltaRadian1 = (lat2 - lat1) * M_PI / 180.0;
+    // LD deltaRadian2 = (lon2 - lon1) * M_PI / 180.0;
 
-    LD a = std::sin(deltaRadian1 / 2) * std::sin(deltaRadian1 / 2) +
-        std::cos(radian1) * std::cos(radian2) *
-        std::sin(deltaRadian2 / 2) * std::sin(deltaRadian2 / 2);
+    // LD a = std::sin(deltaRadian1 / 2) * std::sin(deltaRadian1 / 2) +
+    //     std::cos(radian1) * std::cos(radian2) *
+    //     std::sin(deltaRadian2 / 2) * std::sin(deltaRadian2 / 2);
 
-    LD c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
+    // LD c = 2 * std::atan2(std::sqrt(a), std::sqrt(1-a));
 
-    // average earth radius times 'c'
-    return 6371000.0 * c;
+    // // average earth radius times 'c'
+    // return 6371000.0 * c;
+
+    /** NEW! Charles F. F. Karney - Vincenty's Formulae */
+
+    double lat1 = startPt.x, lon1 = startPt.y,
+        lat2 = endPt.x, lon2 = endPt.y,
+        s12 = 0;
+
+    double a = 6378137,
+        f = 1/298.257223563;
+
+    GeographicLib::Geodesic geo(a, f);
+    geo.Inverse(lat1, lon1, lat2, lon2, s12);
+
+    return s12;
 }
 
 int Placemark::getPathDistance(std::vector<Point> &points) {
@@ -125,7 +142,7 @@ int Placemark::getPathDistance(std::vector<Point> &points) {
         Point prevPoint = points.front();
 
         for (int i = 1; i < points.size(); i++) {
-            accumulateDistance += getHaversineDistance<Point&>(prevPoint, points.at(i));
+            accumulateDistance += getHaversineDistance(prevPoint, points.at(i));
             prevPoint = points.at(i);
         }
 
@@ -378,16 +395,16 @@ void Placemark::includeFolder(
 }
 
 Point Placemark::convertDegreeToMeterPoint(Point &ptIn) {
+
+    Point ptx(ptIn.x, 0),
+        pty(0, ptIn.y),
+        pt0(0, 0);
+
     return Point(
-        getHaversineDistance<Point>(
-            Point(ptIn.x, 0),
-            Point(0, 0)
-        ),
-        getHaversineDistance<Point>(
-            Point(0, ptIn.y),
-            Point(0, 0)
-        )
+        getHaversineDistance(ptx, pt0),
+        getHaversineDistance(pty, pt0)
     );
+}
 }
 
 #endif // __KML_PLACEMARK_CPP__
