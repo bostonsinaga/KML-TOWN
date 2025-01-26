@@ -1,10 +1,10 @@
-# KML-TOWN v1.1.3 2023-07-08
+# geoton v1.1.3 2023-07-08
 ****************************************************************
 *Departure from v0.10.4 ALPHA 2023-03-22*
 ****************************************************************
 
 Hello there,</br>
-I've created software named **KML-TOWN**.</br>
+I've created software named **geoton**.</br>
 A simple and useful **Google Earth** *'.kml'* editor program.</br>
 I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
@@ -25,12 +25,12 @@ I started developing it from *2022 November 14th (version 0.1.0)*.</br>
 
 **HOW TO INSTALL:**</br>
 -- compile the source code, by run *'./compile.[sh, bat]'* in CLI</br>
----- or <a href="https://github.com/bostonsinaga/KML-TOWN/releases/">download</a> released alpha version instead</br>
--- then add compiled program folder path (the 'bin/' folder where *'kml-town'* program located)</br>
+---- or <a href="https://github.com/bostonsinaga/geoton/releases/">download</a> released alpha version instead</br>
+-- then add compiled program folder path (the 'bin/' folder where *'geoton'* program located)</br>
 ---- to 'path' in your 'Environment Variable'</br>
 ---- (if you don't want to do so, you have to always *'cd'* into the program folder every time you using it)</br>
--- and finally run *'kml-town'* in your CLI</br>
----- (type *'kml-town --help'* to start)</br>
+-- and finally run *'geoton'* in your CLI</br>
+---- (type *'geoton --help'* to start)</br>
 
 I use this software in my previous job, as a coordinate data entry using **Google Earth**.</br>
 This really help me. And I hope this can help you too. Thank you.</br>
@@ -118,17 +118,17 @@ TXT_COMPLETE_DATE_FLAG = "out"
 
 **CROP PINS**
 
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-wide-pins.jpg" alt="scrsht-ge-wide-pins.jpg" width="800"/>
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-crop-pins.png" alt="scrsht-cli-crop-pins.png" width="800"/>
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-selected-pins.jpg" alt="scrsht-ge-selected-pins.jpg" width="800"/>
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-cropped-pins.jpg" alt="scrsht-ge-cropped-pins.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-ge-wide-pins.jpg" alt="scrsht-ge-wide-pins.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-cli-crop-pins.png" alt="scrsht-cli-crop-pins.png" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-ge-selected-pins.jpg" alt="scrsht-ge-selected-pins.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-ge-cropped-pins.jpg" alt="scrsht-ge-cropped-pins.jpg" width="800"/>
 
 **PINS TO PATH**
 
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-pins-path.png" alt="scrsht-cli-pins-path.png" width="800"/>
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-ge-path-of-pins.jpg" alt="scrsht-ge-path-of-pins.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-cli-pins-path.png" alt="scrsht-cli-pins-path.png" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-ge-path-of-pins.jpg" alt="scrsht-ge-path-of-pins.jpg" width="800"/>
 
 **KML TO SHEET**
 
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-cli-kml-csv.png" alt="scrsht-cli-kml-csv.png" width="800"/>
-<img src="https://raw.githubusercontent.com/bostonsinaga/KML-TOWN/main/test/screenshots/scrsht-sheet.jpg" alt="scrsht-sheet.jpg" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-cli-kml-csv.png" alt="scrsht-cli-kml-csv.png" width="800"/>
+<img src="https://raw.githubusercontent.com/bostonsinaga/geoton/main/test/screenshots/scrsht-sheet.jpg" alt="scrsht-sheet.jpg" width="800"/>
